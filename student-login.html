@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Student Login | Kumaun Institute of Computer Education</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+Student Login | Kumaun Institute of Computer Education
+</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -148,6 +156,11 @@ input:focus{
     color:#166534;
 }
 
+.info{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
 .reset-box{
     display:none;
 }
@@ -180,22 +193,82 @@ input:focus{
     margin-bottom:20px;
 }
 
+.loading-screen{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#f4f6f9;
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:12px;
+    color:#172554;
+}
+
+.loading-screen.show{
+    display:flex;
+}
+
+.loader{
+    width:38px;
+    height:38px;
+    border:4px solid #cbd5e1;
+    border-top-color:#172554;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
+
+<!-- AUTO LOGIN LOADING SCREEN -->
+
+<div
+id="loadingScreen"
+class="loading-screen"
+>
+
+    <div class="loader"></div>
+
+    <strong>
+        Checking login...
+    </strong>
+
+</div>
+
+
+
+<!-- LOGIN BOX -->
+
 <div class="login-box">
+
+
+    <!-- LOGO -->
 
     <div class="logo">
 
         <img
-            src="kumaun institute logo.png"
-            alt="Kumaun Institute"
+        src="kumaun institute logo.png"
+        alt="Kumaun Institute"
         >
 
     </div>
 
+
+    <!-- TITLE -->
 
     <h1>
         Kumaun Institute of Computer Education
@@ -207,17 +280,25 @@ input:focus{
     </p>
 
 
-    <!-- LOGIN -->
+
+    <!-- =========================
+         LOGIN SECTION
+    ========================== -->
 
     <div id="loginSection">
 
+
         <div
-            id="loginMessage"
-            class="message">
-        </div>
+        id="loginMessage"
+        class="message"
+        ></div>
+
 
 
         <form id="loginForm">
+
+
+            <!-- MOBILE -->
 
             <div class="form-group">
 
@@ -226,17 +307,20 @@ input:focus{
                 </label>
 
                 <input
-                    type="tel"
-                    id="mobile"
-                    placeholder="Enter registered mobile number"
-                    maxlength="10"
-                    inputmode="numeric"
-                    autocomplete="username"
-                    required
+                type="tel"
+                id="mobile"
+                placeholder="Enter registered mobile number"
+                maxlength="10"
+                inputmode="numeric"
+                autocomplete="username"
+                required
                 >
 
             </div>
 
+
+
+            <!-- PASSWORD -->
 
             <div class="form-group">
 
@@ -245,51 +329,66 @@ input:focus{
                 </label>
 
                 <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
                 >
 
             </div>
 
 
+
+            <!-- LOGIN BUTTON -->
+
             <button
-                type="submit"
-                id="loginBtn"
-                class="login-btn">
+            type="submit"
+            id="loginBtn"
+            class="login-btn"
+            >
 
                 Login
 
             </button>
 
+
         </form>
 
 
+
+        <!-- FORGOT PASSWORD -->
+
         <button
-            type="button"
-            id="forgotBtn"
-            class="forgot-btn">
+        type="button"
+        id="forgotBtn"
+        class="forgot-btn"
+        >
 
             Forgot Password?
 
         </button>
 
+
     </div>
 
 
-    <!-- FORGOT PASSWORD -->
+
+    <!-- =========================
+         PASSWORD RESET SECTION
+    ========================== -->
 
     <div
-        id="resetSection"
-        class="reset-box">
+    id="resetSection"
+    class="reset-box"
+    >
 
 
         <div
-            id="resetMessage"
-            class="message">
-        </div>
+        id="resetMessage"
+        class="message"
+        ></div>
+
 
 
         <p class="small-note">
@@ -300,6 +399,7 @@ input:focus{
             enter karein.
 
         </p>
+
 
 
         <form id="resetForm">
@@ -314,15 +414,16 @@ input:focus{
                 </label>
 
                 <input
-                    type="tel"
-                    id="resetMobile"
-                    placeholder="Enter registered mobile number"
-                    maxlength="10"
-                    inputmode="numeric"
-                    required
+                type="tel"
+                id="resetMobile"
+                placeholder="Enter registered mobile number"
+                maxlength="10"
+                inputmode="numeric"
+                required
                 >
 
             </div>
+
 
 
             <!-- DOB -->
@@ -334,12 +435,13 @@ input:focus{
                 </label>
 
                 <input
-                    type="date"
-                    id="dob"
-                    required
+                type="date"
+                id="dob"
+                required
                 >
 
             </div>
+
 
 
             <!-- JOINING DATE -->
@@ -351,12 +453,13 @@ input:focus{
                 </label>
 
                 <input
-                    type="date"
-                    id="joiningDate"
-                    required
+                type="date"
+                id="joiningDate"
+                required
                 >
 
             </div>
+
 
 
             <!-- NEW PASSWORD -->
@@ -368,14 +471,15 @@ input:focus{
                 </label>
 
                 <input
-                    type="password"
-                    id="newPassword"
-                    placeholder="Enter new password"
-                    minlength="6"
-                    required
+                type="password"
+                id="newPassword"
+                placeholder="Enter new password"
+                minlength="6"
+                required
                 >
 
             </div>
+
 
 
             <!-- CONFIRM PASSWORD -->
@@ -387,20 +491,24 @@ input:focus{
                 </label>
 
                 <input
-                    type="password"
-                    id="confirmPassword"
-                    placeholder="Re-enter new password"
-                    minlength="6"
-                    required
+                type="password"
+                id="confirmPassword"
+                placeholder="Re-enter new password"
+                minlength="6"
+                required
                 >
 
             </div>
 
 
+
+            <!-- RESET BUTTON -->
+
             <button
-                type="submit"
-                id="resetBtn"
-                class="login-btn">
+            type="submit"
+            id="resetBtn"
+            class="login-btn"
+            >
 
                 Reset Password
 
@@ -410,17 +518,25 @@ input:focus{
         </form>
 
 
+
+        <!-- BACK -->
+
         <button
-            type="button"
-            id="backBtn"
-            class="back-btn">
+        type="button"
+        id="backBtn"
+        class="back-btn"
+        >
 
             ← Back to Login
 
         </button>
 
+
     </div>
 
+
+
+    <!-- FOOTER -->
 
     <div class="footer">
 
@@ -429,15 +545,17 @@ input:focus{
 
     </div>
 
+
 </div>
+
 
 
 <script>
 
 
-/* =========================
-   SUPABASE
-========================= */
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
 
 const SUPABASE_URL =
     "https://sfgnwdljakmtuyoxmltr.supabase.co";
@@ -450,13 +568,27 @@ const SUPABASE_KEY =
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_KEY
+        SUPABASE_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
     );
 
 
-/* =========================
+
+/* =========================================
    ELEMENTS
-========================= */
+========================================= */
+
+const loadingScreen =
+    document.getElementById(
+        "loadingScreen"
+    );
+
 
 const loginSection =
     document.getElementById(
@@ -560,9 +692,10 @@ const backBtn =
     );
 
 
-/* =========================
-   MESSAGE
-========================= */
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
 
 function showMessage(
     element,
@@ -578,8 +711,14 @@ function showMessage(
 
     element.style.display =
         "block";
+
 }
 
+
+
+/* =========================================
+   HIDE MESSAGE
+========================================= */
 
 function hideMessage(
     element
@@ -587,12 +726,239 @@ function hideMessage(
 
     element.style.display =
         "none";
+
 }
 
 
-/* =========================
+
+/* =========================================
+   SHOW LOADING
+========================================= */
+
+function showLoading(){
+
+    loadingScreen.classList.add(
+        "show"
+    );
+
+}
+
+
+
+/* =========================================
+   HIDE LOADING
+========================================= */
+
+function hideLoading(){
+
+    loadingScreen.classList.remove(
+        "show"
+    );
+
+}
+
+
+
+/* =========================================
+   CLEAR STUDENT LOCAL DATA
+========================================= */
+
+function clearStudentLocalData(){
+
+    localStorage.removeItem(
+        "studentId"
+    );
+
+    localStorage.removeItem(
+        "student_id"
+    );
+
+    localStorage.removeItem(
+        "loggedInStudentId"
+    );
+
+    localStorage.removeItem(
+        "studentAuthUserId"
+    );
+
+    localStorage.removeItem(
+        "studentLoggedIn"
+    );
+
+}
+
+
+
+/* =========================================
+   SAVE STUDENT LOGIN DATA
+========================================= */
+
+function saveStudentLoginData(
+    studentId,
+    authUserId
+){
+
+    localStorage.setItem(
+        "studentId",
+        String(studentId)
+    );
+
+    localStorage.setItem(
+        "student_id",
+        String(studentId)
+    );
+
+    localStorage.setItem(
+        "loggedInStudentId",
+        String(studentId)
+    );
+
+    localStorage.setItem(
+        "studentAuthUserId",
+        String(authUserId)
+    );
+
+    localStorage.setItem(
+        "studentLoggedIn",
+        "true"
+    );
+
+}
+
+
+
+/* =========================================
+   AUTO LOGIN CHECK
+========================================= */
+
+async function checkExistingLogin(){
+
+    showLoading();
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+        if(error){
+
+            console.error(
+                "Session check error:",
+                error
+            );
+
+            clearStudentLocalData();
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        const session =
+            data ?
+            data.session :
+            null;
+
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            clearStudentLocalData();
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        const authUserId =
+            session.user.id;
+
+
+        const {
+            data:studentData,
+            error:studentError
+        } =
+            await supabaseClient
+            .from("Students")
+            .select("id, auth_user_id")
+            .eq(
+                "auth_user_id",
+                authUserId
+            )
+            .maybeSingle();
+
+
+        if(studentError){
+
+            console.error(
+                "Student profile check error:",
+                studentError
+            );
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        if(!studentData){
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+            clearStudentLocalData();
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        saveStudentLoginData(
+            studentData.id,
+            authUserId
+        );
+
+
+        window.location.replace(
+            "student-dashboard.html"
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Auto login error:",
+            error
+        );
+
+        hideLoading();
+
+    }
+
+}
+
+
+
+/* =========================================
    FORGOT PASSWORD
-========================= */
+========================================= */
 
 forgotBtn.addEventListener(
     "click",
@@ -612,9 +978,10 @@ forgotBtn.addEventListener(
 );
 
 
-/* =========================
-   BACK LOGIN
-========================= */
+
+/* =========================================
+   BACK TO LOGIN
+========================================= */
 
 backBtn.addEventListener(
     "click",
@@ -634,9 +1001,10 @@ backBtn.addEventListener(
 );
 
 
-/* =========================
-   LOGIN
-========================= */
+
+/* =========================================
+   STUDENT LOGIN
+========================================= */
 
 loginForm.addEventListener(
     "submit",
@@ -671,6 +1039,7 @@ loginForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -683,6 +1052,7 @@ loginForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -696,10 +1066,15 @@ loginForm.addEventListener(
 
         try{
 
+
+            /* CREATE AUTH EMAIL */
+
             const authEmail =
                 mobile +
                 "@students.kumauninstitute.local";
 
+
+            /* SUPABASE LOGIN */
 
             const {
                 data:authData,
@@ -741,6 +1116,7 @@ loginForm.addEventListener(
 
 
                 return;
+
             }
 
 
@@ -765,12 +1141,15 @@ loginForm.addEventListener(
 
 
                 return;
+
             }
 
 
             const authUserId =
                 authData.user.id;
 
+
+            /* CHECK STUDENT PROFILE */
 
             const {
                 data:studentData,
@@ -798,6 +1177,9 @@ loginForm.addEventListener(
                     .signOut();
 
 
+                clearStudentLocalData();
+
+
                 showMessage(
                     loginMessage,
                     "Student profile nahi mili.",
@@ -814,6 +1196,7 @@ loginForm.addEventListener(
 
 
                 return;
+
             }
 
 
@@ -822,6 +1205,9 @@ loginForm.addEventListener(
                 await supabaseClient
                     .auth
                     .signOut();
+
+
+                clearStudentLocalData();
 
 
                 showMessage(
@@ -840,44 +1226,15 @@ loginForm.addEventListener(
 
 
                 return;
+
             }
 
 
-            localStorage.setItem(
-                "studentId",
-                String(
-                    studentData.id
-                )
-            );
+            /* SAVE LOGIN DATA */
 
-
-            localStorage.setItem(
-                "student_id",
-                String(
-                    studentData.id
-                )
-            );
-
-
-            localStorage.setItem(
-                "loggedInStudentId",
-                String(
-                    studentData.id
-                )
-            );
-
-
-            localStorage.setItem(
-                "studentAuthUserId",
-                String(
-                    authUserId
-                )
-            );
-
-
-            localStorage.setItem(
-                "studentLoggedIn",
-                "true"
+            saveStudentLoginData(
+                studentData.id,
+                authUserId
             );
 
 
@@ -891,15 +1248,16 @@ loginForm.addEventListener(
             setTimeout(
                 function(){
 
-                    window.location.href =
-                        "student-dashboard.html";
+                    window.location.replace(
+                        "student-dashboard.html"
+                    );
 
                 },
                 700
             );
 
-        }
 
+        }
         catch(error){
 
             console.error(
@@ -927,9 +1285,10 @@ loginForm.addEventListener(
 );
 
 
-/* =========================
+
+/* =========================================
    PASSWORD RESET
-========================= */
+========================================= */
 
 resetForm.addEventListener(
     "submit",
@@ -963,7 +1322,8 @@ resetForm.addEventListener(
             confirmPassword.value;
 
 
-        /* MOBILE */
+
+        /* MOBILE VALIDATION */
 
         if(
             !/^[0-9]{10}$/.test(
@@ -978,10 +1338,12 @@ resetForm.addEventListener(
             );
 
             return;
+
         }
 
 
-        /* DOB */
+
+        /* DOB VALIDATION */
 
         if(!dateOfBirth){
 
@@ -992,10 +1354,12 @@ resetForm.addEventListener(
             );
 
             return;
+
         }
 
 
-        /* JOINING DATE */
+
+        /* JOINING DATE VALIDATION */
 
         if(!admissionDate){
 
@@ -1006,10 +1370,12 @@ resetForm.addEventListener(
             );
 
             return;
+
         }
 
 
-        /* PASSWORD */
+
+        /* PASSWORD VALIDATION */
 
         if(
             password.length < 6
@@ -1022,14 +1388,15 @@ resetForm.addEventListener(
             );
 
             return;
+
         }
 
 
-        /* CONFIRM */
+
+        /* CONFIRM PASSWORD */
 
         if(
-            password !==
-            confirm
+            password !== confirm
         ){
 
             showMessage(
@@ -1039,6 +1406,7 @@ resetForm.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -1052,6 +1420,9 @@ resetForm.addEventListener(
 
         try{
 
+
+            /* CALL EDGE FUNCTION */
+
             const response =
                 await fetch(
 
@@ -1063,16 +1434,20 @@ resetForm.addEventListener(
                         method:
                             "POST",
 
-                       headers:{
-    "Content-Type":
-        "application/json",
+                        headers:{
 
-    "Authorization":
-        "Bearer " + SUPABASE_KEY,
+                            "Content-Type":
+                                "application/json",
 
-    "apikey":
-        SUPABASE_KEY
-},
+                            "Authorization":
+                                "Bearer " +
+                                SUPABASE_KEY,
+
+                            "apikey":
+                                SUPABASE_KEY
+
+                        },
+
                         body:
                             JSON.stringify({
 
@@ -1098,8 +1473,23 @@ resetForm.addEventListener(
                 );
 
 
-            const result =
-                await response.json();
+            let result =
+                null;
+
+
+            try{
+
+                result =
+                    await response.json();
+
+            }
+            catch(jsonError){
+
+                throw new Error(
+                    "Server response invalid hai."
+                );
+
+            }
 
 
             if(
@@ -1124,6 +1514,7 @@ resetForm.addEventListener(
 
 
                 return;
+
             }
 
 
@@ -1143,19 +1534,29 @@ resetForm.addEventListener(
                     resetSection.style.display =
                         "none";
 
+
                     loginSection.style.display =
                         "block";
+
 
                     hideMessage(
                         resetMessage
                     );
 
+
+                    resetBtn.disabled =
+                        false;
+
+
+                    resetBtn.textContent =
+                        "Reset Password";
+
                 },
                 2000
             );
 
-        }
 
+        }
         catch(error){
 
             console.error(
@@ -1181,6 +1582,40 @@ resetForm.addEventListener(
 
     }
 );
+
+
+
+/* =========================================
+   AUTH STATE LISTENER
+========================================= */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+    function(
+        event,
+        session
+    ){
+
+        if(
+            event === "SIGNED_OUT"
+        ){
+
+            clearStudentLocalData();
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   START AUTO LOGIN CHECK
+========================================= */
+
+checkExistingLogin();
+
 
 </script>
 
