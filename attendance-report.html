@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Attendance Report | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#222;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+    background:#172554;
+    color:white;
+    padding:14px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.institute-logo{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    object-fit:cover;
+    background:white;
+    padding:2px;
+}
+
+.brand h2{
+    font-size:20px;
+}
+
+.brand p{
+    font-size:12px;
+    opacity:.8;
+    margin-top:4px;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+.main{
+    padding:25px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.top{
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.message{
+    display:none;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+
+/* =========================================
+   FILTERS
+========================================= */
+
+.filters{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.filter-box{
+    flex:1;
+    min-width:220px;
+}
+
+.filter-box label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    color:#555;
+    margin-bottom:7px;
+}
+
+.filter-box select,
+.filter-box input{
+    width:100%;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    outline:none;
+    font-size:15px;
+    background:white;
+}
+
+
+/* =========================================
+   STUDENT INFO
+========================================= */
+
+.student-info{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    margin-bottom:20px;
+    display:none;
+}
+
+.student-info h2{
+    margin-bottom:8px;
+}
+
+.student-info p{
+    color:#666;
+    font-size:14px;
+    line-height:1.7;
+}
+
+.batch-display{
+    margin-top:12px;
+    display:inline-block;
+    background:#eff6ff;
+    color:#1e40af;
+    padding:9px 13px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.summary{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.card{
+    flex:1;
+    min-width:160px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.card p{
+    color:#666;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.card h2{
+    font-size:26px;
+}
+
+.percentage{
+    font-size:32px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.box{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:600px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+}
+
+th{
+    background:#fafafa;
+    color:#666;
+    font-size:13px;
+}
+
+td{
+    font-size:14px;
+}
+
+.present{
+    background:#dcfce7;
+    color:#166534;
+    padding:6px 10px;
+    border-radius:6px;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.absent{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:6px 10px;
+    border-radius:6px;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.empty,
+.loading{
+    text-align:center;
+    padding:35px;
+    color:#777;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:650px){
+
+    .header{
+        padding:12px 15px;
+    }
+
+    .brand{
+        gap:8px;
+    }
+
+    .institute-logo{
+        width:42px;
+        height:42px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:9px 10px;
+        font-size:12px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .filters{
+        padding:15px;
+    }
+
+    .filter-box{
+        min-width:100%;
+    }
+
+    .box{
+        padding:12px;
+    }
+
+    .summary{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .card{
+        min-width:0;
+        padding:15px;
+    }
+
+    .card h2{
+        font-size:22px;
+    }
+
+    .percentage{
+        font-size:24px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <img
+            src="kumaun institute logo.png"
+            class="institute-logo"
+            alt="Institute Logo"
+            onerror="this.style.display='none'"
+        >
+
+        <div>
+
+            <h2>Kumaun Institute</h2>
+
+            <p>Monthly Attendance Report</p>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="back-btn"
+        onclick="location.href='index.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+
+<main class="main">
+
+
+<!-- =========================================
+     TITLE
+========================================= -->
+
+<div class="top">
+
+    <h1>📊 Monthly Attendance Report</h1>
+
+</div>
+
+
+
+<!-- =========================================
+     MESSAGE
+========================================= -->
+
+<div
+    id="message"
+    class="message"
+></div>
+
+
+
+<!-- =========================================
+     FILTERS
+========================================= -->
+
+<div class="filters">
+
+
+    <div class="filter-box">
+
+        <label>Select Student</label>
+
+        <select id="studentSelect">
+
+            <option value="">
+                Select Student
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <div class="filter-box">
+
+        <label>Select Month</label>
+
+        <input
+            type="month"
+            id="monthSelect"
+        >
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================
+     STUDENT INFO
+========================================= -->
+
+<div
+    id="studentInfo"
+    class="student-info"
+>
+
+    <h2 id="studentName">
+        -
+    </h2>
+
+
+    <p id="studentDetails">
+        -
+    </p>
+
+
+    <div
+        id="studentBatch"
+        class="batch-display"
+    >
+        -
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     SUMMARY
+========================================= -->
+
+<div class="summary">
+
+
+    <div class="card">
+
+        <p>Total Classes</p>
+
+        <h2 id="totalClasses">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <p>Present</p>
+
+        <h2 id="presentCount">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <p>Absent</p>
+
+        <h2 id="absentCount">
+            0
+        </h2>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <p>Attendance %</p>
+
+        <div
+            id="percentage"
+            class="percentage"
+        >
+            0%
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================
+     ATTENDANCE DETAILS
+========================================= -->
+
+<div class="box">
+
+    <div class="table-scroll">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="reportBody">
+
+                <tr>
+
+                    <td
+                        colspan="2"
+                        class="empty"
+                    >
+                        Student aur month select karein.
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let students = [];
+
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const studentSelect =
+    document.getElementById(
+        "studentSelect"
+    );
+
+const monthSelect =
+    document.getElementById(
+        "monthSelect"
+    );
+
+const reportBody =
+    document.getElementById(
+        "reportBody"
+    );
+
+
+
+/* =========================================
+   CURRENT MONTH
+========================================= */
+
+function setCurrentMonth(){
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    monthSelect.value =
+        `${year}-${month}`;
+
+}
+
+
+
+/* =========================================
+   FORMAT BATCH TIMING
+
+   1, 2, 3 ... 11 ko proper
+   Batch aur Timing me convert karega.
+========================================= */
+
+function formatBatchTiming(value){
+
+    if(
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+    ){
+
+        return "Batch Not Assigned";
+
+    }
+
+
+    const text =
+        String(value).trim();
+
+
+    const batchTimings = {
+
+        "1":
+            "Batch 1 - 07:00 AM to 08:00 AM",
+
+        "2":
+            "Batch 2 - 08:00 AM to 09:00 AM",
+
+        "3":
+            "Batch 3 - 09:00 AM to 10:00 AM",
+
+        "4":
+            "Batch 4 - 10:00 AM to 11:00 AM",
+
+        "5":
+            "Batch 5 - 11:00 AM to 12:00 PM",
+
+        "6":
+            "Batch 6 - 12:00 PM to 01:00 PM",
+
+        "7":
+            "Batch 7 - 01:00 PM to 02:00 PM",
+
+        "8":
+            "Batch 8 - 02:00 PM to 03:00 PM",
+
+        "9":
+            "Batch 9 - 03:00 PM to 04:00 PM",
+
+        "10":
+            "Batch 10 - 04:00 PM to 05:00 PM",
+
+        "11":
+            "Batch 11 - 05:00 PM to 06:00 PM"
+
+    };
+
+
+    if(
+        batchTimings[text]
+    ){
+
+        return batchTimings[text];
+
+    }
+
+
+    /*
+       Agar database me direct timing saved hai,
+       jaise:
+       08:00 AM to 09:00 AM
+
+       to wahi show hogi.
+    */
+
+    return text;
+
+}
+
+
+
+/* =========================================
+   LOAD STUDENTS
+========================================= */
+
+async function loadStudents(){
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+
+        .from("Students")
+
+        .select(
+            "id,name,phone,course,batch_timing"
+        )
+
+        .order(
+            "name",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "Students load nahi hue: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    students =
+        data || [];
+
+
+    studentSelect.innerHTML =
+        `
+        <option value="">
+            Select Student
+        </option>
+        `;
+
+
+    students.forEach(
+        function(student){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                student.id;
+
+
+            const batchText =
+                formatBatchTiming(
+                    student.batch_timing
+                );
+
+
+            option.textContent =
+                `${student.name || "Unknown"} (${batchText})`;
+
+
+            studentSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   STUDENT CHANGE
+========================================= */
+
+studentSelect.addEventListener(
+    "change",
+    function(){
+
+        loadReport();
+
+    }
+);
+
+
+
+/* =========================================
+   MONTH CHANGE
+========================================= */
+
+monthSelect.addEventListener(
+    "change",
+    function(){
+
+        loadReport();
+
+    }
+);
+
+
+
+/* =========================================
+   LOAD REPORT
+========================================= */
+
+async function loadReport(){
+
+    const studentId =
+        studentSelect.value;
+
+    const month =
+        monthSelect.value;
+
+
+    if(
+        !studentId ||
+        !month
+    ){
+
+        document.getElementById(
+            "studentInfo"
+        ).style.display =
+            "none";
+
+
+        resetSummary();
+
+
+        reportBody.innerHTML =
+            `
+            <tr>
+
+                <td
+                    colspan="2"
+                    class="empty"
+                >
+                    Student aur month select karein.
+                </td>
+
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    const student =
+        students.find(
+            function(s){
+
+                return String(
+                    s.id
+                ) === String(
+                    studentId
+                );
+
+            }
+        );
+
+
+    if(!student){
+
+        return;
+
+    }
+
+
+
+    /* STUDENT INFO */
+
+    document.getElementById(
+        "studentInfo"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent =
+        student.name || "-";
+
+
+    document.getElementById(
+        "studentDetails"
+    ).textContent =
+        `${student.course || "-"} • ${student.phone || "-"}`;
+
+
+    document.getElementById(
+        "studentBatch"
+    ).textContent =
+        "📚 " +
+        formatBatchTiming(
+            student.batch_timing
+        );
+
+
+
+    /* LOADING */
+
+    reportBody.innerHTML =
+        `
+        <tr>
+
+            <td
+                colspan="2"
+                class="loading"
+            >
+                Report load ho rahi hai...
+            </td>
+
+        </tr>
+        `;
+
+
+
+    /* MONTH START */
+
+    const startDate =
+        `${month}-01`;
+
+
+    const parts =
+        month.split(
+            "-"
+        );
+
+
+    const year =
+        Number(
+            parts[0]
+        );
+
+    const monthNumber =
+        Number(
+            parts[1]
+        );
+
+
+    const lastDay =
+        new Date(
+            year,
+            monthNumber,
+            0
+        ).getDate();
+
+
+    const endDate =
+        `${month}-${String(
+            lastDay
+        ).padStart(
+            2,
+            "0"
+        )}`;
+
+
+
+    /* LOAD ATTENDANCE */
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+
+        .from("attendance")
+
+        .select(
+            "student_id,attendance_date,status"
+        )
+
+        .eq(
+            "student_id",
+            Number(studentId)
+        )
+
+        .gte(
+            "attendance_date",
+            startDate
+        )
+
+        .lte(
+            "attendance_date",
+            endDate
+        )
+
+        .order(
+            "attendance_date",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "Report load nahi hui: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    const records =
+        data || [];
+
+
+
+    /* =========================================
+       SUMMARY
+    ========================================= */
+
+    const total =
+        records.length;
+
+
+    const present =
+        records.filter(
+            function(record){
+
+                return record.status ===
+                    "Present";
+
+            }
+        ).length;
+
+
+    const absent =
+        records.filter(
+            function(record){
+
+                return record.status ===
+                    "Absent";
+
+            }
+        ).length;
+
+
+    let attendancePercentage =
+        0;
+
+
+    if(total > 0){
+
+        attendancePercentage =
+            Math.round(
+                (
+                    present /
+                    total
+                ) * 100
+            );
+
+    }
+
+
+    document.getElementById(
+        "totalClasses"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "presentCount"
+    ).textContent =
+        present;
+
+
+    document.getElementById(
+        "absentCount"
+    ).textContent =
+        absent;
+
+
+    document.getElementById(
+        "percentage"
+    ).textContent =
+        attendancePercentage + "%";
+
+
+
+    /* =========================================
+       TABLE
+    ========================================= */
+
+    if(!records.length){
+
+        reportBody.innerHTML =
+            `
+            <tr>
+
+                <td
+                    colspan="2"
+                    class="empty"
+                >
+                    Is month ki attendance nahi mili.
+                </td>
+
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    reportBody.innerHTML =
+        "";
+
+
+    records.forEach(
+        function(record){
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const status =
+                record.status;
+
+
+            const statusHTML =
+                status === "Present"
+
+                ?
+
+                `<span class="present">
+                    Present
+                </span>`
+
+                :
+
+                `<span class="absent">
+                    Absent
+                </span>`;
+
+
+            row.innerHTML =
+                `
+
+                <td>
+                    ${formatDate(
+                        record.attendance_date
+                    )}
+                </td>
+
+                <td>
+                    ${statusHTML}
+                </td>
+
+                `;
+
+
+            reportBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   RESET SUMMARY
+========================================= */
+
+function resetSummary(){
+
+    document.getElementById(
+        "totalClasses"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "presentCount"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "absentCount"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "percentage"
+    ).textContent =
+        "0%";
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const parts =
+        String(value).split(
+            "-"
+        );
+
+
+    if(parts.length === 3){
+
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+    }
+
+
+    return value;
+
+}
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(text){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.style.display =
+        "block";
+
+
+    setTimeout(
+        function(){
+
+            message.style.display =
+                "none";
+
+        },
+        4000
+    );
+
+}
+
+
+
+/* =========================================
+   START
+========================================= */
+
+async function start(){
+
+    setCurrentMonth();
+
+    await loadStudents();
+
+}
+
+
+start();
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,2313 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Attendance | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:white;
+  padding:3px;
+  object-fit:contain;
+}
+
+.brand h1{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.back-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.back-btn:hover{
+  opacity:.9;
+}
+
+.red-back-btn{
+  background:#dc2626;
+}
+
+.red-back-btn:hover{
+  background:#b91c1c;
+}
+
+.container{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 15px 40px;
+}
+
+.box{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+  margin-bottom:25px;
+}
+
+.title{
+  margin-bottom:25px;
+}
+
+.title h2{
+  font-size:24px;
+  margin-bottom:6px;
+}
+
+.title p{
+  color:#64748b;
+  font-size:14px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#334155;
+  margin-bottom:7px;
+}
+
+select,
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+select:focus,
+input:focus{
+  border-color:#2563eb;
+}
+
+.status-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.status-option{
+  border:2px solid #e2e8f0;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  cursor:pointer;
+  text-align:center;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.status-option:hover{
+  border-color:#2563eb;
+}
+
+.status-option.active{
+  border-color:#2563eb;
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.status-option.present.active{
+  border-color:#16a34a;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status-option.absent.active{
+  border-color:#dc2626;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.status-option.leave.active{
+  border-color:#d97706;
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.status{
+  margin-top:18px;
+  padding:12px;
+  border-radius:8px;
+  display:none;
+  font-size:14px;
+}
+
+.status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.status.info{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.save-btn{
+  width:100%;
+  margin-top:22px;
+  border:none;
+  background:#172554;
+  color:white;
+  padding:15px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.save-btn:hover{
+  background:#1e3a8a;
+}
+
+.save-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* FILTER */
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  align-items:end;
+}
+
+.filter-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:13px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.filter-btn:hover{
+  background:#1d4ed8;
+}
+
+/* SUMMARY */
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.summary-card{
+  border-radius:12px;
+  padding:18px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+}
+
+.summary-card .icon{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+.summary-card h3{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:8px;
+}
+
+.summary-card .number{
+  font-size:25px;
+  font-weight:bold;
+}
+
+.working{
+  border-top:4px solid #2563eb;
+}
+
+.present-card{
+  border-top:4px solid #16a34a;
+}
+
+.absent-card{
+  border-top:4px solid #dc2626;
+}
+
+.leave-card{
+  border-top:4px solid #d97706;
+}
+
+.percentage-card{
+  border-top:4px solid #7c3aed;
+}
+
+/* PROGRESS */
+
+.progress-box{
+  margin-top:0;
+}
+
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+.progress-bg{
+  width:100%;
+  height:18px;
+  background:#e2e8f0;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#16a34a;
+  border-radius:20px;
+  transition:.4s;
+}
+
+/* TABLE */
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th{
+  background:#172554;
+  color:white;
+  padding:13px;
+  text-align:left;
+  font-size:13px;
+}
+
+td{
+  padding:13px;
+  border-bottom:1px solid #e2e8f0;
+  font-size:14px;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+.badge{
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.badge-present{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge-absent{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.badge-leave{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+}
+
+/* CALENDAR */
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.calendar-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  font-size:12px;
+  color:#475569;
+  margin-bottom:18px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.legend-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+
+.calendar-weekdays,
+.calendar-days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:7px;
+}
+
+.calendar-weekdays div{
+  text-align:center;
+  font-size:12px;
+  font-weight:bold;
+  color:#64748b;
+  padding-bottom:5px;
+}
+
+.calendar-day{
+  min-height:72px;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:8px;
+  background:white;
+  font-size:13px;
+  position:relative;
+}
+
+.calendar-day.empty-day{
+  background:#f8fafc;
+  border:none;
+}
+
+.calendar-day .day-number{
+  font-weight:bold;
+}
+
+.calendar-day .calendar-status{
+  margin-top:7px;
+  font-size:11px;
+  padding:4px 5px;
+  border-radius:5px;
+  text-align:center;
+}
+
+.calendar-present{
+  background:#dcfce7;
+  border-color:#86efac;
+}
+
+.calendar-present .calendar-status{
+  background:#16a34a;
+  color:white;
+}
+
+.calendar-absent{
+  background:#fee2e2;
+  border-color:#fca5a5;
+}
+
+.calendar-absent .calendar-status{
+  background:#dc2626;
+  color:white;
+}
+
+.calendar-leave{
+  background:#fef3c7;
+  border-color:#fcd34d;
+}
+
+.calendar-leave .calendar-status{
+  background:#d97706;
+  color:white;
+}
+
+.calendar-today{
+  outline:3px solid #2563eb;
+}
+
+.calendar-future{
+  background:#f8fafc;
+  color:#94a3b8;
+}
+
+@media(max-width:1000px){
+
+  .summary-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:700px){
+
+  .header{
+    padding:12px 15px;
+  }
+
+  .brand img{
+    width:42px;
+    height:42px;
+  }
+
+  .brand h1{
+    font-size:15px;
+  }
+
+  .brand p{
+    font-size:10px;
+  }
+
+  .header-buttons{
+    gap:6px;
+  }
+
+  .back-btn{
+    padding:8px 9px;
+    font-size:11px;
+  }
+
+  .form-grid,
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+
+  .box{
+    padding:18px;
+  }
+
+  .status-buttons{
+    grid-template-columns:1fr;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .summary-card:last-child{
+    grid-column:1/-1;
+  }
+
+  .calendar-days,
+  .calendar-weekdays{
+    gap:4px;
+  }
+
+  .calendar-day{
+    min-height:58px;
+    padding:5px;
+    font-size:11px;
+  }
+
+  .calendar-day .calendar-status{
+    font-size:8px;
+    padding:3px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+      <h1>Kumaun Institute of Computer Education</h1>
+      <p>Teacher Attendance Management</p>
+    </div>
+
+  </div>
+
+  <div class="header-buttons">
+
+    <button
+      class="back-btn red-back-btn"
+      onclick="location.href='owner-teachers.html'"
+    >
+      ← Back
+    </button>
+
+    <button
+      class="back-btn"
+      onclick="location.href='index.html'"
+    >
+      ← Dashboard
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="container">
+
+  <!-- MARK ATTENDANCE -->
+
+  <div class="box">
+
+    <div class="title">
+      <h2>📋 Mark Teacher Attendance</h2>
+      <p>Select teacher, date aur attendance status.</p>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group full">
+
+        <label>👨‍🏫 Select Teacher *</label>
+
+        <select id="teacherSelect">
+          <option value="">Loading teachers...</option>
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📅 Attendance Date *</label>
+
+        <input
+          type="date"
+          id="attendanceDate"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>⏰ Check-in Time</label>
+
+        <input
+          type="time"
+          id="checkIn"
+        >
+
+      </div>
+
+      <div class="form-group full">
+
+        <label>📌 Attendance Status *</label>
+
+        <div class="status-buttons">
+
+          <button
+            type="button"
+            class="status-option present active"
+            onclick="selectStatus('Present')"
+            id="presentBtn"
+          >
+            🟢 Present
+          </button>
+
+          <button
+            type="button"
+            class="status-option absent"
+            onclick="selectStatus('Absent')"
+            id="absentBtn"
+          >
+            🔴 Absent
+          </button>
+
+          <button
+            type="button"
+            class="status-option leave"
+            onclick="selectStatus('Leave')"
+            id="leaveBtn"
+          >
+            🟡 Leave
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="formStatus"
+      class="status"
+    ></div>
+
+    <button
+      class="save-btn"
+      id="saveButton"
+      onclick="saveAttendance()"
+    >
+      💾 Save Attendance
+    </button>
+
+  </div>
+
+
+  <!-- MONTHLY REPORT -->
+
+  <div class="box">
+
+    <div class="title">
+      <h2>📊 Teacher Attendance Report</h2>
+      <p>Teacher select karke monthly attendance report dekhein.</p>
+    </div>
+
+    <div class="filter-grid">
+
+      <div class="form-group">
+
+        <label>👨‍🏫 Select Teacher</label>
+
+        <select id="reportTeacherSelect">
+          <option value="">Loading teachers...</option>
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📅 Select Month</label>
+
+        <select id="monthSelect"></select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📆 Select Year</label>
+
+        <select id="yearSelect"></select>
+
+      </div>
+
+    </div>
+
+    <button
+      class="filter-btn"
+      style="width:100%; margin-top:15px;"
+      onclick="loadReport()"
+    >
+      🔍 View Attendance Report
+    </button>
+
+  </div>
+
+
+  <!-- SUMMARY -->
+
+  <div class="summary-grid">
+
+    <div class="summary-card working">
+
+      <div class="icon">🗓️</div>
+
+      <h3>Total Working Days</h3>
+
+      <div
+        class="number"
+        id="workingDays"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card present-card">
+
+      <div class="icon">🟢</div>
+
+      <h3>Total Present</h3>
+
+      <div
+        class="number"
+        id="presentCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card absent-card">
+
+      <div class="icon">🔴</div>
+
+      <h3>Total Absent</h3>
+
+      <div
+        class="number"
+        id="absentCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card leave-card">
+
+      <div class="icon">🟡</div>
+
+      <h3>Leave</h3>
+
+      <div
+        class="number"
+        id="leaveCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card percentage-card">
+
+      <div class="icon">📈</div>
+
+      <h3>Attendance Percentage</h3>
+
+      <div
+        class="number"
+        id="attendancePercentage"
+      >
+        0%
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- PROGRESS -->
+
+  <div class="box progress-box">
+
+    <div class="progress-top">
+
+      <span>📊 Attendance Progress</span>
+
+      <span id="progressText">
+        Attendance: 0%
+      </span>
+
+    </div>
+
+    <div class="progress-bg">
+
+      <div
+        class="progress-fill"
+        id="progressFill"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- HISTORY -->
+
+  <div class="box">
+
+    <div class="title">
+
+      <h2>📋 Daily Attendance History</h2>
+
+      <p>
+        Selected month ki daily attendance details.
+      </p>
+
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Status</th>
+            <th>Check-in</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="attendanceHistory">
+
+          <tr>
+
+            <td
+              colspan="4"
+              class="empty"
+            >
+              Teacher aur month select karke report dekhein.
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- CALENDAR -->
+
+  <div class="box">
+
+    <div class="calendar-header">
+
+      <div
+        class="title"
+        style="margin-bottom:0;"
+      >
+
+        <h2>🗓️ Calendar View</h2>
+
+        <p id="calendarTitle">
+          Monthly attendance calendar
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="calendar-legend">
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#16a34a;"
+        ></span>
+
+        Present
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#dc2626;"
+        ></span>
+
+        Absent
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#d97706;"
+        ></span>
+
+        Leave
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#e2e8f0;"
+        ></span>
+
+        No Record / Future
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#2563eb;"
+        ></span>
+
+        Today
+
+      </div>
+
+    </div>
+
+    <div class="calendar-weekdays">
+
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+
+    </div>
+
+    <div
+      class="calendar-days"
+      id="calendarDays"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* SUPABASE */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* GLOBAL */
+
+let selectedStatus = "Present";
+
+let currentReportData = [];
+
+
+/* TODAY */
+
+const today =
+  new Date()
+    .toISOString()
+    .split("T")[0];
+
+document.getElementById(
+  "attendanceDate"
+).value = today;
+
+
+/* CURRENT TIME */
+
+const now = new Date();
+
+const currentTime =
+  String(
+    now.getHours()
+  ).padStart(2,"0")
+  +
+  ":"
+  +
+  String(
+    now.getMinutes()
+  ).padStart(2,"0");
+
+document.getElementById(
+  "checkIn"
+).value = currentTime;
+
+
+/* MONTHS */
+
+function loadMonths(){
+
+  const monthSelect =
+    document.getElementById(
+      "monthSelect"
+    );
+
+  monthSelect.innerHTML = "";
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const currentMonth =
+    new Date().getMonth();
+
+  months.forEach(
+    function(month,index){
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        index + 1;
+
+      option.textContent =
+        month;
+
+      if(index === currentMonth){
+
+        option.selected = true;
+
+      }
+
+      monthSelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* YEARS */
+
+function loadYears(){
+
+  const yearSelect =
+    document.getElementById(
+      "yearSelect"
+    );
+
+  yearSelect.innerHTML = "";
+
+  const currentYear =
+    new Date().getFullYear();
+
+  for(
+    let year =
+      currentYear - 5;
+    year <=
+      currentYear + 2;
+    year++
+  ){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value = year;
+
+    option.textContent = year;
+
+    if(year === currentYear){
+
+      option.selected = true;
+
+    }
+
+    yearSelect.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+/* LOAD TEACHERS */
+
+async function loadTeachers(){
+
+  const select =
+    document.getElementById(
+      "teacherSelect"
+    );
+
+  const reportSelect =
+    document.getElementById(
+      "reportTeacherSelect"
+    );
+
+  select.innerHTML =
+    '<option value="">Loading teachers...</option>';
+
+  reportSelect.innerHTML =
+    '<option value="">Loading teachers...</option>';
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teachers")
+        .select(
+          "id, name, subject, status"
+        )
+        .eq(
+          "status",
+          "Active"
+        )
+        .order(
+          "name",
+          {
+            ascending:true
+          }
+        );
+
+    if(error){
+      throw error;
+    }
+
+    select.innerHTML =
+      '<option value="">-- Select Teacher --</option>';
+
+    reportSelect.innerHTML =
+      '<option value="">-- Select Teacher --</option>';
+
+    if(
+      !data ||
+      data.length === 0
+    ){
+
+      select.innerHTML +=
+        '<option value="">No active teachers found</option>';
+
+      reportSelect.innerHTML +=
+        '<option value="">No active teachers found</option>';
+
+      return;
+
+    }
+
+    data.forEach(
+      function(teacher){
+
+        const text =
+          teacher.name +
+          (
+            teacher.subject
+            ?
+            " - " +
+            teacher.subject
+            :
+            ""
+          );
+
+        const option1 =
+          document.createElement(
+            "option"
+          );
+
+        option1.value =
+          teacher.id;
+
+        option1.textContent =
+          text;
+
+        select.appendChild(
+          option1
+        );
+
+        const option2 =
+          document.createElement(
+            "option"
+          );
+
+        option2.value =
+          teacher.id;
+
+        option2.textContent =
+          text;
+
+        reportSelect.appendChild(
+          option2
+        );
+
+      }
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Load teachers error:",
+      error
+    );
+
+    select.innerHTML =
+      '<option value="">Teachers load nahi hue</option>';
+
+    reportSelect.innerHTML =
+      '<option value="">Teachers load nahi hue</option>';
+
+    showStatus(
+      "❌ Teachers load nahi hue: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* SELECT STATUS */
+
+function selectStatus(status){
+
+  selectedStatus =
+    status;
+
+  document
+    .querySelectorAll(
+      ".status-option"
+    )
+    .forEach(
+      function(button){
+
+        button.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+  if(status === "Present"){
+
+    document
+      .getElementById(
+        "presentBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+  if(status === "Absent"){
+
+    document
+      .getElementById(
+        "absentBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+    document
+      .getElementById(
+        "checkIn"
+      )
+      .value = "";
+
+  }
+
+  if(status === "Leave"){
+
+    document
+      .getElementById(
+        "leaveBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+    document
+      .getElementById(
+        "checkIn"
+      )
+      .value = "";
+
+  }
+
+}
+
+
+/* STATUS MESSAGE */
+
+function showStatus(
+  message,
+  type
+){
+
+  const status =
+    document.getElementById(
+      "formStatus"
+    );
+
+  status.textContent =
+    message;
+
+  status.className =
+    "status " +
+    type;
+
+}
+
+
+/* SAVE ATTENDANCE */
+
+async function saveAttendance(){
+
+  const saveButton =
+    document.getElementById(
+      "saveButton"
+    );
+
+  const teacherId =
+    document.getElementById(
+      "teacherSelect"
+    ).value;
+
+  const attendanceDate =
+    document.getElementById(
+      "attendanceDate"
+    ).value;
+
+  const checkIn =
+    document.getElementById(
+      "checkIn"
+    ).value ||
+    null;
+
+  if(!teacherId){
+
+    showStatus(
+      "Please teacher select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(!attendanceDate){
+
+    showStatus(
+      "Attendance date select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  saveButton.disabled =
+    true;
+
+  saveButton.textContent =
+    "Saving...";
+
+  try{
+
+    showStatus(
+      "Attendance save ho rahi hai...",
+      "info"
+    );
+
+    const {
+      data: existingAttendance,
+      error: checkError
+    } =
+      await supabaseClient
+        .from("teacher_attendance")
+        .select("id")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "date",
+          attendanceDate
+        )
+        .maybeSingle();
+
+    if(checkError){
+      throw checkError;
+    }
+
+    if(existingAttendance){
+
+      const {
+        error:updateError
+      } =
+        await supabaseClient
+          .from("teacher_attendance")
+          .update({
+            status:
+              selectedStatus,
+            check_in:
+              checkIn
+          })
+          .eq(
+            "id",
+            existingAttendance.id
+          );
+
+      if(updateError){
+        throw updateError;
+      }
+
+      showStatus(
+        "✅ Attendance successfully update ho gayi!",
+        "success"
+      );
+
+    }
+    else{
+
+      const {
+        error:insertError
+      } =
+        await supabaseClient
+          .from("teacher_attendance")
+          .insert([
+            {
+              teacher_id:
+                teacherId,
+              date:
+                attendanceDate,
+              status:
+                selectedStatus,
+              check_in:
+                checkIn
+            }
+          ]);
+
+      if(insertError){
+        throw insertError;
+      }
+
+      showStatus(
+        "✅ Teacher attendance successfully save ho gayi!",
+        "success"
+      );
+
+    }
+
+    setTimeout(
+      function(){
+        loadReport();
+      },
+      700
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Save attendance error:",
+      error
+    );
+
+    showStatus(
+      "❌ Attendance save nahi hui: " +
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    saveButton.disabled =
+      false;
+
+    saveButton.textContent =
+      "💾 Save Attendance";
+
+  }
+
+}
+
+
+/* LOAD REPORT */
+
+async function loadReport(){
+
+  const teacherId =
+    document.getElementById(
+      "reportTeacherSelect"
+    ).value;
+
+  const month =
+    Number(
+      document.getElementById(
+        "monthSelect"
+      ).value
+    );
+
+  const year =
+    Number(
+      document.getElementById(
+        "yearSelect"
+      ).value
+    );
+
+  if(!teacherId){
+
+    document.getElementById(
+      "attendanceHistory"
+    ).innerHTML =
+      '<tr><td colspan="4" class="empty">Please teacher select karein.</td></tr>';
+
+    return;
+
+  }
+
+  const monthStart =
+    year +
+    "-" +
+    String(month).padStart(2,"0") +
+    "-01";
+
+  const lastDay =
+    new Date(
+      year,
+      month,
+      0
+    ).getDate();
+
+  const monthEnd =
+    year +
+    "-" +
+    String(month).padStart(2,"0") +
+    "-" +
+    String(lastDay).padStart(2,"0");
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teacher_attendance")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .gte(
+          "date",
+          monthStart
+        )
+        .lte(
+          "date",
+          monthEnd
+        )
+        .order(
+          "date",
+          {
+            ascending:true
+          }
+        );
+
+    if(error){
+      throw error;
+    }
+
+    currentReportData =
+      data || [];
+
+    updateSummary(
+      currentReportData
+    );
+
+    updateHistory(
+      currentReportData
+    );
+
+    createCalendar(
+      currentReportData,
+      year,
+      month
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Report error:",
+      error
+    );
+
+    alert(
+      "❌ Attendance report load nahi hui: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* SUMMARY */
+
+function updateSummary(records){
+
+  const present =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "present"
+    ).length;
+
+  const absent =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "absent"
+    ).length;
+
+  const leave =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "leave"
+    ).length;
+
+  const workingDays =
+    records.length;
+
+  let percentage = 0;
+
+  if(workingDays > 0){
+
+    percentage =
+      (
+        present /
+        workingDays
+      ) *
+      100;
+
+  }
+
+  document.getElementById(
+    "workingDays"
+  ).textContent =
+    workingDays;
+
+  document.getElementById(
+    "presentCount"
+  ).textContent =
+    present;
+
+  document.getElementById(
+    "absentCount"
+  ).textContent =
+    absent;
+
+  document.getElementById(
+    "leaveCount"
+  ).textContent =
+    leave;
+
+  document.getElementById(
+    "attendancePercentage"
+  ).textContent =
+    percentage.toFixed(1) +
+    "%";
+
+  document.getElementById(
+    "progressText"
+  ).textContent =
+    "Attendance: " +
+    percentage.toFixed(1) +
+    "%";
+
+  document.getElementById(
+    "progressFill"
+  ).style.width =
+    percentage +
+    "%";
+
+}
+
+
+/* HISTORY */
+
+function updateHistory(records){
+
+  const tbody =
+    document.getElementById(
+      "attendanceHistory"
+    );
+
+  tbody.innerHTML = "";
+
+  if(records.length === 0){
+
+    tbody.innerHTML =
+      '<tr>' +
+      '<td colspan="4" class="empty">' +
+      'Selected month me attendance record nahi mila.' +
+      '</td>' +
+      '</tr>';
+
+    return;
+
+  }
+
+  records.forEach(
+    function(record){
+
+      const date =
+        new Date(
+          record.date +
+          "T00:00:00"
+        );
+
+      const dateText =
+        date.toLocaleDateString(
+          "en-IN",
+          {
+            day:"2-digit",
+            month:"short"
+          }
+        );
+
+      const dayText =
+        date.toLocaleDateString(
+          "en-IN",
+          {
+            weekday:"long"
+          }
+        );
+
+      let badgeClass =
+        "";
+
+      let badgeText =
+        record.status;
+
+      if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "present"
+      ){
+
+        badgeClass =
+          "badge-present";
+
+        badgeText =
+          "🟢 Present";
+
+      }
+      else if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "absent"
+      ){
+
+        badgeClass =
+          "badge-absent";
+
+        badgeText =
+          "🔴 Absent";
+
+      }
+      else if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "leave"
+      ){
+
+        badgeClass =
+          "badge-leave";
+
+        badgeText =
+          "🟡 Leave";
+
+      }
+
+      let checkInText =
+        "—";
+
+      if(record.check_in){
+
+        const timeParts =
+          String(
+            record.check_in
+          )
+          .substring(
+            0,
+            5
+          )
+          .split(":");
+
+        const hour =
+          Number(
+            timeParts[0]
+          );
+
+        const minute =
+          timeParts[1];
+
+        const ampm =
+          hour >= 12
+          ?
+          "PM"
+          :
+          "AM";
+
+        const displayHour =
+          hour % 12 ||
+          12;
+
+        checkInText =
+          displayHour +
+          ":" +
+          minute +
+          " " +
+          ampm;
+
+      }
+
+      tbody.innerHTML +=
+        "<tr>" +
+        "<td>" +
+        dateText +
+        "</td>" +
+        "<td>" +
+        dayText +
+        "</td>" +
+        '<td><span class="badge ' +
+        badgeClass +
+        '">' +
+        badgeText +
+        "</span></td>" +
+        "<td>" +
+        checkInText +
+        "</td>" +
+        "</tr>";
+
+    }
+  );
+
+}
+
+
+/* CALENDAR */
+
+function createCalendar(
+  records,
+  year,
+  month
+){
+
+  const calendar =
+    document.getElementById(
+      "calendarDays"
+    );
+
+  calendar.innerHTML = "";
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  document.getElementById(
+    "calendarTitle"
+  ).textContent =
+    months[month - 1] +
+    " " +
+    year +
+    " Attendance Calendar";
+
+  const firstDay =
+    new Date(
+      year,
+      month - 1,
+      1
+    ).getDay();
+
+  const totalDays =
+    new Date(
+      year,
+      month,
+      0
+    ).getDate();
+
+  const recordMap = {};
+
+  records.forEach(
+    function(record){
+
+      recordMap[
+        record.date
+      ] =
+        record;
+
+    }
+  );
+
+  for(
+    let blank = 0;
+    blank < firstDay;
+    blank++
+  ){
+
+    const emptyDay =
+      document.createElement(
+        "div"
+      );
+
+    emptyDay.className =
+      "calendar-day empty-day";
+
+    calendar.appendChild(
+      emptyDay
+    );
+
+  }
+
+  const currentDate =
+    new Date();
+
+  const todayYear =
+    currentDate.getFullYear();
+
+  const todayMonth =
+    currentDate.getMonth() + 1;
+
+  const todayDay =
+    currentDate.getDate();
+
+  for(
+    let day = 1;
+    day <= totalDays;
+    day++
+  ){
+
+    const dateString =
+      year +
+      "-" +
+      String(month).padStart(2,"0") +
+      "-" +
+      String(day).padStart(2,"0");
+
+    const dayBox =
+      document.createElement(
+        "div"
+      );
+
+    dayBox.className =
+      "calendar-day";
+
+    const record =
+      recordMap[
+        dateString
+      ];
+
+    if(record){
+
+      const status =
+        String(
+          record.status
+        ).toLowerCase();
+
+      if(status === "present"){
+
+        dayBox.classList.add(
+          "calendar-present"
+        );
+
+      }
+      else if(status === "absent"){
+
+        dayBox.classList.add(
+          "calendar-absent"
+        );
+
+      }
+      else if(status === "leave"){
+
+        dayBox.classList.add(
+          "calendar-leave"
+        );
+
+      }
+
+    }
+    else{
+
+      const checkDate =
+        new Date(
+          year,
+          month - 1,
+          day
+        );
+
+      if(
+        checkDate >
+        new Date(
+          todayYear,
+          todayMonth - 1,
+          todayDay
+        )
+      ){
+
+        dayBox.classList.add(
+          "calendar-future"
+        );
+
+      }
+
+    }
+
+    if(
+      year === todayYear &&
+      month === todayMonth &&
+      day === todayDay
+    ){
+
+      dayBox.classList.add(
+        "calendar-today"
+      );
+
+    }
+
+    let statusText =
+      "";
+
+    if(record){
+
+      const status =
+        String(
+          record.status
+        ).toLowerCase();
+
+      if(status === "present"){
+
+        statusText =
+          "🟢 Present";
+
+      }
+      else if(status === "absent"){
+
+        statusText =
+          "🔴 Absent";
+
+      }
+      else if(status === "leave"){
+
+        statusText =
+          "🟡 Leave";
+
+      }
+
+    }
+
+    dayBox.innerHTML =
+      '<div class="day-number">' +
+      day +
+      "</div>" +
+      (
+        statusText
+        ?
+        '<div class="calendar-status">' +
+        statusText +
+        "</div>"
+        :
+        ""
+      );
+
+    calendar.appendChild(
+      dayBox
+    );
+
+  }
+
+}
+
+
+/* AUTO SELECT */
+
+document
+  .getElementById(
+    "teacherSelect"
+  )
+  .addEventListener(
+    "change",
+    function(){
+
+      const teacherId =
+        this.value;
+
+      document.getElementById(
+        "reportTeacherSelect"
+      ).value =
+        teacherId;
+
+      if(teacherId){
+        loadReport();
+      }
+
+    }
+  );
+
+
+/* AUTO REPORT */
+
+document
+  .getElementById(
+    "reportTeacherSelect"
+  )
+  .addEventListener(
+    "change",
+    loadReport
+  );
+
+document
+  .getElementById(
+    "monthSelect"
+  )
+  .addEventListener(
+    "change",
+    loadReport
+  );
+
+document
+  .getElementById(
+    "yearSelect"
+  )
+  .addEventListener(
+    "change",
+    loadReport
+  );
+
+
+/* START */
+
+loadMonths();
+
+loadYears();
+
+loadTeachers();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#222;
+}
+
+.header{
+    background:#172554;
+    color:white;
+    padding:12px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.institute-logo{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    object-fit:contain;
+    background:white;
+    padding:3px;
+}
+
+.brand h2{
+    font-size:20px;
+}
+
+.brand p{
+    font-size:12px;
+    opacity:.8;
+    margin-top:3px;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.main{
+    padding:25px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.top{
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+}
+
+.filters{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.filter-box{
+    flex:1;
+    min-width:220px;
+}
+
+.filter-box label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    color:#555;
+    margin-bottom:7px;
+}
+
+.filter-box select,
+.filter-box input{
+    width:100%;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    outline:none;
+    font-size:15px;
+    background:white;
+}
+
+.search-box{
+    position:relative;
+}
+
+.search-input-wrap{
+    position:relative;
+}
+
+.search-icon{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:18px;
+    pointer-events:none;
+}
+
+.search-input{
+    padding-left:40px !important;
+}
+
+.search-hint{
+    font-size:11px;
+    color:#777;
+    margin-top:5px;
+}
+
+.batch-info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:20px;
+    display:none;
+    font-weight:bold;
+}
+
+.message{
+    display:none;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* SEARCH RESULT */
+
+.search-results-box{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    margin-bottom:20px;
+    display:none;
+}
+
+.search-results-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.search-result-card{
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+    background:#fafafa;
+}
+
+.search-result-card:last-child{
+    margin-bottom:0;
+}
+
+.search-result-name{
+    font-size:16px;
+    font-weight:bold;
+    color:#172554;
+    margin-bottom:8px;
+}
+
+.search-result-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.search-result-item{
+    font-size:13px;
+    color:#555;
+}
+
+.search-result-item strong{
+    display:block;
+    color:#222;
+    margin-top:3px;
+}
+
+.batch-badge{
+    display:inline-block;
+    background:#dbeafe;
+    color:#1e40af;
+    padding:6px 10px;
+    border-radius:7px;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.no-search-result{
+    text-align:center;
+    padding:20px;
+    color:#777;
+}
+
+.box{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    margin-bottom:25px;
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:900px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px 12px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+    white-space:nowrap;
+}
+
+th{
+    background:#fafafa;
+    color:#666;
+    font-size:13px;
+}
+
+td{
+    font-size:14px;
+}
+
+.student-photo{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #e5e7eb;
+}
+
+.no-photo{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#e8efff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.attendance-select{
+    padding:9px 12px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    font-size:14px;
+    cursor:pointer;
+    outline:none;
+    min-width:120px;
+}
+
+.present{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.absent{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.save-btn{
+    margin-top:20px;
+    background:#16a34a;
+    color:white;
+    border:0;
+    padding:12px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.save-btn:disabled{
+    background:#9ca3af;
+    cursor:not-allowed;
+}
+
+.empty,
+.loading{
+    text-align:center;
+    padding:35px;
+    color:#777;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.summary-card h3{
+    font-size:13px;
+    color:#666;
+    margin-bottom:8px;
+}
+
+.summary-card strong{
+    font-size:26px;
+}
+
+.present-card strong{
+    color:#16a34a;
+}
+
+.absent-card strong{
+    color:#dc2626;
+}
+
+.percent-card strong{
+    color:#2563eb;
+}
+
+.month-title{
+    margin-bottom:15px;
+}
+
+.month-title h2{
+    font-size:21px;
+}
+
+@media(max-width:800px){
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .search-result-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 15px;
+    }
+
+    .institute-logo{
+        width:42px;
+        height:42px;
+    }
+
+    .brand h2{
+        font-size:16px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 10px;
+        font-size:12px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .filters{
+        padding:15px;
+    }
+
+    .filter-box{
+        min-width:100%;
+    }
+
+    .box{
+        padding:12px;
+    }
+
+    .summary-grid{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:15px;
+    }
+
+    .summary-card strong{
+        font-size:21px;
+    }
+
+    .search-results-box{
+        padding:15px;
+    }
+
+    .search-result-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="brand">
+
+<img
+    src="kumaun institute logo.png"
+    alt="Kumaun Institute Logo"
+    class="institute-logo"
+    onerror="this.style.display='none'"
+>
+
+<div>
+    <h2>Kumaun Institute of Computer Education</h2>
+    <p>Attendance Management System</p>
+</div>
+
+</div>
+
+<button
+class="back-btn"
+onclick="location.href='index.html'"
+
+>
+
+← Dashboard
+
+</button>
+
+</header>
+
+<main class="main">
+
+<div class="top">
+    <h1>📋 Attendance</h1>
+</div>
+
+<div
+    id="message"
+    class="message"
+></div>
+
+<!-- SEARCH + FILTERS -->
+
+<div class="filters">
+
+<!-- NEW SEARCH BAR -->
+
+<div class="filter-box search-box">
+
+    <label> Search Student</label>
+
+    <div class="search-input-wrap">
+
+        <span class="search-icon">🔍</span>
+
+        <input
+            type="text"
+            id="studentSearch"
+            class="search-input"
+            placeholder="Name, Student ID, Phone..."
+            autocomplete="off"
+        >
+
+    </div>
+
+</div>
+
+
+<div class="filter-box">
+
+    <label>Select Batch Timing</label>
+
+    <select id="batchSelect">
+
+        <option value="">
+            Select Batch
+        </option>
+
+        <option value="1">
+            Batch 1 - 07:00 AM to 08:00 AM
+        </option>
+
+        <option value="2">
+            Batch 2 - 08:00 AM to 09:00 AM
+        </option>
+
+        <option value="3">
+            Batch 3 - 09:00 AM to 10:00 AM
+        </option>
+
+        <option value="4">
+            Batch 4 - 10:00 AM to 11:00 AM
+        </option>
+
+        <option value="5">
+            Batch 5 - 11:00 AM to 12:00 PM
+        </option>
+
+        <option value="6">
+            Batch 6 - 12:00 PM to 01:00 PM
+        </option>
+
+        <option value="7">
+            Batch 7 - 01:00 PM to 02:00 PM
+        </option>
+
+        <option value="8">
+            Batch 8 - 02:00 PM to 03:00 PM
+        </option>
+
+        <option value="9">
+            Batch 9 - 03:00 PM to 04:00 PM
+        </option>
+
+        <option value="10">
+            Batch 10 - 04:00 PM to 05:00 PM
+        </option>
+
+        <option value="11">
+            Batch 11 - 05:00 PM to 06:00 PM
+        </option>
+
+    </select>
+
+</div>
+
+
+<div class="filter-box">
+
+    <label>Select Date</label>
+
+    <input
+        type="date"
+        id="attendanceDate"
+    >
+
+</div>
+
+</div>
+
+<!-- SEARCH RESULTS -->
+
+<div
+    id="searchResultsBox"
+    class="search-results-box"
+>
+
+<div
+    id="searchResultsTitle"
+    class="search-results-title"
+>
+    🔍 Search Results
+</div>
+
+<div id="searchResults"></div>
+
+</div>
+
+<div
+    id="batchInfo"
+    class="batch-info"
+></div>
+
+<!-- ATTENDANCE TABLE -->
+
+<div class="box">
+
+<div class="table-scroll">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Photo</th>
+
+<th>Student ID</th>
+
+<th>Name</th>
+
+<th>Phone</th>
+
+<th>Course</th>
+
+<th>Batch / Timing</th>
+
+<th>Attendance</th>
+
+</tr>
+
+</thead>
+
+<tbody id="attendanceBody">
+
+<tr>
+
+<td
+    colspan="7"
+    class="empty"
+>
+    Select Batch.
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<button
+id="saveBtn"
+class="save-btn"
+onclick="saveAttendance()"
+disabled
+
+>
+
+💾 Save Attendance
+
+</button>
+
+</div>
+
+<!-- MONTHLY SUMMARY -->
+
+<div class="box">
+
+<div class="month-title">
+
+<h2>
+    📊 Monthly Attendance Summary
+</h2>
+
+</div>
+
+<div class="summary-grid">
+
+<div class="summary-card">
+
+    <h3>Total Attendance</h3>
+
+    <strong id="totalDays">
+        0
+    </strong>
+
+</div>
+
+
+<div class="summary-card present-card">
+
+    <h3>Total Present</h3>
+
+    <strong id="totalPresent">
+        0
+    </strong>
+
+</div>
+
+
+<div class="summary-card absent-card">
+
+    <h3>Total Absent</h3>
+
+    <strong id="totalAbsent">
+        0
+    </strong>
+
+</div>
+
+
+<div class="summary-card percent-card">
+
+    <h3>Attendance %</h3>
+
+    <strong id="attendancePercent">
+        0%
+    </strong>
+
+</div>
+
+</div>
+
+<div class="table-scroll">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Student ID</th>
+
+<th>Name</th>
+
+<th>Present</th>
+
+<th>Absent</th>
+
+<th>Total</th>
+
+<th>Attendance %</th>
+
+</tr>
+
+</thead>
+
+<tbody id="summaryBody">
+
+<tr>
+
+<td
+    colspan="6"
+    class="empty"
+>
+    Select Batch.
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let students = [];
+
+let existingAttendance = [];
+
+let allStudentsForSearch = [];
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const batchSelect =
+    document.getElementById(
+        "batchSelect"
+    );
+
+const attendanceDate =
+    document.getElementById(
+        "attendanceDate"
+    );
+
+const attendanceBody =
+    document.getElementById(
+        "attendanceBody"
+    );
+
+const saveBtn =
+    document.getElementById(
+        "saveBtn"
+    );
+
+const batchInfo =
+    document.getElementById(
+        "batchInfo"
+    );
+
+const studentSearch =
+    document.getElementById(
+        "studentSearch"
+    );
+
+const searchResultsBox =
+    document.getElementById(
+        "searchResultsBox"
+    );
+
+const searchResults =
+    document.getElementById(
+        "searchResults"
+    );
+
+const searchResultsTitle =
+    document.getElementById(
+        "searchResultsTitle"
+    );
+
+
+/* =========================================
+   BATCH DATA
+========================================= */
+
+const batchData = {
+
+    "1":{
+        number:"1",
+        timing:"07:00 AM - 08:00 AM"
+    },
+
+    "2":{
+        number:"2",
+        timing:"08:00 AM - 09:00 AM"
+    },
+
+    "3":{
+        number:"3",
+        timing:"09:00 AM - 10:00 AM"
+    },
+
+    "4":{
+        number:"4",
+        timing:"10:00 AM - 11:00 AM"
+    },
+
+    "5":{
+        number:"5",
+        timing:"11:00 AM - 12:00 PM"
+    },
+
+    "6":{
+        number:"6",
+        timing:"12:00 PM - 01:00 PM"
+    },
+
+    "7":{
+        number:"7",
+        timing:"01:00 PM - 02:00 PM"
+    },
+
+    "8":{
+        number:"8",
+        timing:"02:00 PM - 03:00 PM"
+    },
+
+    "9":{
+        number:"9",
+        timing:"03:00 PM - 04:00 PM"
+    },
+
+    "10":{
+        number:"10",
+        timing:"04:00 PM - 05:00 PM"
+    },
+
+    "11":{
+        number:"11",
+        timing:"05:00 PM - 06:00 PM"
+    }
+
+};
+
+
+/* =========================================
+   SET TODAY
+========================================= */
+
+function setToday(){
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    attendanceDate.value =
+        `${year}-${month}-${day}`;
+}
+
+
+/* =========================================
+   NORMALIZE VALUE
+========================================= */
+
+function normalizeValue(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    return String(value)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g," ")
+        .replace(/–/g,"-")
+        .replace(/—/g,"-")
+        .replace(/\./g,"");
+}
+
+
+/* =========================================
+   GET TIME VALUES
+========================================= */
+
+function getBatchValues(batchNumber){
+
+    const batch =
+        batchData[batchNumber];
+
+    if(!batch){
+        return [];
+    }
+
+    const number =
+        String(batch.number);
+
+    const timing =
+        batch.timing;
+
+    return [
+
+        number,
+
+        "batch " + number,
+
+        timing,
+
+        timing.replace(/0/g,""),
+
+        timing.replace(
+            " - ",
+            " to "
+        ),
+
+        timing.replace(
+            " AM",
+            "AM"
+        ),
+
+        timing.replace(
+            " PM",
+            "PM"
+        ),
+
+        timing
+            .replace(
+                " AM - ",
+                " to "
+            )
+            .replace(
+                " PM",
+                ""
+            ),
+
+        timing
+            .replace(
+                " AM - ",
+                " - "
+            )
+            .replace(
+                " PM",
+                ""
+            )
+
+    ];
+}
+
+
+/* =========================================
+   CHECK STUDENT BATCH
+========================================= */
+
+function studentMatchesBatch(
+    student,
+    selectedBatch
+){
+
+    const validValues =
+        getBatchValues(
+            selectedBatch
+        ).map(
+            function(value){
+
+                return normalizeValue(
+                    value
+                );
+
+            }
+        );
+
+    const batchTiming =
+        normalizeValue(
+            student.batch_timing
+        );
+
+    const batchGroup =
+        normalizeValue(
+            student.batch_group
+        );
+
+    const directBatch =
+        normalizeValue(
+            student.batch
+        );
+
+    if(
+        validValues.includes(
+            batchTiming
+        )
+    ){
+        return true;
+    }
+
+    if(
+        validValues.includes(
+            batchGroup
+        )
+    ){
+        return true;
+    }
+
+    if(
+        validValues.includes(
+            directBatch
+        )
+    ){
+        return true;
+    }
+
+    return false;
+}
+
+
+/* =========================================
+   GET STUDENT BATCH TEXT
+========================================= */
+
+function getStudentBatchText(student){
+
+    if(
+        student.batch_timing !== null &&
+        student.batch_timing !== undefined &&
+        student.batch_timing !== ""
+    ){
+
+        const value =
+            String(
+                student.batch_timing
+            );
+
+        const batch =
+            batchData[value];
+
+        if(batch){
+
+            return (
+                "Batch " +
+                value +
+                " - " +
+                batch.timing
+            );
+
+        }
+
+        return value;
+    }
+
+
+    if(
+        student.batch_group !== null &&
+        student.batch_group !== undefined &&
+        student.batch_group !== ""
+    ){
+
+        const group =
+            String(
+                student.batch_group
+            );
+
+        const batch =
+            batchData[group];
+
+        if(batch){
+
+            return (
+                "Batch " +
+                group +
+                " - " +
+                batch.timing
+            );
+
+        }
+
+        return (
+            "Batch " +
+            group
+        );
+    }
+
+
+    if(
+        student.batch !== null &&
+        student.batch !== undefined &&
+        student.batch !== ""
+    ){
+
+        const value =
+            String(
+                student.batch
+            );
+
+        const batch =
+            batchData[value];
+
+        if(batch){
+
+            return (
+                "Batch " +
+                value +
+                " - " +
+                batch.timing
+            );
+
+        }
+
+        return value;
+    }
+
+
+    return "-";
+}
+
+
+/* =========================================
+   BATCH CHANGE
+========================================= */
+
+batchSelect.addEventListener(
+    "change",
+    function(){
+
+        loadBatchStudents();
+
+    }
+);
+
+
+/* =========================================
+   DATE CHANGE
+========================================= */
+
+attendanceDate.addEventListener(
+    "change",
+    function(){
+
+        if(batchSelect.value){
+
+            loadBatchStudents();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   SEARCH STUDENT
+========================================= */
+
+let searchTimer = null;
+
+studentSearch.addEventListener(
+    "input",
+    function(){
+
+        clearTimeout(
+            searchTimer
+        );
+
+        searchTimer =
+            setTimeout(
+                function(){
+
+                    searchStudent(
+                        studentSearch.value
+                    );
+
+                },
+                250
+            );
+
+    }
+);
+
+
+/* =========================================
+   SEARCH ALL STUDENTS
+========================================= */
+
+async function searchStudent(searchText){
+
+    const query =
+        searchText.trim().toLowerCase();
+
+
+    if(!query){
+
+        searchResultsBox.style.display =
+            "none";
+
+        searchResults.innerHTML =
+            "";
+
+        return;
+    }
+
+
+    searchResultsBox.style.display =
+        "block";
+
+    searchResults.innerHTML = `
+
+        <div class="no-search-result">
+
+            ⏳ Student search ho rahi hai...
+
+        </div>
+
+    `;
+
+
+    try{
+
+        if(
+            !allStudentsForSearch.length
+        ){
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+
+                .from("Students")
+
+                .select("*")
+
+                .order(
+                    "name",
+                    {
+                        ascending:true
+                    }
+                );
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            allStudentsForSearch =
+                data || [];
+
+        }
+
+
+        const results =
+            allStudentsForSearch.filter(
+                function(student){
+
+                    const name =
+                        String(
+                            student.name || ""
+                        ).toLowerCase();
+
+                    const id =
+                        String(
+                            student.id || ""
+                        ).toLowerCase();
+
+                    const phone =
+                        String(
+                            student.phone || ""
+                        ).toLowerCase();
+
+                    const email =
+                        String(
+                            student.email || ""
+                        ).toLowerCase();
+
+
+                    return (
+
+                        name.includes(query) ||
+
+                        id.includes(query) ||
+
+                        phone.includes(query) ||
+
+                        email.includes(query)
+
+                    );
+
+                }
+            );
+
+
+        displaySearchResults(
+            results,
+            query
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+        searchResults.innerHTML = `
+
+            <div class="no-search-result">
+
+                ❌ ${escapeHTML(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   DISPLAY SEARCH RESULTS
+========================================= */
+
+function displaySearchResults(
+    results,
+    query
+){
+
+    if(!results.length){
+
+        searchResultsTitle.textContent =
+            "🔍 Search Results";
+
+        searchResults.innerHTML = `
+
+            <div class="no-search-result">
+
+                ❌ "${escapeHTML(query)}"
+                naam ka koi student nahi mila.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    searchResultsTitle.textContent =
+        `🔍 ${results.length} Student Found`;
+
+
+    searchResults.innerHTML =
+        "";
+
+
+    results.forEach(
+        function(student){
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "search-result-card";
+
+
+            const batchText =
+                getStudentBatchText(
+                    student
+                );
+
+
+            card.innerHTML = `
+
+                <div class="search-result-name">
+
+                    👤 ${escapeHTML(
+                        student.name || "-"
+                    )}
+
+                </div>
+
+
+                <div class="search-result-grid">
+
+                    <div class="search-result-item">
+
+                        Student ID
+
+                        <strong>
+
+                            ${escapeHTML(
+                                student.id || "-"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="search-result-item">
+
+                        Phone
+
+                        <strong>
+
+                            ${escapeHTML(
+                                student.phone || "-"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="search-result-item">
+
+                        Course
+
+                        <strong>
+
+                            ${escapeHTML(
+                                student.course || "-"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="search-result-item">
+
+                        Batch / Timing
+
+                        <strong>
+
+                            <span class="batch-badge">
+
+                                📚 ${escapeHTML(
+                                    batchText
+                                )}
+
+                            </span>
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            searchResults.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   LOAD BATCH STUDENTS
+========================================= */
+
+async function loadBatchStudents(){
+
+    const batchValue =
+        batchSelect.value;
+
+    const date =
+        attendanceDate.value;
+
+
+    if(!batchValue){
+
+        attendanceBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    Select Batch.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        saveBtn.disabled =
+            true;
+
+        batchInfo.style.display =
+            "none";
+
+        clearSummary();
+
+        return;
+    }
+
+
+    if(!date){
+
+        showMessage(
+            "Pehle date select karein.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    attendanceBody.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="7"
+                class="loading"
+            >
+
+                Students loading...
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+    saveBtn.disabled =
+        true;
+
+
+    const selectedBatch =
+        batchData[batchValue];
+
+
+    batchInfo.textContent =
+        "📚 Batch " +
+        batchValue +
+        " • ⏰ " +
+        (
+            selectedBatch
+            ? selectedBatch.timing
+            : ""
+        );
+
+
+    batchInfo.style.display =
+        "block";
+
+
+    const {
+        data: studentData,
+        error: studentError
+    } = await supabaseClient
+
+        .from("Students")
+
+        .select("*")
+
+        .order(
+            "name",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(studentError){
+
+        console.error(
+            studentError
+        );
+
+        attendanceBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    ❌ ${escapeHTML(
+                        studentError.message
+                    )}
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    allStudentsForSearch =
+        studentData || [];
+
+
+    students =
+        (studentData || []).filter(
+            function(student){
+
+                return studentMatchesBatch(
+                    student,
+                    batchValue
+                );
+
+            }
+        );
+
+
+    if(!students.length){
+
+        attendanceBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    ❌ No students found for this batch.
+
+            </tr>
+
+        `;
+
+        clearSummary();
+
+        return;
+    }
+
+
+    const {
+        data: attendanceData,
+        error: attendanceError
+    } = await supabaseClient
+
+        .from("attendance")
+
+        .select(
+            "student_id,status"
+        )
+
+        .eq(
+            "attendance_date",
+            date
+        );
+
+
+    if(attendanceError){
+
+        console.error(
+            attendanceError
+        );
+
+        existingAttendance =
+            [];
+
+    }
+    else{
+
+        existingAttendance =
+            attendanceData || [];
+
+    }
+
+
+    displayStudents();
+
+    loadMonthlySummary();
+
+}
+
+
+/* =========================================
+   DISPLAY STUDENTS
+========================================= */
+
+function displayStudents(){
+
+    attendanceBody.innerHTML =
+        "";
+
+
+    students.forEach(
+        function(student){
+
+            let photo = `
+
+                <div class="no-photo">
+
+                    👤
+
+                </div>
+
+            `;
+
+
+            if(student.photo_url){
+
+                photo = `
+
+                    <img
+                        src="${escapeHTML(
+                            student.photo_url
+                        )}"
+                        class="student-photo"
+                        alt="Student"
+                        onerror="this.style.display='none'"
+                    >
+
+                `;
+
+            }
+
+
+            const oldAttendance =
+                existingAttendance.find(
+                    function(item){
+
+                        return String(
+                            item.student_id
+                        ) === String(
+                            student.id
+                        );
+
+                    }
+                );
+
+
+            const oldStatus =
+                oldAttendance
+                ? oldAttendance.status
+                : "";
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    ${photo}
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+
+                        ${escapeHTML(
+                            student.id
+                        )}
+
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+
+                        ${escapeHTML(
+                            student.name || "-"
+                        )}
+
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(
+                        student.phone || "-"
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(
+                        student.course || "-"
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(
+                        getStudentBatchText(
+                            student
+                        )
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <select
+                        class="attendance-select"
+                        data-student-id="${student.id}"
+                        onchange="changeAttendanceColor(this)"
+                    >
+
+                        <option value="">
+                            Select
+                        </option>
+
+
+                        <option
+                            value="Present"
+                            ${
+                                oldStatus === "Present"
+                                ? "selected"
+                                : ""
+                            }
+                        >
+
+                            Present
+
+                        </option>
+
+
+                        <option
+                            value="Absent"
+                            ${
+                                oldStatus === "Absent"
+                                ? "selected"
+                                : ""
+                            }
+                        >
+
+                            Absent
+
+                        </option>
+
+                    </select>
+
+                </td>
+
+            `;
+
+
+            attendanceBody.appendChild(
+                row
+            );
+
+
+            const select =
+                row.querySelector(
+                    ".attendance-select"
+                );
+
+
+            changeAttendanceColor(
+                select
+            );
+
+        }
+    );
+
+
+    saveBtn.disabled =
+        false;
+
+}
+
+
+/* =========================================
+   ATTENDANCE COLOR
+========================================= */
+
+function changeAttendanceColor(
+    select
+){
+
+    select.classList.remove(
+        "present",
+        "absent"
+    );
+
+
+    if(
+        select.value === "Present"
+    ){
+
+        select.classList.add(
+            "present"
+        );
+
+    }
+
+
+    if(
+        select.value === "Absent"
+    ){
+
+        select.classList.add(
+            "absent"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SAVE ATTENDANCE
+========================================= */
+
+async function saveAttendance(){
+
+    const date =
+        attendanceDate.value;
+
+
+    if(!batchSelect.value){
+
+        showMessage(
+            "Pehle Batch select karein.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!date){
+
+        showMessage(
+            "Select Date.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const selects =
+        document.querySelectorAll(
+            ".attendance-select"
+        );
+
+
+    if(!selects.length){
+
+        showMessage(
+            "No students found.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const records = [];
+
+    let missing = 0;
+
+
+    selects.forEach(
+        function(select){
+
+            const status =
+                select.value;
+
+
+            const studentId =
+                Number(
+                    select.dataset.studentId
+                );
+
+
+            if(!status){
+
+                missing++;
+
+                return;
+
+            }
+
+
+            records.push({
+
+                student_id:
+                    studentId,
+
+                attendance_date:
+                    date,
+
+                status:
+                    status
+
+            });
+
+        }
+    );
+
+
+    if(missing > 0){
+
+        showMessage(
+            `${missing} students missing attendance.`,
+            "error"
+        );
+
+        return;
+    }
+
+
+    saveBtn.disabled =
+        true;
+
+    saveBtn.textContent =
+        "⏳ Saving...";
+
+
+    try{
+
+        const studentIds =
+            records.map(
+                function(record){
+
+                    return record.student_id;
+
+                }
+            );
+
+
+        const {
+            error: deleteError
+        } = await supabaseClient
+
+            .from("attendance")
+
+            .delete()
+
+            .eq(
+                "attendance_date",
+                date
+            )
+
+            .in(
+                "student_id",
+                studentIds
+            );
+
+
+        if(deleteError){
+
+            throw deleteError;
+
+        }
+
+
+        const {
+            error: insertError
+        } = await supabaseClient
+
+            .from("attendance")
+
+            .insert(
+                records
+            );
+
+
+        if(insertError){
+
+            throw insertError;
+
+        }
+
+
+        showMessage(
+            `✅ ${records.length} Attendance Saved.`,
+            "success"
+        );
+
+
+        await loadBatchStudents();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        showMessage(
+            "Attendance saved failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally{
+
+        saveBtn.disabled =
+            false;
+
+        saveBtn.textContent =
+            "💾 Save Attendance";
+
+    }
+
+}
+
+
+/* =========================================
+   MONTHLY SUMMARY
+========================================= */
+
+async function loadMonthlySummary(){
+
+    if(
+        !batchSelect.value ||
+        !attendanceDate.value
+    ){
+
+        clearSummary();
+
+        return;
+
+    }
+
+
+    const selectedDate =
+        attendanceDate.value;
+
+
+    const month =
+        selectedDate.substring(
+            0,
+            7
+        );
+
+
+    const startDate =
+        `${month}-01`;
+
+
+    const year =
+        Number(
+            month.substring(
+                0,
+                4
+            )
+        );
+
+
+    const monthNumber =
+        Number(
+            month.substring(
+                5,
+                7
+            )
+        );
+
+
+    const nextMonthDate =
+        new Date(
+            year,
+            monthNumber,
+            1
+        );
+
+
+    const nextYear =
+        nextMonthDate.getFullYear();
+
+
+    const nextMonth =
+        String(
+            nextMonthDate.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const endDate =
+        `${nextYear}-${nextMonth}-01`;
+
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+
+        .from("attendance")
+
+        .select(
+            "student_id,attendance_date,status"
+        )
+
+        .gte(
+            "attendance_date",
+            startDate
+        )
+
+        .lt(
+            "attendance_date",
+            endDate
+        );
+
+
+    if(error){
+
+        console.error(
+            error
+        );
+
+        clearSummary();
+
+        return;
+
+    }
+
+
+    const attendanceRows =
+        data || [];
+
+
+    const batchStudentIds =
+        students.map(
+            function(student){
+
+                return String(
+                    student.id
+                );
+
+            }
+        );
+
+
+    const filteredAttendance =
+        attendanceRows.filter(
+            function(row){
+
+                return batchStudentIds.includes(
+                    String(
+                        row.student_id
+                    )
+                );
+
+            }
+        );
+
+
+    let totalPresent = 0;
+
+    let totalAbsent = 0;
+
+
+    filteredAttendance.forEach(
+        function(row){
+
+            if(
+                row.status === "Present"
+            ){
+
+                totalPresent++;
+
+            }
+
+
+            if(
+                row.status === "Absent"
+            ){
+
+                totalAbsent++;
+
+            }
+
+        }
+    );
+
+
+    const total =
+        totalPresent +
+        totalAbsent;
+
+
+    const percent =
+        total > 0
+        ? (
+            (
+                totalPresent /
+                total
+            ) * 100
+        ).toFixed(1)
+        : "0";
+
+
+    document.getElementById(
+        "totalDays"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "totalPresent"
+    ).textContent =
+        totalPresent;
+
+
+    document.getElementById(
+        "totalAbsent"
+    ).textContent =
+        totalAbsent;
+
+
+    document.getElementById(
+        "attendancePercent"
+    ).textContent =
+        `${percent}%`;
+
+
+    const summaryBody =
+        document.getElementById(
+            "summaryBody"
+        );
+
+
+    summaryBody.innerHTML =
+        "";
+
+
+    students.forEach(
+        function(student){
+
+            const studentRows =
+                filteredAttendance.filter(
+                    function(row){
+
+                        return String(
+                            row.student_id
+                        ) === String(
+                            student.id
+                        );
+
+                    }
+                );
+
+
+            let present = 0;
+
+            let absent = 0;
+
+
+            studentRows.forEach(
+                function(row){
+
+                    if(
+                        row.status === "Present"
+                    ){
+
+                        present++;
+
+                    }
+
+
+                    if(
+                        row.status === "Absent"
+                    ){
+
+                        absent++;
+
+                    }
+
+                }
+            );
+
+
+            const studentTotal =
+                present +
+                absent;
+
+
+            const studentPercent =
+                studentTotal > 0
+                ? (
+                    (
+                        present /
+                        studentTotal
+                    ) * 100
+                ).toFixed(1)
+                : "0";
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    ${escapeHTML(
+                        student.id
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+
+                        ${escapeHTML(
+                            student.name || "-"
+                        )}
+
+                    </strong>
+
+                </td>
+
+
+                <td
+                    style="
+                        color:#16a34a;
+                        font-weight:bold;
+                    "
+                >
+
+                    ${present}
+
+                </td>
+
+
+                <td
+                    style="
+                        color:#dc2626;
+                        font-weight:bold;
+                    "
+                >
+
+                    ${absent}
+
+                </td>
+
+
+                <td>
+
+                    ${studentTotal}
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+
+                        ${studentPercent}%
+
+                    </strong>
+
+                </td>
+
+            `;
+
+
+            summaryBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CLEAR SUMMARY
+========================================= */
+
+function clearSummary(){
+
+    document.getElementById(
+        "totalDays"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "totalPresent"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "totalAbsent"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "attendancePercent"
+    ).textContent =
+        "0%";
+
+
+    document.getElementById(
+        "summaryBody"
+    ).innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="6"
+                class="empty"
+            >
+
+                Select Batch.
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.className =
+        "message";
+
+
+    if(
+        type === "success"
+    ){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    message.textContent =
+        text;
+
+
+    message.style.display =
+        "block";
+
+
+    setTimeout(
+        function(){
+
+            message.style.display =
+                "none";
+
+        },
+        4000
+    );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+setToday();
+
+</script>
+
+</body>
+</html>

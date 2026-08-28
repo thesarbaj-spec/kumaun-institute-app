@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Owner Settings | Kumaun Institute
+</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#172554;
+}
+
+/* HEADER */
+
+.header{
+    min-height:75px;
+    padding:12px 25px;
+    background:#172b68;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.header-logo{
+    width:52px;
+    height:52px;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:3px;
+    font-size:12px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:10px 17px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.back-btn:hover{
+    background:white;
+    color:#172b68;
+}
+
+/* MAIN */
+
+.container{
+    width:94%;
+    max-width:900px;
+    margin:28px auto;
+}
+
+.page-heading{
+    margin-bottom:22px;
+}
+
+.page-heading h1{
+    font-size:27px;
+    margin-bottom:7px;
+}
+
+.page-heading p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* MESSAGE */
+
+.message{
+    display:none;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.success-message{
+    display:block;
+    background:#dcfce7;
+    border:1px solid #bbf7d0;
+    color:#166534;
+}
+
+.error-message{
+    display:block;
+    background:#fff1f2;
+    border:1px solid #fecdd3;
+    color:#991b1b;
+}
+
+/* SETTINGS BOX */
+
+.settings-box{
+    background:white;
+    border-radius:18px;
+    padding:28px;
+    margin-bottom:22px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.section-top{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:10px;
+}
+
+.section-icon{
+    width:50px;
+    height:50px;
+    border-radius:12px;
+    background:#e0e7ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+}
+
+.section-title{
+    font-size:22px;
+    font-weight:800;
+}
+
+.section-subtitle{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:24px;
+}
+
+/* FORM */
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    color:#475569;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:13px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    color:#172554;
+    background:white;
+}
+
+input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.08);
+}
+
+.password-wrapper{
+    position:relative;
+}
+
+.password-wrapper input{
+    padding-right:50px;
+}
+
+.show-password{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background:transparent;
+    color:#2563eb;
+    cursor:pointer;
+    font-weight:700;
+    font-size:12px;
+}
+
+.action-btn{
+    width:100%;
+    border:0;
+    padding:14px;
+    border-radius:10px;
+    color:white;
+    background:#172b68;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:800;
+    transition:.2s;
+}
+
+.action-btn:hover{
+    background:#1e3a8a;
+}
+
+.action-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.reset-note{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    color:#1e40af;
+    padding:14px;
+    border-radius:11px;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.security-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.divider{
+    height:1px;
+    background:#e2e8f0;
+    margin:28px 0;
+}
+
+.info-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:18px;
+    border-radius:13px;
+    margin-bottom:22px;
+}
+
+.info-box h3{
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.info-box p{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    padding:20px;
+    color:#64748b;
+    font-size:13px;
+}
+
+/* MOBILE */
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-logo{
+        width:43px;
+        height:43px;
+    }
+
+    .header-title{
+        font-size:15px;
+    }
+
+    .header-subtitle{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .container{
+        width:96%;
+        margin:18px auto;
+    }
+
+    .page-heading h1{
+        font-size:23px;
+    }
+
+    .settings-box{
+        padding:19px;
+    }
+
+    .section-title{
+        font-size:19px;
+    }
+
+    .security-grid{
+        grid-template-columns:1fr;
+        gap:0;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-left">
+
+    <div class="header-logo">
+
+        <img
+            src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+            alt="Kumaun Institute Logo"
+        >
+
+    </div>
+
+    <div>
+
+        <div class="header-title">
+            Kumaun Institute of Computer Education
+        </div>
+
+        <div class="header-subtitle">
+            Owner Account Settings
+        </div>
+
+    </div>
+
+</div>
+
+<button
+    class="back-btn"
+    onclick="window.location.href='index.html'"
+>
+    ← Dashboard
+</button>
+
+</header>
+
+
+<main class="container">
+
+<div class="page-heading">
+
+    <h1>
+        ⚙️ Account Settings
+    </h1>
+
+    <p>
+        Manage your owner account password, email and security settings.
+    </p>
+
+</div>
+
+
+<div
+    id="messageBox"
+    class="message"
+></div>
+
+
+<!-- CHANGE PASSWORD -->
+
+<section class="settings-box">
+
+    <div class="section-top">
+
+        <div class="section-icon">
+            🔐
+        </div>
+
+        <div>
+
+            <div class="section-title">
+                Change Password
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="section-subtitle">
+        Apna current password verify karke naya password set karein.
+    </p>
+
+    <form id="changePasswordForm">
+
+        <div class="form-group">
+
+            <label>
+                Current Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="currentPassword"
+                    placeholder="Enter current password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('currentPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                New Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="newPassword"
+                    placeholder="Minimum 6 characters"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('newPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Confirm New Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Enter new password again"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('confirmPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            id="changePasswordBtn"
+            class="action-btn"
+        >
+            🔐 Change Password
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- CHANGE EMAIL -->
+
+<section class="settings-box">
+
+    <div class="section-top">
+
+        <div class="section-icon">
+            📧
+        </div>
+
+        <div>
+
+            <div class="section-title">
+                Change Owner Email
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="section-subtitle">
+        Current password verify karke Owner login email change karein.
+    </p>
+
+    <div class="reset-note">
+
+        <strong>
+            ⚠️ Important
+        </strong>
+
+        <br>
+
+        Email change hone ke baad Owner Login aur Password Reset
+        dono me naya email use hoga.
+
+    </div>
+
+
+    <form id="changeEmailForm">
+
+        <div class="form-group">
+
+            <label>
+                Current Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="emailCurrentPassword"
+                    placeholder="Enter current password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('emailCurrentPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                New Owner Email
+            </label>
+
+            <input
+                type="email"
+                id="newOwnerEmail"
+                placeholder="Enter new owner email"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Confirm New Owner Email
+            </label>
+
+            <input
+                type="email"
+                id="confirmOwnerEmail"
+                placeholder="Enter new owner email again"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            id="changeEmailBtn"
+            class="action-btn"
+        >
+            📧 Change Owner Email
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- RESET PASSWORD -->
+
+<section class="settings-box">
+
+    <div class="section-top">
+
+        <div class="section-icon">
+            🔑
+        </div>
+
+        <div>
+
+            <div class="section-title">
+                Reset Password
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="section-subtitle">
+
+        Agar aap current password bhool gaye hain,
+        to security details verify karke password reset karein.
+
+    </p>
+
+
+    <div class="reset-note">
+
+        <strong>
+            🔒 Security Verification Required
+        </strong>
+
+        <br>
+
+        Password reset karne ke liye Owner Email,
+        Owner Name, Reset KEY aur Developer Name
+        bilkul database wali information se match honi chahiye.
+
+    </div>
+
+
+    <form id="resetPasswordForm">
+
+        <div class="security-grid">
+
+            <div class="form-group">
+
+                <label>
+                    Owner Email
+                </label>
+
+                <input
+                    type="email"
+                    id="resetEmail"
+                    placeholder="Enter owner email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Owner Name
+                </label>
+
+                <input
+                    type="text"
+                    id="ownerName"
+                    placeholder="Enter owner name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Reset KEY
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="resetKey"
+                        placeholder="Enter Reset KEY"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="togglePassword('resetKey',this)"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Developer Name
+                </label>
+
+                <input
+                    type="text"
+                    id="developerName"
+                    placeholder="Enter developer name"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <div class="info-box">
+
+            <h3>
+                Set New Password
+            </h3>
+
+            <p>
+                Verification details submit karne par
+                ye naya password Owner account me set ho jayega.
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                New Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="resetNewPassword"
+                    placeholder="Minimum 6 characters"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('resetNewPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Confirm New Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="resetConfirmPassword"
+                    placeholder="Enter new password again"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('resetConfirmPassword',this)"
+                >
+                    Show
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            id="resetPasswordBtn"
+            class="action-btn"
+        >
+            🔑 Verify & Reset Password
+        </button>
+
+    </form>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+© 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+
+<script>
+
+/* SUPABASE CONNECTION */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* EDGE FUNCTION URL */
+
+const RESET_FUNCTION_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co/functions/v1/owner-password-reset";
+
+
+/* SHOW MESSAGE */
+
+function showMessage(
+    text,
+    type
+){
+
+    const box =
+        document.getElementById(
+            "messageBox"
+        );
+
+
+    box.className =
+        "message";
+
+
+    if(type === "success"){
+
+        box.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        box.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    box.textContent =
+        text;
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+
+    setTimeout(
+        function(){
+
+            box.className =
+                "message";
+
+        },
+        6000
+    );
+
+}
+
+
+/* TOGGLE PASSWORD */
+
+function togglePassword(
+    inputId,
+    button
+){
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+
+    if(
+        input.type ===
+        "password"
+    ){
+
+        input.type =
+            "text";
+
+        button.textContent =
+            "Hide";
+
+    }
+    else{
+
+        input.type =
+            "password";
+
+        button.textContent =
+            "Show";
+
+    }
+
+}
+
+
+/* CHANGE PASSWORD */
+
+document.getElementById(
+    "changePasswordForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const currentPassword =
+            document.getElementById(
+                "currentPassword"
+            ).value;
+
+
+        const newPassword =
+            document.getElementById(
+                "newPassword"
+            ).value;
+
+
+        const confirmPassword =
+            document.getElementById(
+                "confirmPassword"
+            ).value;
+
+
+        const button =
+            document.getElementById(
+                "changePasswordBtn"
+            );
+
+
+        if(
+            newPassword.length < 6
+        ){
+
+            showMessage(
+                "❌ New password kam se kam 6 characters ka hona chahiye.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            newPassword !==
+            confirmPassword
+        ){
+
+            showMessage(
+                "❌ New Password aur Confirm Password match nahi kar rahe.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Verifying Password...";
+
+
+        try{
+
+            const {
+                data:sessionData,
+                error:sessionError
+            } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+            if(sessionError){
+
+                throw sessionError;
+
+            }
+
+
+            const session =
+                sessionData.session;
+
+
+            if(
+                !session ||
+                !session.user
+            ){
+
+                throw new Error(
+                    "Owner login session nahi mili. Please login again."
+                );
+
+            }
+
+
+            const ownerEmail =
+                session.user.email;
+
+
+            const {
+                error:loginError
+            } =
+            await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:
+                    ownerEmail,
+
+                password:
+                    currentPassword
+
+            });
+
+
+            if(loginError){
+
+                throw new Error(
+                    "Current password incorrect hai."
+                );
+
+            }
+
+
+            button.textContent =
+                "Changing Password...";
+
+
+            const {
+                error:updateError
+            } =
+            await supabaseClient
+            .auth
+            .updateUser({
+
+                password:
+                    newPassword
+
+            });
+
+
+            if(updateError){
+
+                throw updateError;
+
+            }
+
+
+            document.getElementById(
+                "changePasswordForm"
+            ).reset();
+
+
+            showMessage(
+                "✅ Password successfully change ho gaya hai.",
+                "success"
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Password change nahi hua: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+
+            button.textContent =
+                "🔐 Change Password";
+
+        }
+
+    }
+);
+
+
+/* CHANGE OWNER EMAIL */
+
+document.getElementById(
+    "changeEmailForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const currentPassword =
+            document.getElementById(
+                "emailCurrentPassword"
+            ).value;
+
+
+        const newEmail =
+            document.getElementById(
+                "newOwnerEmail"
+            ).value
+            .trim()
+            .toLowerCase();
+
+
+        const confirmEmail =
+            document.getElementById(
+                "confirmOwnerEmail"
+            ).value
+            .trim()
+            .toLowerCase();
+
+
+        const button =
+            document.getElementById(
+                "changeEmailBtn"
+            );
+
+
+        if(
+            newEmail !==
+            confirmEmail
+        ){
+
+            showMessage(
+                "❌ New Email aur Confirm Email match nahi kar rahe.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Verifying Password...";
+
+
+        try{
+
+            const {
+                data:sessionData,
+                error:sessionError
+            } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+            if(sessionError){
+
+                throw sessionError;
+
+            }
+
+
+            const session =
+                sessionData.session;
+
+
+            if(
+                !session ||
+                !session.user
+            ){
+
+                throw new Error(
+                    "Owner login session nahi mili. Please login again."
+                );
+
+            }
+
+
+            const oldEmail =
+                String(
+                    session.user.email || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+            if(
+                oldEmail === ""
+            ){
+
+                throw new Error(
+                    "Current Owner Email nahi mila."
+                );
+
+            }
+
+
+            const {
+                error:loginError
+            } =
+            await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:
+                    oldEmail,
+
+                password:
+                    currentPassword
+
+            });
+
+
+            if(loginError){
+
+                throw new Error(
+                    "Current password incorrect hai."
+                );
+
+            }
+
+
+            button.textContent =
+                "Changing Email...";
+
+
+            const {
+                error:emailUpdateError
+            } =
+            await supabaseClient
+            .auth
+            .updateUser({
+
+                email:
+                    newEmail
+
+            });
+
+
+            if(emailUpdateError){
+
+                throw emailUpdateError;
+
+            }
+
+
+            const {
+                error:databaseError
+            } =
+            await supabaseClient
+            .from(
+                "owner_settings"
+            )
+            .update({
+
+                email:
+                    newEmail
+
+            })
+            .eq(
+                "email",
+                oldEmail
+            );
+
+
+            if(databaseError){
+
+                throw new Error(
+                    "Auth email update ho gaya, lekin owner_settings update nahi hui: " +
+                    databaseError.message
+                );
+
+            }
+
+
+            document.getElementById(
+                "changeEmailForm"
+            ).reset();
+
+
+            showMessage(
+                "✅ Owner Email successfully change ho gaya hai. Agar email confirmation required hai to naye email inbox me confirmation complete karein.",
+                "success"
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Owner Email change nahi hua: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+
+            button.textContent =
+                "📧 Change Owner Email";
+
+        }
+
+    }
+);
+
+
+/* RESET PASSWORD */
+
+document.getElementById(
+    "resetPasswordForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById(
+                "resetEmail"
+            ).value
+            .trim()
+            .toLowerCase();
+
+
+        const ownerName =
+            document.getElementById(
+                "ownerName"
+            ).value
+            .trim();
+
+
+        const resetKey =
+            document.getElementById(
+                "resetKey"
+            ).value
+            .trim();
+
+
+        const developerName =
+            document.getElementById(
+                "developerName"
+            ).value
+            .trim();
+
+
+        const newPassword =
+            document.getElementById(
+                "resetNewPassword"
+            ).value;
+
+
+        const confirmPassword =
+            document.getElementById(
+                "resetConfirmPassword"
+            ).value;
+
+
+        const button =
+            document.getElementById(
+                "resetPasswordBtn"
+            );
+
+
+        if(
+            !email ||
+            !ownerName ||
+            !resetKey ||
+            !developerName ||
+            !newPassword ||
+            !confirmPassword
+        ){
+
+            showMessage(
+                "❌ Please sabhi details fill karein.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            newPassword.length < 6
+        ){
+
+            showMessage(
+                "❌ New password kam se kam 6 characters ka hona chahiye.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            newPassword !==
+            confirmPassword
+        ){
+
+            showMessage(
+                "❌ New Password aur Confirm Password match nahi kar rahe.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Verifying Details...";
+
+
+        try{
+
+            const response =
+                await fetch(
+                    RESET_FUNCTION_URL,
+                    {
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json",
+
+                            "apikey":
+                                SUPABASE_KEY
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                email:
+                                    email,
+
+                                owner_name:
+                                    ownerName,
+
+                                reset_key:
+                                    resetKey,
+
+                                developer_name:
+                                    developerName,
+
+                                new_password:
+                                    newPassword
+
+                            })
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if(
+                !response.ok ||
+                !result.success
+            ){
+
+                throw new Error(
+                    result.message ||
+                    "Password reset verification failed."
+                );
+
+            }
+
+
+            document.getElementById(
+                "resetPasswordForm"
+            ).reset();
+
+
+            showMessage(
+                "✅ Password successfully reset ho gaya hai. Ab aap naye password se login kar sakte hain.",
+                "success"
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Password reset nahi hua: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            button.disabled = false;
+
+            button.textContent =
+                "🔑 Verify & Reset Password";
+
+        }
+
+    }
+);
+
+
+console.log(
+    "Owner Settings Ready"
+);
+
+</script>
+
+</body>
+</html>

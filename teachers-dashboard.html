@@ -1,0 +1,3395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard | Kumaun Institute of Computer Education</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+.header{
+  background:#172554;
+  color:white;
+  padding:14px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:3px;
+}
+
+.brand h1{
+  font-size:18px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.logout-btn{
+  border:none;
+  background:#ef4444;
+  color:white;
+  padding:9px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.notification-btn{
+  position:relative;
+  width:40px;
+  height:40px;
+  border:1px solid rgba(255,255,255,.45);
+  background:rgba(255,255,255,.08);
+  color:white;
+  border-radius:9px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+.notification-btn:hover{
+  background:rgba(255,255,255,.16);
+}
+
+.notification-count{
+  position:absolute;
+  top:-7px;
+  right:-7px;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  background:#ef4444;
+  color:white;
+  border:2px solid #172554;
+  border-radius:20px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:800;
+}
+
+.notification-count.show{
+  display:flex;
+}
+
+.notification-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  backdrop-filter:blur(3px);
+  z-index:9998;
+  display:none;
+}
+
+.notification-overlay.show{
+  display:block;
+}
+
+.notification-panel{
+  position:fixed;
+  top:68px;
+  right:20px;
+  width:390px;
+  max-width:calc(100% - 25px);
+  max-height:calc(100vh - 90px);
+  background:white;
+  border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  z-index:9999;
+  overflow:hidden;
+  display:none;
+}
+
+.notification-panel.show{
+  display:block;
+}
+
+.notification-panel-header{
+  background:#172554;
+  color:white;
+  padding:14px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.notification-panel-title{
+  font-size:16px;
+  font-weight:800;
+}
+
+.notification-panel-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.mark-all-btn{
+  border:1px solid rgba(255,255,255,.6);
+  background:rgba(255,255,255,.1);
+  color:white;
+  padding:6px 9px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.close-notification-btn{
+  width:29px;
+  height:29px;
+  border:none;
+  background:rgba(255,255,255,.12);
+  color:white;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.notification-list{
+  max-height:calc(100vh - 150px);
+  overflow-y:auto;
+  padding:9px;
+}
+
+.notification-empty{
+  padding:40px 15px;
+  text-align:center;
+  color:#64748b;
+}
+
+.notification-empty-icon{
+  font-size:40px;
+  margin-bottom:8px;
+}
+
+.notification-empty-title{
+  color:#334155;
+  font-size:15px;
+  font-weight:800;
+}
+
+.notification-empty-text{
+  font-size:11px;
+  margin-top:5px;
+}
+
+.notification-item{
+  position:relative;
+  padding:13px 12px;
+  margin-bottom:8px;
+  background:#f8fbff;
+  border:1px solid #dbe7f5;
+  border-radius:12px;
+}
+
+.notification-item.unread{
+  border-left:4px solid #2563eb;
+  background:#edf4ff;
+}
+
+.notification-item-title{
+  color:#172554;
+  font-size:13px;
+  font-weight:800;
+  padding-right:45px;
+}
+
+.notification-item-message{
+  color:#64748b;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:5px;
+  padding-right:5px;
+}
+
+.notification-item-date{
+  color:#94a3b8;
+  font-size:9px;
+  margin-top:7px;
+}
+
+.notification-seen-btn{
+  position:absolute;
+  top:10px;
+  right:9px;
+  border:none;
+  background:#16a34a;
+  color:white;
+  border-radius:6px;
+  padding:5px 7px;
+  cursor:pointer;
+  font-size:9px;
+  font-weight:bold;
+}
+
+.notification-seen-btn:hover{
+  background:#15803d;
+}
+
+.container{
+  display:flex;
+  min-height:calc(100vh - 76px);
+}
+
+.sidebar{
+  width:235px;
+  background:white;
+  border-right:1px solid #ddd;
+  padding:20px 12px;
+}
+
+.menu-btn{
+  position:relative;
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:12px 14px;
+  text-align:left;
+  border-radius:8px;
+  cursor:pointer;
+  margin-bottom:5px;
+  font-size:14px;
+  color:#172554;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+  background:#e8efff;
+  color:#1d4ed8;
+  font-weight:bold;
+}
+
+.notice-menu-badge{
+  position:absolute;
+  top:6px;
+  right:8px;
+  min-width:19px;
+  height:19px;
+  padding:0 5px;
+  background:#ef4444;
+  color:white;
+  border-radius:20px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.notice-menu-badge.show{
+  display:flex;
+}
+
+.main{
+  flex:1;
+  padding:25px;
+  min-width:0;
+}
+
+.welcome{
+  margin-bottom:20px;
+}
+
+.welcome h2{
+  font-size:26px;
+  margin-bottom:5px;
+}
+
+.welcome p{
+  color:#64748b;
+}
+
+.loading-box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  color:#64748b;
+  margin-bottom:20px;
+}
+
+.error-box{
+  display:none;
+  background:#fee2e2;
+  color:#991b1b;
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:20px;
+  font-size:13px;
+}
+
+.id-card-section{
+  margin-bottom:25px;
+}
+
+.section-title{
+  font-size:20px;
+  margin-bottom:12px;
+}
+
+.teacher-id-card{
+  width:100%;
+  max-width:700px;
+  min-height:280px;
+  margin:0 auto;
+  border-radius:16px;
+  padding:15px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(
+      135deg,
+      #fffdf0,
+      #e3c65b 35%,
+      #fff8d2 55%,
+      #d7b943 100%
+    );
+  border:3px solid #a77b16;
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.18),
+    inset 0 0 0 2px rgba(255,255,255,.5);
+}
+
+.teacher-id-card:before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px solid rgba(95,65,0,.4);
+  border-radius:11px;
+  pointer-events:none;
+}
+
+.id-header{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:2px 8px 10px;
+  border-bottom:1px solid rgba(75,50,0,.35);
+}
+
+.id-logo{
+  width:45px;
+  height:45px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:2px;
+  flex-shrink:0;
+}
+
+.id-header-text{
+  flex:1;
+  min-width:0;
+  text-align:center;
+  padding-right:45px;
+}
+
+.id-header h2{
+  font-size:14px;
+  color:#513b00;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.id-header p{
+  font-size:9px;
+  color:#654d08;
+  margin-top:4px;
+  font-weight:bold;
+}
+
+.id-body{
+  position:relative;
+  z-index:2;
+  display:flex;
+  gap:18px;
+  padding:15px 10px 8px;
+}
+
+.id-photo{
+  width:100px;
+  height:120px;
+  flex-shrink:0;
+  border-radius:8px;
+  overflow:hidden;
+  border:3px solid #8c6917;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.id-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.id-photo-placeholder{
+  font-size:40px;
+}
+
+.id-details{
+  flex:1;
+  min-width:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  column-gap:25px;
+  row-gap:11px;
+}
+
+.id-detail-row{
+  display:flex;
+  min-width:0;
+  font-size:11px;
+}
+
+.id-label{
+  font-weight:bold;
+  color:#574000;
+  margin-right:7px;
+  white-space:nowrap;
+}
+
+.id-value{
+  color:#211900;
+  font-weight:bold;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.id-address-row{
+  grid-column:1 / -1;
+  display:flex;
+  font-size:11px;
+  line-height:1.4;
+}
+
+.id-address-value{
+  color:#211900;
+  font-weight:bold;
+  word-break:break-word;
+}
+
+.id-footer{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  padding:12px 12px 3px;
+  margin-top:12px;
+  min-height:58px;
+}
+
+.signature-box{
+  width:145px;
+  text-align:center;
+}
+
+.signature-img{
+  width:85px;
+  height:45px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 4px;
+  mix-blend-mode:multiply;
+}
+
+.signature-line{
+  border-top:1px solid #654d08;
+  padding-top:4px;
+  font-size:9px;
+  font-weight:bold;
+  color:#4b3800;
+}
+
+.id-download-area{
+  text-align:center;
+  margin-top:15px;
+}
+
+.download-id-btn{
+  border:none;
+  background:#172554;
+  color:white;
+  padding:11px 22px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 5px 15px rgba(23,37,84,.18);
+}
+
+.download-id-btn:hover{
+  background:#1e3a8a;
+  transform:translateY(-1px);
+}
+
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.report-card{
+  background:white;
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+  cursor:pointer;
+  transition:.2s;
+}
+
+.report-card:hover{
+  transform:translateY(-2px);
+}
+
+.report-icon{
+  font-size:28px;
+  margin-bottom:10px;
+}
+
+.report-card h3{
+  font-size:17px;
+  margin-bottom:5px;
+}
+
+.report-card p{
+  font-size:12px;
+  color:#64748b;
+}
+
+.quick-box{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.quick-box h2{
+  font-size:19px;
+  margin-bottom:15px;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.quick-btn{
+  border:none;
+  padding:15px;
+  border-radius:10px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  cursor:pointer;
+  text-align:left;
+  color:#172554;
+  font-weight:bold;
+}
+
+.quick-btn:hover{
+  background:#eef4ff;
+}
+
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:10mm;
+  }
+
+  body *{
+    visibility:hidden !important;
+  }
+
+  .teacher-id-card,
+  .teacher-id-card *{
+    visibility:visible !important;
+  }
+
+  .teacher-id-card{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    max-width:700px;
+    box-shadow:none;
+    margin:0;
+  }
+}
+
+@media(max-width:850px){
+  .container{
+    display:block;
+  }
+
+  .sidebar{
+    width:100%;
+    display:flex;
+    overflow-x:auto;
+    padding:9px;
+    border-right:none;
+    border-bottom:1px solid #ddd;
+  }
+
+  .menu-btn{
+    min-width:125px;
+    margin-right:5px;
+    margin-bottom:0;
+  }
+
+  .main{
+    padding:15px;
+  }
+}
+
+@media(max-width:600px){
+  .header{
+    padding:10px 12px;
+  }
+
+  .brand img{
+    width:40px;
+    height:40px;
+  }
+
+  .brand h1{
+    font-size:14px;
+  }
+
+  .brand p{
+    font-size:9px;
+  }
+
+  .header-actions{
+    gap:5px;
+  }
+
+  .notification-btn{
+    width:36px;
+    height:36px;
+    font-size:18px;
+  }
+
+  .logout-btn{
+    padding:8px 10px;
+    font-size:11px;
+  }
+
+  .notification-panel{
+    top:60px;
+    right:8px;
+    width:calc(100% - 16px);
+    max-width:none;
+  }
+
+  .welcome h2{
+    font-size:22px;
+  }
+
+  .teacher-id-card{
+    padding:10px;
+  }
+
+  .id-logo{
+    width:34px;
+    height:34px;
+  }
+
+  .id-header-text{
+    padding-right:34px;
+  }
+
+  .id-header h2{
+    font-size:9px;
+  }
+
+  .id-header p{
+    font-size:7px;
+  }
+
+  .id-body{
+    gap:9px;
+    padding:10px 3px 5px;
+  }
+
+  .id-photo{
+    width:72px;
+    height:90px;
+  }
+
+  .id-details{
+    column-gap:8px;
+    row-gap:7px;
+  }
+
+  .id-detail-row,
+  .id-address-row{
+    font-size:8px;
+  }
+
+  .id-label{
+    margin-right:3px;
+  }
+
+  .signature-box{
+    width:85px;
+  }
+
+  .signature-img{
+    width:60px;
+    height:25px;
+  }
+
+  .signature-line{
+    font-size:7px;
+  }
+
+  .download-id-btn{
+    padding:10px 17px;
+    font-size:12px;
+  }
+
+  .report-grid{
+    grid-template-columns:1fr;
+  }
+
+  .quick-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+      <h1>Kumaun Institute of Computer Education</h1>
+      <p>Teacher Management System</p>
+    </div>
+
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      type="button"
+      class="notification-btn"
+      id="notificationBtn"
+      title="Notifications"
+    >
+      🔔
+      <span
+        id="notificationCount"
+        class="notification-count"
+      >0</span>
+    </button>
+
+    <button
+      class="logout-btn"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+<div
+  id="notificationOverlay"
+  class="notification-overlay"
+></div>
+
+<div
+  id="notificationPanel"
+  class="notification-panel"
+>
+
+  <div class="notification-panel-header">
+
+    <div class="notification-panel-title">
+      🔔 Notifications
+    </div>
+
+    <div class="notification-panel-actions">
+
+      <button
+        type="button"
+        class="mark-all-btn"
+        id="markAllSeenBtn"
+      >
+        Mark All Seen
+      </button>
+
+      <button
+        type="button"
+        class="close-notification-btn"
+        id="closeNotificationBtn"
+      >
+        ×
+      </button>
+
+    </div>
+
+  </div>
+
+  <div
+    id="notificationList"
+    class="notification-list"
+  >
+
+    <div class="notification-empty">
+      <div class="notification-empty-icon">
+        🔔
+      </div>
+
+      <div class="notification-empty-title">
+        No notifications
+      </div>
+
+      <div class="notification-empty-text">
+        You are all caught up.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="container">
+
+  <aside class="sidebar">
+
+    <button
+      class="menu-btn active"
+      onclick="go('teachers-dashboard.html')"
+    >
+      🏠 Dashboard
+    </button>
+
+    <button
+      class="menu-btn"
+      onclick="go('teacher-notice.html')"
+    >
+      🔔 Notice Box
+
+      <span
+        id="noticeMenuBadge"
+        class="notice-menu-badge"
+      >
+        0
+      </span>
+
+    </button>
+
+    <button
+      class="menu-btn"
+      onclick="go('teacher-settings.html')"
+    >
+      ⚙️ Settings
+    </button>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="welcome">
+
+      <h2>
+        Welcome,
+        <span id="welcomeTeacherName">Teacher</span>
+        👋
+      </h2>
+
+      <p>Teacher Dashboard</p>
+
+    </div>
+
+    <div
+      id="errorBox"
+      class="error-box"
+    ></div>
+
+    <div
+      id="loadingBox"
+      class="loading-box"
+    >
+      ⏳ Teacher details load ho rahi hain...
+    </div>
+
+    <section class="id-card-section">
+
+      <h2 class="section-title">
+        🪪 Teacher ID Card
+      </h2>
+
+      <div
+        class="teacher-id-card"
+        id="teacherIdCard"
+      >
+
+        <div class="id-header">
+
+          <img
+            src="kumaun institute logo.png"
+            class="id-logo"
+            alt="Logo"
+          >
+
+          <div class="id-header-text">
+
+            <h2>
+              KUMAUN INSTITUTE OF COMPUTER EDUCATION
+            </h2>
+
+            <p>
+              TEACHER IDENTITY CARD
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="id-body">
+
+          <div
+            class="id-photo"
+            id="teacherPhoto"
+          >
+            <div class="id-photo-placeholder">
+              👤
+            </div>
+          </div>
+
+          <div class="id-details">
+
+            <div class="id-detail-row">
+              <div class="id-label">Teacher ID:</div>
+              <div
+                class="id-value"
+                id="cardId"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Teacher Name:</div>
+              <div
+                class="id-value"
+                id="cardName"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Email:</div>
+              <div
+                class="id-value"
+                id="cardEmail"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Phone:</div>
+              <div
+                class="id-value"
+                id="cardPhone"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Subject:</div>
+              <div
+                class="id-value"
+                id="cardSubject"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Batch Timing:</div>
+              <div
+                class="id-value"
+                id="cardBatch"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">DOB:</div>
+              <div
+                class="id-value"
+                id="cardDob"
+              >-</div>
+            </div>
+
+            <div class="id-detail-row">
+              <div class="id-label">Joining Date:</div>
+              <div
+                class="id-value"
+                id="cardJoining"
+              >-</div>
+            </div>
+
+            <div class="id-address-row">
+
+              <div class="id-label">
+                Address:
+              </div>
+
+              <div
+                class="id-address-value"
+                id="cardAddress"
+              >
+                -
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="id-footer">
+
+          <div class="signature-box">
+
+            <img
+              src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/App%20Developer%20Signature.png"
+              class="signature-img"
+              alt="Developer Signature"
+              onerror="this.style.display='none'"
+            >
+
+            <div class="signature-line">
+              App Developer
+            </div>
+
+          </div>
+
+          <div class="signature-box">
+
+            <img
+              src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/Institute%20Owner%20Signature.png"
+              class="signature-img"
+              alt="Owner Signature"
+              onerror="this.style.display='none'"
+            >
+
+            <div class="signature-line">
+              Institute Owner
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="id-download-area">
+
+        <button
+          type="button"
+          class="download-id-btn"
+          onclick="downloadTeacherIDCard()"
+        >
+          📥 Download ID Card
+        </button>
+
+      </div>
+
+    </section>
+
+    <section class="report-grid">
+
+      <div
+        class="report-card"
+        onclick="go('teacher-salary-report.html')"
+      >
+        <div class="report-icon">
+          💰
+        </div>
+
+        <h3>
+          Salary Report
+        </h3>
+
+        <p>
+          Apni salary aur payment details dekhein.
+        </p>
+
+      </div>
+
+      <div
+        class="report-card"
+        onclick="go('teacher-attendance-report.html')"
+      >
+        <div class="report-icon">
+          📊
+        </div>
+
+        <h3>
+          Attendance Report
+        </h3>
+
+        <p>
+          Apni attendance report check karein.
+        </p>
+
+      </div>
+
+    </section>
+
+    <section class="quick-box">
+
+      <h2>
+        ⚡ Quick Actions
+      </h2>
+
+      <div class="quick-grid">
+
+        <button
+          class="quick-btn"
+          onclick="go('teacher-notice.html')"
+        >
+          🔔 Notice Box
+        </button>
+
+        <button
+          class="quick-btn"
+          onclick="go('teacher-settings.html')"
+        >
+          ⚙️ Settings
+        </button>
+
+        <button
+          class="quick-btn"
+          onclick="go('teacher-about.html')"
+        >
+          ℹ️ About
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
+      }
+    }
+  );
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
+let currentTeacher = null;
+let currentTeacherId = null;
+let currentTeacherEmail = null;
+
+let allNotifications = [];
+
+let realtimeChannel = null;
+
+let teacherLoading = false;
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value){
+
+  if(!value){
+    return "-";
+  }
+
+  const date = new Date(value);
+
+  if(isNaN(date.getTime())){
+    return String(value);
+  }
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message){
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+}
+
+
+function hideError(){
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent =
+    "";
+
+  box.style.display =
+    "none";
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function setLoading(message){
+
+  const box =
+    document.getElementById("loadingBox");
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+}
+
+
+function hideLoading(){
+
+  const box =
+    document.getElementById("loadingBox");
+
+  box.style.display =
+    "none";
+}
+
+
+/* =====================================================
+   TEACHER SERIAL ID
+===================================================== */
+
+async function getTeacherSerialId(teacherId){
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+      .from("teachers")
+      .select("id")
+      .order(
+        "id",
+        {
+          ascending:true
+        }
+      );
+
+    if(error){
+
+      console.warn(
+        "Teacher serial ID error:",
+        error
+      );
+
+      return "-";
+    }
+
+    const index =
+      (data || []).findIndex(
+        teacher =>
+          String(teacher.id) ===
+          String(teacherId)
+      );
+
+    if(index === -1){
+      return "-";
+    }
+
+    return index + 1;
+
+  }
+  catch(error){
+
+    console.warn(
+      "Serial ID failed:",
+      error
+    );
+
+    return "-";
+  }
+}
+
+
+/* =====================================================
+   DISPLAY TEACHER
+===================================================== */
+
+async function displayTeacher(teacher){
+
+  currentTeacher =
+    teacher;
+
+  currentTeacherId =
+    teacher.id;
+
+  currentTeacherEmail =
+    String(
+      teacher.email || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  const name =
+    teacher.name ||
+    "Teacher";
+
+
+  document.getElementById(
+    "welcomeTeacherName"
+  ).textContent =
+    name;
+
+
+  const serialId =
+    await getTeacherSerialId(
+      teacher.id
+    );
+
+
+  document.getElementById(
+    "cardId"
+  ).textContent =
+    serialId;
+
+
+  document.getElementById(
+    "cardName"
+  ).textContent =
+    name;
+
+
+  document.getElementById(
+    "cardEmail"
+  ).textContent =
+    teacher.email ||
+    "-";
+
+
+  document.getElementById(
+    "cardPhone"
+  ).textContent =
+    teacher.phone ||
+    "-";
+
+
+  document.getElementById(
+    "cardSubject"
+  ).textContent =
+    teacher.subject ||
+    "-";
+
+
+  document.getElementById(
+    "cardBatch"
+  ).textContent =
+    teacher.batch_timing ||
+    "-";
+
+
+  document.getElementById(
+    "cardDob"
+  ).textContent =
+    formatDate(
+      teacher.dob
+    );
+
+
+  document.getElementById(
+    "cardJoining"
+  ).textContent =
+    formatDate(
+      teacher.joining_date
+    );
+
+
+  document.getElementById(
+    "cardAddress"
+  ).textContent =
+    teacher.address ||
+    "-";
+
+
+  const photoBox =
+    document.getElementById(
+      "teacherPhoto"
+    );
+
+
+  if(teacher.photo_url){
+
+    photoBox.innerHTML = "";
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      teacher.photo_url;
+
+    img.alt =
+      "Teacher Photo";
+
+    img.onerror =
+      function(){
+
+        photoBox.innerHTML =
+          '<div class="id-photo-placeholder">👤</div>';
+
+      };
+
+    photoBox.appendChild(
+      img
+    );
+
+  }
+  else{
+
+    photoBox.innerHTML =
+      '<div class="id-photo-placeholder">👤</div>';
+
+  }
+
+
+  hideError();
+
+  await loadNotifications();
+}
+
+
+/* =====================================================
+   GET AUTH USER
+===================================================== */
+
+async function getLoggedInUser(){
+
+  try{
+
+    /*
+      Pehle existing session check
+    */
+
+    let {
+      data:sessionData,
+      error:sessionError
+    } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+    if(sessionError){
+
+      console.warn(
+        "Session check error:",
+        sessionError
+      );
+
+    }
+
+
+    /*
+      Agar session missing hai to refresh try karo
+    */
+
+    if(
+      !sessionData ||
+      !sessionData.session ||
+      !sessionData.session.user
+    ){
+
+      console.log(
+        "Session missing. Refreshing session..."
+      );
+
+      const {
+        data:refreshData,
+        error:refreshError
+      } =
+      await supabaseClient
+        .auth
+        .refreshSession();
+
+
+      if(
+        refreshError ||
+        !refreshData ||
+        !refreshData.session ||
+        !refreshData.session.user
+      ){
+
+        return null;
+
+      }
+
+
+      sessionData =
+        refreshData;
+
+    }
+
+
+    /*
+      Auth user ko directly get karo
+    */
+
+    const {
+      data:userData,
+      error:userError
+    } =
+    await supabaseClient
+      .auth
+      .getUser();
+
+
+    if(
+      !userError &&
+      userData &&
+      userData.user
+    ){
+
+      return userData.user;
+
+    }
+
+
+    /*
+      Fallback: session user
+    */
+
+    return sessionData.session.user;
+
+  }
+  catch(error){
+
+    console.error(
+      "Auth user error:",
+      error
+    );
+
+    return null;
+
+  }
+}
+
+
+/* =====================================================
+   FIND TEACHER
+===================================================== */
+
+async function findTeacherByEmail(email){
+
+  const cleanEmail =
+    String(email || "")
+      .trim()
+      .toLowerCase();
+
+
+  if(!cleanEmail){
+
+    return {
+      teacher:null,
+      error:null
+    };
+
+  }
+
+
+  /*
+    First attempt
+  */
+
+  let {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("teachers")
+    .select(`
+      id,
+      name,
+      email,
+      phone,
+      subject,
+      batch_timing,
+      dob,
+      joining_date,
+      address,
+      photo_url
+    `)
+    .ilike(
+      "email",
+      cleanEmail
+    )
+    .limit(1);
+
+
+  if(
+    !error &&
+    data &&
+    data.length
+  ){
+
+    return {
+      teacher:data[0],
+      error:null
+    };
+
+  }
+
+
+  /*
+    Second attempt after small delay.
+    Ye temporary network/database delay ko handle karega.
+  */
+
+  await new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        1000
+      )
+  );
+
+
+  const secondResult =
+    await supabaseClient
+      .from("teachers")
+      .select(`
+        id,
+        name,
+        email,
+        phone,
+        subject,
+        batch_timing,
+        dob,
+        joining_date,
+        address,
+        photo_url
+      `)
+      .ilike(
+        "email",
+        cleanEmail
+      )
+      .limit(1);
+
+
+  if(
+    !secondResult.error &&
+    secondResult.data &&
+    secondResult.data.length
+  ){
+
+    return {
+      teacher:secondResult.data[0],
+      error:null
+    };
+
+  }
+
+
+  /*
+    Original error preserve karo
+  */
+
+  return {
+    teacher:null,
+    error:
+      secondResult.error ||
+      error ||
+      null
+  };
+
+}
+
+
+/* =====================================================
+   LOAD LOGGED-IN TEACHER
+===================================================== */
+
+async function loadTeacher(){
+
+  if(teacherLoading){
+
+    return;
+
+  }
+
+
+  teacherLoading = true;
+
+  setLoading(
+    "⏳ Teacher details load ho rahi hain..."
+  );
+
+  hideError();
+
+
+  try{
+
+    /*
+      Current authenticated user
+    */
+
+    const user =
+      await getLoggedInUser();
+
+
+    if(!user){
+
+      hideLoading();
+
+      showError(
+        "Teacher login session expire ho gayi hai. Login page par redirect kiya ja raha hai."
+      );
+
+
+      setTimeout(
+        function(){
+
+          window.location.href =
+            "teacher-login.html";
+
+        },
+        1500
+      );
+
+      return;
+
+    }
+
+
+    const teacherEmail =
+      String(
+        user.email || ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    if(!teacherEmail){
+
+      hideLoading();
+
+      showError(
+        "Login account ka email nahi mila."
+      );
+
+      return;
+
+    }
+
+
+    console.log(
+      "Authenticated teacher email:",
+      teacherEmail
+    );
+
+
+    /*
+      Teacher record search
+    */
+
+    const result =
+      await findTeacherByEmail(
+        teacherEmail
+      );
+
+
+    if(
+      result.error
+    ){
+
+      console.error(
+        "Teacher table query error:",
+        result.error
+      );
+
+
+      hideLoading();
+
+
+      /*
+        IMPORTANT:
+        Database/network error ko
+        "record nahi mila" mat bolo.
+      */
+
+      showError(
+        "Teacher details load karte waqt temporary problem aa rahi hai. Please thodi der baad refresh karein."
+      );
+
+
+      /*
+        Automatic retry
+      */
+
+      setTimeout(
+        function(){
+
+          if(
+            document.visibilityState !==
+            "hidden"
+          ){
+
+            loadTeacher();
+
+          }
+
+        },
+        3000
+      );
+
+
+      return;
+
+    }
+
+
+    if(
+      !result.teacher
+    ){
+
+      hideLoading();
+
+
+      /*
+        Abhi bhi record nahi mila.
+        Lekin ek aur retry.
+      */
+
+      console.warn(
+        "Teacher record not found for:",
+        teacherEmail
+      );
+
+
+      setLoading(
+        "⏳ Teacher account verify ho raha hai..."
+      );
+
+
+      setTimeout(
+        async function(){
+
+          const retryResult =
+            await findTeacherByEmail(
+              teacherEmail
+            );
+
+
+          hideLoading();
+
+
+          if(
+            retryResult.teacher
+          ){
+
+            await displayTeacher(
+              retryResult.teacher
+            );
+
+          }
+          else{
+
+            showError(
+              "Is login email ke saath teachers table ka record match nahi ho raha."
+            );
+
+          }
+
+        },
+        2000
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+      Teacher successfully found
+    */
+
+    await displayTeacher(
+      result.teacher
+    );
+
+
+    hideLoading();
+
+
+  }
+  catch(error){
+
+    console.error(
+      "Dashboard error:",
+      error
+    );
+
+
+    hideLoading();
+
+
+    showError(
+      "Dashboard load nahi ho paya. Temporary connection problem ho sakti hai."
+    );
+
+
+    /*
+      Automatic retry
+    */
+
+    setTimeout(
+      function(){
+
+        if(
+          document.visibilityState !==
+          "hidden"
+        ){
+
+          loadTeacher();
+
+        }
+
+      },
+      3000
+    );
+
+  }
+  finally{
+
+    teacherLoading =
+      false;
+
+  }
+
+}
+
+
+/* =====================================================
+   AUTH STATE LISTENER
+===================================================== */
+
+supabaseClient
+  .auth
+  .onAuthStateChange(
+    function(event, session){
+
+      console.log(
+        "Auth event:",
+        event
+      );
+
+
+      if(
+        event === "SIGNED_IN" ||
+        event === "TOKEN_REFRESHED"
+      ){
+
+        if(
+          session &&
+          session.user
+        ){
+
+          /*
+            Token refresh hone par
+            dashboard dobara teacher query karega.
+          */
+
+          setTimeout(
+            function(){
+
+              loadTeacher();
+
+            },
+            100
+          );
+
+        }
+
+      }
+
+
+      if(
+        event === "SIGNED_OUT"
+      ){
+
+        window.location.href =
+          "teacher-login.html";
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function go(page){
+
+  window.location.href =
+    page;
+
+}
+
+
+/* =====================================================
+   DOWNLOAD ID
+===================================================== */
+
+function downloadTeacherIDCard(){
+
+  if(!currentTeacher){
+
+    alert(
+      "Teacher information abhi load nahi hui."
+    );
+
+    return;
+
+  }
+
+  window.print();
+
+}
+
+
+/* =====================================================
+   NOTIFICATION SEEN KEY
+===================================================== */
+
+function getSeenKey(){
+
+  const teacherKey =
+    currentTeacherId ||
+    currentTeacherEmail ||
+    "unknown_teacher";
+
+  return (
+    "teacher_notifications_seen_" +
+    String(teacherKey)
+  );
+
+}
+
+
+/* =====================================================
+   GET SEEN
+===================================================== */
+
+function getSeenNotifications(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        getSeenKey()
+      );
+
+    if(!saved){
+
+      return [];
+
+    }
+
+    const parsed =
+      JSON.parse(saved);
+
+    return Array.isArray(parsed)
+      ? parsed
+      : [];
+
+  }
+  catch(error){
+
+    console.warn(
+      "Seen notification read error:",
+      error
+    );
+
+    return [];
+
+  }
+
+}
+
+
+/* =====================================================
+   SAVE SEEN
+===================================================== */
+
+function saveSeenNotifications(list){
+
+  try{
+
+    localStorage.setItem(
+      getSeenKey(),
+      JSON.stringify(list)
+    );
+
+  }
+  catch(error){
+
+    console.warn(
+      "Seen notification save error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CHECK SEEN
+===================================================== */
+
+function isNotificationSeen(id){
+
+  return getSeenNotifications()
+    .includes(
+      String(id)
+    );
+
+}
+
+
+/* =====================================================
+   MARK SEEN
+===================================================== */
+
+function markNotificationSeen(id){
+
+  if(
+    id === undefined ||
+    id === null
+  ){
+
+    return;
+
+  }
+
+  const notificationId =
+    String(id);
+
+  const seen =
+    getSeenNotifications();
+
+  if(
+    !seen.includes(
+      notificationId
+    )
+  ){
+
+    seen.push(
+      notificationId
+    );
+
+  }
+
+  saveSeenNotifications(
+    seen
+  );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   ESCAPE JS
+===================================================== */
+
+function escapeJs(value){
+
+  return String(value)
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'")
+    .replace(/\n/g,"\\n")
+    .replace(/\r/g,"\\r");
+
+}
+
+
+/* =====================================================
+   NOTIFICATION ID
+===================================================== */
+
+function makeNotificationId(
+  source,
+  item
+){
+
+  if(
+    item.id !== undefined &&
+    item.id !== null
+  ){
+
+    return (
+      source +
+      "_" +
+      String(item.id)
+    );
+
+  }
+
+
+  if(
+    item.notice_id !== undefined &&
+    item.notice_id !== null
+  ){
+
+    return (
+      source +
+      "_" +
+      String(item.notice_id)
+    );
+
+  }
+
+
+  const title =
+    item.title ||
+    item.notice_title ||
+    item.subject ||
+    item.message ||
+    "";
+
+  const date =
+    item.created_at ||
+    item.date ||
+    "";
+
+  return (
+    source +
+    "_" +
+    title +
+    "_" +
+    date
+  );
+
+}
+
+
+/* =====================================================
+   OWNER NOTICES
+===================================================== */
+
+async function loadOwnerNotices(){
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+      .from("notices")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+    if(error){
+
+      console.warn(
+        "Owner notices error:",
+        error.message
+      );
+
+      return [];
+
+    }
+
+
+    return data || [];
+
+  }
+  catch(error){
+
+    console.warn(
+      "Owner notices failed:",
+      error
+    );
+
+    return [];
+
+  }
+
+}
+
+
+/* =====================================================
+   NORMAL NOTIFICATIONS
+===================================================== */
+
+async function loadNormalNotifications(){
+
+  try{
+
+    const user =
+      await getLoggedInUser();
+
+
+    const authUserId =
+      user
+        ? user.id
+        : null;
+
+
+    /*
+      Teacher ID query
+    */
+
+    if(
+      currentTeacherId !== null &&
+      currentTeacherId !== undefined
+    ){
+
+      const {
+        data:teacherData,
+        error:teacherError
+      } =
+      await supabaseClient
+        .from("notifications")
+        .select("*")
+        .eq(
+          "teacher_id",
+          currentTeacherId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+      if(
+        !teacherError &&
+        teacherData
+      ){
+
+        return teacherData;
+
+      }
+
+    }
+
+
+    /*
+      User ID fallback
+    */
+
+    if(authUserId){
+
+      const {
+        data,
+        error
+      } =
+      await supabaseClient
+        .from("notifications")
+        .select("*")
+        .eq(
+          "user_id",
+          authUserId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+      if(
+        !error &&
+        data
+      ){
+
+        return data;
+
+      }
+
+    }
+
+
+    return [];
+
+  }
+  catch(error){
+
+    console.warn(
+      "Normal notifications failed:",
+      error
+    );
+
+    return [];
+
+  }
+
+}
+
+
+/* =====================================================
+   BUILD OWNER NOTIFICATION
+===================================================== */
+
+function buildOwnerNotification(notice){
+
+  const title =
+    notice.title ||
+    notice.notice_title ||
+    notice.heading ||
+    notice.subject ||
+    "Institute Notice";
+
+
+  const message =
+    notice.message ||
+    notice.description ||
+    notice.content ||
+    notice.notice ||
+    notice.body ||
+    "New notice from institute";
+
+
+  return {
+
+    id:
+      makeNotificationId(
+        "notice",
+        notice
+      ),
+
+    source:
+      "notice",
+
+    title:
+      String(title),
+
+    message:
+      String(message),
+
+    type:
+      "notice",
+
+    created_at:
+      notice.created_at ||
+      notice.date ||
+      null
+
+  };
+
+}
+
+
+/* =====================================================
+   BUILD NORMAL NOTIFICATION
+===================================================== */
+
+function buildNormalNotification(notification){
+
+  const title =
+    notification.title ||
+    notification.subject ||
+    notification.heading ||
+    notification.type ||
+    "Notification";
+
+
+  const message =
+    notification.message ||
+    notification.description ||
+    notification.body ||
+    notification.text ||
+    "New notification";
+
+
+  const type =
+    String(
+      notification.type ||
+      notification.category ||
+      notification.service ||
+      notification.page ||
+      notification.module ||
+      "notification"
+    )
+    .toLowerCase();
+
+
+  return {
+
+    id:
+      makeNotificationId(
+        "notification",
+        notification
+      ),
+
+    source:
+      "notification",
+
+    title:
+      String(title),
+
+    message:
+      String(message),
+
+    type:
+      type,
+
+    created_at:
+      notification.created_at ||
+      notification.date ||
+      null
+
+  };
+
+}
+
+
+/* =====================================================
+   LOAD NOTIFICATIONS
+===================================================== */
+
+async function loadNotifications(){
+
+  if(!currentTeacher){
+
+    return;
+
+  }
+
+
+  try{
+
+    const [
+      normalNotifications,
+      ownerNotices
+    ] =
+    await Promise.all([
+      loadNormalNotifications(),
+      loadOwnerNotices()
+    ]);
+
+
+    const normalList =
+      normalNotifications.map(
+        buildNormalNotification
+      );
+
+
+    const noticeList =
+      ownerNotices.map(
+        buildOwnerNotification
+      );
+
+
+    allNotifications = [
+      ...normalList,
+      ...noticeList
+    ];
+
+
+    allNotifications.sort(
+      function(a,b){
+
+        const dateA =
+          new Date(
+            a.created_at || 0
+          ).getTime();
+
+        const dateB =
+          new Date(
+            b.created_at || 0
+          ).getTime();
+
+        return dateB - dateA;
+
+      }
+    );
+
+
+    const unread =
+      allNotifications.filter(
+        function(notification){
+
+          return !isNotificationSeen(
+            notification.id
+          );
+
+        }
+      );
+
+
+    setNotificationCount(
+      unread.length
+    );
+
+
+    const unreadNotices =
+      noticeList.filter(
+        function(notification){
+
+          return !isNotificationSeen(
+            notification.id
+          );
+
+        }
+      );
+
+
+    setNoticeMenuBadge(
+      unreadNotices.length
+    );
+
+
+    const panel =
+      document.getElementById(
+        "notificationPanel"
+      );
+
+
+    if(
+      panel &&
+      panel.classList.contains("show")
+    ){
+
+      renderNotifications();
+
+    }
+
+  }
+  catch(error){
+
+    console.warn(
+      "Notification loading error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   BELL COUNT
+===================================================== */
+
+function setNotificationCount(count){
+
+  const badge =
+    document.getElementById(
+      "notificationCount"
+    );
+
+
+  if(!badge){
+
+    return;
+
+  }
+
+
+  const number =
+    Number(count || 0);
+
+
+  if(number > 0){
+
+    badge.textContent =
+      number > 99
+        ? "99+"
+        : number;
+
+    badge.classList.add(
+      "show"
+    );
+
+  }
+  else{
+
+    badge.textContent =
+      "0";
+
+    badge.classList.remove(
+      "show"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   NOTICE BADGE
+===================================================== */
+
+function setNoticeMenuBadge(count){
+
+  const badge =
+    document.getElementById(
+      "noticeMenuBadge"
+    );
+
+
+  if(!badge){
+
+    return;
+
+  }
+
+
+  const number =
+    Number(count || 0);
+
+
+  if(number > 0){
+
+    badge.textContent =
+      number > 99
+        ? "99+"
+        : number;
+
+    badge.classList.add(
+      "show"
+    );
+
+  }
+  else{
+
+    badge.textContent =
+      "0";
+
+    badge.classList.remove(
+      "show"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   RENDER NOTIFICATIONS
+===================================================== */
+
+function renderNotifications(){
+
+  const list =
+    document.getElementById(
+      "notificationList"
+    );
+
+
+  if(!list){
+
+    return;
+
+  }
+
+
+  const unread =
+    allNotifications.filter(
+      function(notification){
+
+        return !isNotificationSeen(
+          notification.id
+        );
+
+      }
+    );
+
+
+  if(unread.length === 0){
+
+    list.innerHTML = `
+      <div class="notification-empty">
+
+        <div class="notification-empty-icon">
+          ✅
+        </div>
+
+        <div class="notification-empty-title">
+          All caught up!
+        </div>
+
+        <div class="notification-empty-text">
+          There are no new notifications.
+        </div>
+
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  list.innerHTML =
+    unread
+      .map(
+        function(notification){
+
+          const date =
+            notification.created_at
+              ? new Date(
+                  notification.created_at
+                ).toLocaleString(
+                  "en-IN",
+                  {
+                    day:"2-digit",
+                    month:"short",
+                    year:"numeric",
+                    hour:"2-digit",
+                    minute:"2-digit"
+                  }
+                )
+              : "";
+
+
+          return `
+            <div
+              class="notification-item unread"
+            >
+
+              <div class="notification-item-title">
+                ${escapeHtml(
+                  notification.title
+                )}
+              </div>
+
+              <div class="notification-item-message">
+                ${escapeHtml(
+                  notification.message
+                )}
+              </div>
+
+              <div class="notification-item-date">
+                ${escapeHtml(
+                  date
+                )}
+              </div>
+
+              <button
+                type="button"
+                class="notification-seen-btn"
+                onclick="markSingleNotificationSeen('${escapeJs(notification.id)}')"
+              >
+                ✓ Seen
+              </button>
+
+            </div>
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* =====================================================
+   MARK SINGLE
+===================================================== */
+
+async function markSingleNotificationSeen(
+  notificationId
+){
+
+  markNotificationSeen(
+    notificationId
+  );
+
+  renderNotifications();
+
+  await loadNotifications();
+
+}
+
+
+/* =====================================================
+   MARK ALL
+===================================================== */
+
+async function markAllNotificationsSeen(){
+
+  if(
+    allNotifications.length === 0
+  ){
+
+    return;
+
+  }
+
+
+  const seen =
+    getSeenNotifications();
+
+
+  allNotifications.forEach(
+    function(notification){
+
+      const id =
+        String(
+          notification.id
+        );
+
+
+      if(
+        !seen.includes(id)
+      ){
+
+        seen.push(id);
+
+      }
+
+    }
+  );
+
+
+  saveSeenNotifications(
+    seen
+  );
+
+
+  renderNotifications();
+
+  await loadNotifications();
+
+}
+
+
+/* =====================================================
+   OPEN NOTIFICATION
+===================================================== */
+
+function openNotificationPanel(){
+
+  const panel =
+    document.getElementById(
+      "notificationPanel"
+    );
+
+  const overlay =
+    document.getElementById(
+      "notificationOverlay"
+    );
+
+
+  panel.classList.add(
+    "show"
+  );
+
+  overlay.classList.add(
+    "show"
+  );
+
+
+  renderNotifications();
+
+}
+
+
+/* =====================================================
+   CLOSE NOTIFICATION
+===================================================== */
+
+function closeNotificationPanel(){
+
+  document
+    .getElementById(
+      "notificationPanel"
+    )
+    .classList.remove(
+      "show"
+    );
+
+
+  document
+    .getElementById(
+      "notificationOverlay"
+    )
+    .classList.remove(
+      "show"
+    );
+
+}
+
+
+/* =====================================================
+   NOTIFICATION BUTTON
+===================================================== */
+
+document
+  .getElementById(
+    "notificationBtn"
+  )
+  .addEventListener(
+    "click",
+    function(event){
+
+      event.stopPropagation();
+
+
+      const panel =
+        document.getElementById(
+          "notificationPanel"
+        );
+
+
+      if(
+        panel.classList.contains(
+          "show"
+        )
+      ){
+
+        closeNotificationPanel();
+
+      }
+      else{
+
+        openNotificationPanel();
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
+document
+  .getElementById(
+    "closeNotificationBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      closeNotificationPanel();
+
+    }
+  );
+
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+document
+  .getElementById(
+    "notificationOverlay"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      closeNotificationPanel();
+
+    }
+  );
+
+
+/* =====================================================
+   MARK ALL BUTTON
+===================================================== */
+
+document
+  .getElementById(
+    "markAllSeenBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      markAllNotificationsSeen();
+
+    }
+  );
+
+
+/* =====================================================
+   REALTIME OWNER NOTICES
+===================================================== */
+
+try{
+
+  realtimeChannel =
+    supabaseClient
+      .channel(
+        "teacher-owner-notices"
+      )
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"notices"
+        },
+        function(payload){
+
+          console.log(
+            "Owner notice changed:",
+            payload
+          );
+
+
+          loadNotifications();
+
+        }
+      )
+      .subscribe(
+        function(status){
+
+          console.log(
+            "Notice realtime status:",
+            status
+          );
+
+        }
+      );
+
+}
+catch(error){
+
+  console.warn(
+    "Notice realtime unavailable:",
+    error
+  );
+
+}
+
+
+/* =====================================================
+   NOTIFICATION AUTO REFRESH
+===================================================== */
+
+setInterval(
+  function(){
+
+    if(
+      currentTeacher &&
+      document.visibilityState !==
+      "hidden"
+    ){
+
+      loadNotifications();
+
+    }
+
+  },
+  10000
+);
+
+
+/* =====================================================
+   WHEN TAB BECOMES ACTIVE
+===================================================== */
+
+document.addEventListener(
+  "visibilitychange",
+  function(){
+
+    if(
+      document.visibilityState ===
+      "visible"
+    ){
+
+      /*
+        Agar user 5 minute tak
+        tab/background me raha,
+        wapas aane par session check.
+      */
+
+      loadTeacher();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+  try{
+
+    if(realtimeChannel){
+
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }
+
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+  }
+  catch(error){
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+
+  /*
+    IMPORTANT:
+    localStorage.clear() hata diya gaya hai.
+    Isse poori website ka local data delete nahi hoga.
+  */
+
+  window.location.href =
+    "teacher-login.html";
+
+}
+
+
+/* =====================================================
+   START DASHBOARD
+===================================================== */
+
+loadTeacher();
+
+</script>
+
+</body>
+</html>

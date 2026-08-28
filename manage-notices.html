@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
+>
+
+<title>Manage Notices | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#1f2937;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    background:#172554;
+    color:white;
+    padding:15px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand h2{
+    font-size:21px;
+}
+
+.brand p{
+    margin-top:4px;
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 16px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    max-width:1100px;
+    margin:auto;
+    padding:25px;
+}
+
+.top{
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:28px;
+}
+
+.top p{
+    margin-top:6px;
+    color:#64748b;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* =========================
+   BOX
+========================= */
+
+.box{
+    background:white;
+    padding:22px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:22px;
+}
+
+.box-title{
+    font-size:20px;
+    font-weight:bold;
+    color:#172554;
+    margin-bottom:18px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:14px;
+    font-weight:bold;
+    color:#334155;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:12px;
+    font-size:15px;
+    outline:none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+    border-color:#172554;
+}
+
+.form-group textarea{
+    min-height:140px;
+    resize:vertical;
+}
+
+.form-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.save-btn{
+    background:#172554;
+    color:white;
+    border:0;
+    padding:12px 20px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.cancel-btn{
+    display:none;
+    background:#e2e8f0;
+    color:#334155;
+    border:0;
+    padding:12px 20px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* =========================
+   NOTICE LIST
+========================= */
+
+.notices-list{
+    display:grid;
+    gap:15px;
+}
+
+.notice-card{
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:18px;
+}
+
+.notice-card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    align-items:flex-start;
+}
+
+.notice-card h3{
+    color:#172554;
+    font-size:18px;
+}
+
+.notice-date{
+    margin-top:5px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.notice-message{
+    margin-top:14px;
+    color:#475569;
+    line-height:1.6;
+    white-space:pre-wrap;
+}
+
+.notice-actions{
+    margin-top:16px;
+    display:flex;
+    gap:8px;
+}
+
+.edit-btn{
+    background:#dbeafe;
+    color:#1d4ed8;
+    border:0;
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.delete-btn{
+    background:#fee2e2;
+    color:#dc2626;
+    border:0;
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.loading,
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+.empty{
+    border:1px dashed #cbd5e1;
+    border-radius:12px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:650px){
+
+    .header{
+        padding:12px 15px;
+    }
+
+    .brand h2{
+        font-size:16px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .box{
+        padding:16px;
+    }
+
+    .notice-card-top{
+        flex-direction:column;
+        gap:6px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="brand">
+
+    <h2>
+        Kumaun Institute
+    </h2>
+
+    <p>
+        Owner Dashboard • Notice Management
+    </p>
+
+</div>
+
+
+<button
+    class="back-btn"
+    onclick="location.href='index.html'"
+>
+    ← Dashboard
+</button>
+
+</header>
+
+<main class="main">
+
+<div class="top">
+
+    <h1>
+        📢 Notice Management
+    </h1>
+
+    <p>
+        Add, edit aur delete institute notices.
+    </p>
+
+</div>
+
+
+<div
+    id="message"
+    class="message"
+>
+</div>
+
+
+
+<!-- =========================
+     ADD / EDIT NOTICE
+========================= -->
+
+<section class="box">
+
+    <div
+        class="box-title"
+        id="formTitle"
+    >
+        Add New Notice
+    </div>
+
+
+    <form id="noticeForm">
+
+
+        <div class="form-group">
+
+            <label>
+                Notice Title
+            </label>
+
+            <input
+                type="text"
+                id="noticeTitle"
+                placeholder="Enter notice title"
+                required
+            >
+
+        </div>
+
+
+
+        <div class="form-group">
+
+            <label>
+                Notice Message
+            </label>
+
+            <textarea
+                id="noticeMessage"
+                placeholder="Write your notice here..."
+                required
+            ></textarea>
+
+        </div>
+
+
+
+        <div class="form-buttons">
+
+            <button
+                type="submit"
+                class="save-btn"
+                id="saveBtn"
+            >
+                📢 Publish Notice
+            </button>
+
+
+            <button
+                type="button"
+                class="cancel-btn"
+                id="cancelBtn"
+                onclick="cancelEdit()"
+            >
+                Cancel Edit
+            </button>
+
+        </div>
+
+
+    </form>
+
+</section>
+
+
+
+<!-- =========================
+     NOTICE LIST
+========================= -->
+
+<section class="box">
+
+    <div class="box-title">
+        All Notices
+    </div>
+
+
+    <div
+        id="noticesList"
+        class="notices-list"
+    >
+
+        <div class="loading">
+
+            Loading notices...
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+let editingNoticeId =
+null;
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+
+    message.className =
+    "message";
+
+
+    if(
+        type === "success"
+    ){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    message.textContent =
+    text;
+
+
+    message.style.display =
+    "block";
+
+
+    setTimeout(
+    function(){
+
+        message.style.display =
+        "none";
+
+    },
+    5000
+    );
+
+}
+
+
+
+/* =========================================
+   LOAD NOTICES
+========================================= */
+
+async function loadNotices(){
+
+    const list =
+    document.getElementById(
+        "noticesList"
+    );
+
+
+    list.innerHTML =
+    `
+        <div class="loading">
+            Loading notices...
+        </div>
+    `;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("notices")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !data ||
+            data.length === 0
+        ){
+
+            list.innerHTML =
+            `
+                <div class="empty">
+                    📢 Abhi koi notice nahi hai.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+        "";
+
+
+        data.forEach(
+        function(notice){
+
+            const card =
+            document.createElement(
+                "div"
+            );
+
+
+            card.className =
+            "notice-card";
+
+
+            card.innerHTML =
+            `
+
+                <div class="notice-card-top">
+
+                    <div>
+
+                        <h3>
+                            ${escapeHTML(
+                                notice.title
+                            )}
+                        </h3>
+
+
+                        <div class="notice-date">
+
+                            📅
+                            ${formatDate(
+                                notice.created_at
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="notice-message">
+
+                    ${escapeHTML(
+                        notice.message
+                    )}
+
+                </div>
+
+
+                <div class="notice-actions">
+
+                    <button
+                        class="edit-btn"
+                        onclick="editNotice(
+                            ${notice.id},
+                            ${JSON.stringify(notice.title)},
+                            ${JSON.stringify(notice.message)}
+                        )"
+                    >
+                        ✏️ Edit
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteNotice(
+                            ${notice.id}
+                        )"
+                    >
+                        🗑 Delete
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        list.innerHTML =
+        `
+            <div class="empty">
+                ❌ Notices load nahi hue:
+                ${escapeHTML(error.message)}
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================
+   ADD / UPDATE NOTICE
+========================================= */
+
+document.getElementById(
+    "noticeForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const title =
+        document.getElementById(
+            "noticeTitle"
+        ).value.trim();
+
+
+        const noticeMessage =
+        document.getElementById(
+            "noticeMessage"
+        ).value.trim();
+
+
+        if(
+            !title ||
+            !noticeMessage
+        ){
+
+            showMessage(
+                "Title aur message dono likhna zaroori hai.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const saveButton =
+        document.getElementById(
+            "saveBtn"
+        );
+
+
+        saveButton.disabled =
+        true;
+
+
+        saveButton.textContent =
+        "Saving...";
+
+
+        try{
+
+            if(
+                editingNoticeId
+            ){
+
+                const {
+                    error
+                } =
+                await supabaseClient
+                .from("notices")
+                .update({
+
+                    title:title,
+
+                    message:
+                    noticeMessage
+
+                })
+                .eq(
+                    "id",
+                    editingNoticeId
+                );
+
+
+                if(error){
+
+                    throw error;
+
+                }
+
+
+                showMessage(
+                    "✅ Notice successfully update ho gaya.",
+                    "success"
+                );
+
+
+                cancelEdit();
+
+            }
+            else{
+
+                const {
+                    error
+                } =
+                await supabaseClient
+                .from("notices")
+                .insert({
+
+                    title:title,
+
+                    message:
+                    noticeMessage
+
+                });
+
+
+                if(error){
+
+                    throw error;
+
+                }
+
+
+                showMessage(
+                    "✅ Notice successfully publish ho gaya.",
+                    "success"
+                );
+
+
+                document.getElementById(
+                    "noticeForm"
+                ).reset();
+
+            }
+
+
+            await loadNotices();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "Notice save nahi hua: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            saveButton.disabled =
+            false;
+
+
+            saveButton.textContent =
+            editingNoticeId
+            ? "💾 Update Notice"
+            : "📢 Publish Notice";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   EDIT NOTICE
+========================================= */
+
+function editNotice(
+    id,
+    title,
+    message
+){
+
+    editingNoticeId =
+    id;
+
+
+    document.getElementById(
+        "noticeTitle"
+    ).value =
+    title;
+
+
+    document.getElementById(
+        "noticeMessage"
+    ).value =
+    message;
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+    "Edit Notice";
+
+
+    document.getElementById(
+        "saveBtn"
+    ).textContent =
+    "💾 Update Notice";
+
+
+    document.getElementById(
+        "cancelBtn"
+    ).style.display =
+    "inline-block";
+
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
+
+/* =========================================
+   CANCEL EDIT
+========================================= */
+
+function cancelEdit(){
+
+    editingNoticeId =
+    null;
+
+
+    document.getElementById(
+        "noticeForm"
+    ).reset();
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+    "Add New Notice";
+
+
+    document.getElementById(
+        "saveBtn"
+    ).textContent =
+    "📢 Publish Notice";
+
+
+    document.getElementById(
+        "cancelBtn"
+    ).style.display =
+    "none";
+
+}
+
+
+
+/* =========================================
+   DELETE NOTICE
+========================================= */
+
+async function deleteNotice(id){
+
+    const confirmDelete =
+    confirm(
+        "Kya aap is notice ko delete karna chahte hain?"
+    );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient
+        .from("notices")
+        .delete()
+        .eq(
+            "id",
+            id
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            "🗑 Notice delete ho gaya.",
+            "success"
+        );
+
+
+        await loadNotices();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "Notice delete nahi hua: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+
+            day:"2-digit",
+
+            month:"2-digit",
+
+            year:"numeric",
+
+            hour:"2-digit",
+
+            minute:"2-digit"
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+
+/* =========================================
+   START
+========================================= */
+
+loadNotices();
+
+</script>
+
+</body>
+
+</html>

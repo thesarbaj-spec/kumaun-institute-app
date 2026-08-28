@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>Student Profile | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#222;
+}
+
+/* HEADER */
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:3px;
+}
+
+.brand h2{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.header-btn{
+  border:none;
+  color:white;
+  padding:10px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  text-decoration:none;
+  display:inline-block;
+}
+
+.back-btn{
+  background:#2563eb;
+}
+
+.edit-btn{
+  background:#f59e0b;
+}
+
+.logout-btn{
+  background:#ef4444;
+}
+
+/* MAIN */
+
+.main{
+  max-width:1200px;
+  margin:auto;
+  padding:25px;
+}
+
+/* TITLE */
+
+.page-title{
+  margin-bottom:20px;
+}
+
+.page-title h1{
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+.page-title p{
+  color:#666;
+}
+
+/* PROFILE */
+
+.profile-box{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+  margin-bottom:20px;
+}
+
+/* TOP */
+
+.profile-top{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding-bottom:25px;
+  border-bottom:1px solid #eee;
+}
+
+.profile-photo{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #e5e7eb;
+}
+
+.photo-placeholder{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  background:#e8efff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:48px;
+  border:4px solid #dbeafe;
+}
+
+.profile-name h2{
+  font-size:26px;
+  margin-bottom:7px;
+}
+
+.profile-name p{
+  color:#666;
+  margin-bottom:5px;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.status-active{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.status-pending{
+  background:#fef3c7;
+  color:#b45309;
+}
+
+.status-passout{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* INFO GRID */
+
+.section-title{
+  font-size:19px;
+  margin:25px 0 15px;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.info-card{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:15px;
+}
+
+.info-card label{
+  display:block;
+  color:#777;
+  font-size:12px;
+  margin-bottom:7px;
+}
+
+.info-card strong{
+  font-size:15px;
+  word-break:break-word;
+}
+
+/* FEES */
+
+.fee-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.fee-card{
+  padding:18px;
+  border-radius:12px;
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+}
+
+.fee-card p{
+  color:#777;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.fee-card strong{
+  font-size:22px;
+}
+
+/* ACTIONS */
+
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.action{
+  border:none;
+  padding:14px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.documents{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+.edit{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.students{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+/* LOADING */
+
+.loading{
+  text-align:center;
+  padding:60px 20px;
+  color:#777;
+  font-size:17px;
+}
+
+.error{
+  text-align:center;
+  padding:50px 20px;
+  color:#dc2626;
+}
+
+.error button{
+  margin-top:15px;
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+  .header{
+    padding:12px 15px;
+  }
+
+  .brand img{
+    width:42px;
+    height:42px;
+  }
+
+  .brand h2{
+    font-size:16px;
+  }
+
+  .brand p{
+    font-size:10px;
+  }
+
+  .header-buttons{
+    gap:4px;
+  }
+
+  .header-btn{
+    padding:8px 9px;
+    font-size:11px;
+  }
+
+  .main{
+    padding:15px;
+  }
+
+  .page-title h1{
+    font-size:23px;
+  }
+
+  .profile-box{
+    padding:18px;
+  }
+
+  .profile-top{
+    align-items:flex-start;
+  }
+
+  .profile-photo,
+  .photo-placeholder{
+    width:85px;
+    height:85px;
+  }
+
+  .photo-placeholder{
+    font-size:35px;
+  }
+
+  .profile-name h2{
+    font-size:21px;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .fee-grid{
+    grid-template-columns:1fr;
+  }
+
+  .action-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+
+      <h2>Kumaun Institute</h2>
+
+      <p>Student Profile</p>
+
+    </div>
+
+  </div>
+
+
+  <div class="header-buttons">
+
+    <a
+      href="students.html"
+      class="header-btn back-btn"
+    >
+      🔙 Students
+    </a>
+
+
+    <button
+      class="header-btn edit-btn"
+      id="headerEditBtn"
+      onclick="editStudent()"
+    >
+      ✏️ Edit
+    </button>
+
+
+    <button
+      class="header-btn logout-btn"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+  <div
+    id="loading"
+    class="loading"
+  >
+
+    ⏳ Student profile load ho rahi hai...
+
+  </div>
+
+
+  <div
+    id="profileContent"
+    style="display:none;"
+  >
+
+
+    <!-- TITLE -->
+
+    <div class="page-title">
+
+      <h1>👨‍🎓 Student Profile</h1>
+
+      <p>
+        Student ki complete information.
+      </p>
+
+    </div>
+
+
+
+    <!-- PROFILE BOX -->
+
+    <section class="profile-box">
+
+
+      <!-- TOP -->
+
+      <div class="profile-top">
+
+
+        <div id="photoContainer">
+
+          <div class="photo-placeholder">
+            👤
+          </div>
+
+        </div>
+
+
+        <div class="profile-name">
+
+          <h2 id="studentName">
+            -
+          </h2>
+
+          <p>
+            Student ID:
+            <strong id="studentId">
+              -
+            </strong>
+          </p>
+
+          <p id="studentCourse">
+            -
+          </p>
+
+          <span
+            id="studentStatus"
+            class="status status-active"
+          >
+            Active
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- PERSONAL INFORMATION -->
+
+      <h2 class="section-title">
+        👤 Personal Information
+      </h2>
+
+
+      <div class="info-grid">
+
+
+        <div class="info-card">
+
+          <label>
+            Full Name
+          </label>
+
+          <strong id="infoName">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Email
+          </label>
+
+          <strong id="infoEmail">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Phone
+          </label>
+
+          <strong id="infoPhone">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Date of Birth
+          </label>
+
+          <strong id="infoDOB">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Course
+          </label>
+
+          <strong id="infoCourse">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Admission Date
+          </label>
+
+          <strong id="infoAdmission">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Status
+          </label>
+
+          <strong id="infoStatus">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Student ID
+          </label>
+
+          <strong id="infoId">
+            -
+          </strong>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <label>
+            Address
+          </label>
+
+          <strong id="infoAddress">
+            -
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- FEES -->
+
+      <h2 class="section-title">
+        💰 Fee Information
+      </h2>
+
+
+      <div class="fee-grid">
+
+
+        <div class="fee-card">
+
+          <p>
+            Total Fee
+          </p>
+
+          <strong id="totalFee">
+            ₹0
+          </strong>
+
+        </div>
+
+
+        <div class="fee-card">
+
+          <p>
+            Paid Fee
+          </p>
+
+          <strong id="paidFee">
+            ₹0
+          </strong>
+
+        </div>
+
+
+        <div class="fee-card">
+
+          <p>
+            Remaining Fee
+          </p>
+
+          <strong id="remainingFee">
+            ₹0
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- ACTIONS -->
+
+      <h2 class="section-title">
+        ⚡ Student Actions
+      </h2>
+
+
+      <div class="action-grid">
+
+
+        <button
+          class="action documents"
+          onclick="openDocuments()"
+        >
+          📂 Documents
+        </button>
+
+
+        <button
+          class="action edit"
+          onclick="editStudent()"
+        >
+          ✏️ Edit Student
+        </button>
+
+
+        <button
+          class="action students"
+          onclick="backToStudents()"
+        >
+          👨‍🎓 All Students
+        </button>
+
+
+      </div>
+
+
+    </section>
+
+
+  </div>
+
+
+</main>
+
+
+
+<script>
+
+/* =========================================
+   SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   GET STUDENT ID
+========================================= */
+
+function getStudentId(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const id =
+    params.get("id");
+
+
+  if(!id){
+    return null;
+  }
+
+
+  const numberId =
+    Number(id);
+
+
+  if(
+    !Number.isInteger(numberId) ||
+    numberId <= 0
+  ){
+
+    return null;
+
+  }
+
+
+  return numberId;
+
+}
+
+
+/* =========================================
+   LOAD PROFILE
+========================================= */
+
+async function loadStudentProfile(){
+
+  const loading =
+    document.getElementById(
+      "loading"
+    );
+
+
+  const profile =
+    document.getElementById(
+      "profileContent"
+    );
+
+
+  const studentId =
+    getStudentId();
+
+
+  if(!studentId){
+
+    loading.innerHTML = `
+
+      ❌ Student ID nahi mili.
+
+      <br><br>
+
+      Students page par wapas jaakar
+      View button se profile open karein.
+
+      <br><br>
+
+      <button
+        onclick="backToStudents()"
+        style="
+          padding:10px 15px;
+          border:none;
+          border-radius:8px;
+          background:#2563eb;
+          color:white;
+          cursor:pointer;
+        "
+      >
+        👨‍🎓 Students
+      </button>
+
+    `;
+
+    return;
+
+  }
+
+
+  try{
+
+
+    console.log(
+      "Loading student ID:",
+      studentId
+    );
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+
+        .from("Students")
+
+        .select(`
+          id,
+          name,
+          email,
+          phone,
+          course,
+          dob,
+          address,
+          admission_date,
+          total_fee,
+          paid_fee,
+          status,
+          photo_url,
+          created_at
+        `)
+
+        .eq(
+          "id",
+          studentId
+        )
+
+        .maybeSingle();
+
+
+    console.log(
+      "Student:",
+      data
+    );
+
+
+    console.log(
+      "Student error:",
+      error
+    );
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    if(!data){
+
+      loading.innerHTML = `
+
+        ❌ Student nahi mila.
+
+        <br><br>
+
+        Student ID:
+        <strong>
+          ${studentId}
+        </strong>
+
+        <br><br>
+
+        <button
+          onclick="backToStudents()"
+          style="
+            padding:10px 15px;
+            border:none;
+            border-radius:8px;
+            background:#2563eb;
+            color:white;
+            cursor:pointer;
+          "
+        >
+          👨‍🎓 Back to Students
+        </button>
+
+      `;
+
+      return;
+
+    }
+
+
+    displayStudent(
+      data
+    );
+
+
+    loading.style.display =
+      "none";
+
+
+    profile.style.display =
+      "block";
+
+
+  }
+
+  catch(error){
+
+    console.error(
+      "PROFILE ERROR:",
+      error
+    );
+
+
+    loading.innerHTML = `
+
+      ❌ Student profile load nahi hui.
+
+      <br><br>
+
+      ${escapeHTML(
+        error.message
+      )}
+
+      <br><br>
+
+      <button
+        onclick="backToStudents()"
+        style="
+          padding:10px 15px;
+          border:none;
+          border-radius:8px;
+          background:#2563eb;
+          color:white;
+          cursor:pointer;
+        "
+      >
+        👨‍🎓 Back to Students
+      </button>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   DISPLAY STUDENT
+========================================= */
+
+function displayStudent(
+  student
+){
+
+  const totalFee =
+    Number(
+      student.total_fee
+    ) || 0;
+
+
+  const paidFee =
+    Number(
+      student.paid_fee
+    ) || 0;
+
+
+  const remaining =
+    Math.max(
+      0,
+      totalFee - paidFee
+    );
+
+
+  const status =
+    String(
+      student.status || "active"
+    );
+
+
+  /* NAME */
+
+  document.getElementById(
+    "studentName"
+  ).textContent =
+    student.name || "-";
+
+
+  document.getElementById(
+    "infoName"
+  ).textContent =
+    student.name || "-";
+
+
+  /* ID */
+
+  document.getElementById(
+    "studentId"
+  ).textContent =
+    student.id;
+
+
+  document.getElementById(
+    "infoId"
+  ).textContent =
+    student.id;
+
+
+  /* COURSE */
+
+  document.getElementById(
+    "studentCourse"
+  ).textContent =
+    student.course || "-";
+
+
+  document.getElementById(
+    "infoCourse"
+  ).textContent =
+    student.course || "-";
+
+
+  /* EMAIL */
+
+  document.getElementById(
+    "infoEmail"
+  ).textContent =
+    student.email || "-";
+
+
+  /* PHONE */
+
+  document.getElementById(
+    "infoPhone"
+  ).textContent =
+    student.phone || "-";
+
+
+  /* DOB */
+
+  document.getElementById(
+    "infoDOB"
+  ).textContent =
+    formatDate(
+      student.dob
+    );
+
+
+  /* ADDRESS */
+
+  document.getElementById(
+    "infoAddress"
+  ).textContent =
+    student.address || "-";
+
+
+  /* ADMISSION */
+
+  document.getElementById(
+    "infoAdmission"
+  ).textContent =
+    formatDate(
+      student.admission_date
+    );
+
+
+  /* STATUS */
+
+  document.getElementById(
+    "infoStatus"
+  ).textContent =
+    status;
+
+
+  const statusElement =
+    document.getElementById(
+      "studentStatus"
+    );
+
+
+  statusElement.textContent =
+    status;
+
+
+  statusElement.className =
+    "status";
+
+
+  const lowerStatus =
+    status.toLowerCase();
+
+
+  if(
+    lowerStatus === "pending"
+  ){
+
+    statusElement.classList.add(
+      "status-pending"
+    );
+
+  }
+
+  else if(
+    lowerStatus === "passout"
+  ){
+
+    statusElement.classList.add(
+      "status-passout"
+    );
+
+  }
+
+  else{
+
+    statusElement.classList.add(
+      "status-active"
+    );
+
+  }
+
+
+  /* FEES */
+
+  document.getElementById(
+    "totalFee"
+  ).textContent =
+    "₹" +
+    totalFee.toLocaleString(
+      "en-IN"
+    );
+
+
+  document.getElementById(
+    "paidFee"
+  ).textContent =
+    "₹" +
+    paidFee.toLocaleString(
+      "en-IN"
+    );
+
+
+  document.getElementById(
+    "remainingFee"
+  ).textContent =
+    "₹" +
+    remaining.toLocaleString(
+      "en-IN"
+    );
+
+
+  /* PHOTO */
+
+  const photoContainer =
+    document.getElementById(
+      "photoContainer"
+    );
+
+
+  if(student.photo_url){
+
+    photoContainer.innerHTML = `
+
+      <img
+        src="${escapeHTML(
+          student.photo_url
+        )}"
+        class="profile-photo"
+        alt="Student Photo"
+        onerror="
+          this.style.display='none';
+          this.nextElementSibling.style.display='flex';
+        "
+      >
+
+      <div
+        class="photo-placeholder"
+        style="display:none;"
+      >
+        👤
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   DOCUMENTS
+========================================= */
+
+function openDocuments(){
+
+  const id =
+    getStudentId();
+
+
+  if(!id){
+    return;
+  }
+
+
+  window.location.href =
+    "student-documents.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================================
+   EDIT
+========================================= */
+
+function editStudent(){
+
+  const id =
+    getStudentId();
+
+
+  if(!id){
+    return;
+  }
+
+
+  window.location.href =
+    "edit-student.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================================
+   BACK
+========================================= */
+
+function backToStudents(){
+
+  window.location.href =
+    "students.html";
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatDate(
+  value
+){
+
+  if(!value){
+    return "-";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    isNaN(
+      date.getTime()
+    )
+  ){
+
+    return value;
+
+  }
+
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+
+}
+
+
+/* =========================================
+   HTML SAFETY
+========================================= */
+
+function escapeHTML(
+  value
+){
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logout(){
+
+  window.location.href =
+    "login.html";
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadStudentProfile();
+
+  }
+);
+
+</script>
+
+</body>
+</html>

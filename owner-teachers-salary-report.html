@@ -1,0 +1,2597 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Salary Dashboard | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:white;
+  padding:3px;
+  object-fit:contain;
+}
+
+.brand h1{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+/* HEADER BUTTONS */
+
+.header-buttons{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.back-btn{
+  border:none;
+  background:#dc2626;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.back-btn:hover{
+  background:#b91c1c;
+}
+
+.dashboard-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.dashboard-btn:hover{
+  background:#1d4ed8;
+}
+
+.container{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 15px 40px;
+}
+
+.box{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+  margin-bottom:25px;
+}
+
+.title{
+  margin-bottom:22px;
+}
+
+.title h2{
+  font-size:24px;
+  margin-bottom:6px;
+}
+
+.title p{
+  color:#64748b;
+  font-size:14px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#334155;
+  margin-bottom:7px;
+}
+
+select,
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+select:focus,
+input:focus{
+  border-color:#2563eb;
+}
+
+.status{
+  margin-top:18px;
+  padding:12px;
+  border-radius:8px;
+  display:none;
+  font-size:14px;
+}
+
+.status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.status.info{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.save-btn{
+  width:100%;
+  margin-top:22px;
+  border:none;
+  background:#172554;
+  color:white;
+  padding:15px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.save-btn:hover{
+  background:#1e3a8a;
+}
+
+.save-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.secondary-btn{
+  width:100%;
+  margin-top:12px;
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:14px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.secondary-btn:hover{
+  background:#1d4ed8;
+}
+
+/* SUMMARY */
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.summary-card{
+  background:white;
+  border-radius:14px;
+  padding:20px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.summary-card .icon{
+  font-size:25px;
+  margin-bottom:10px;
+}
+
+.summary-card h3{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:8px;
+}
+
+.summary-card .number{
+  font-size:25px;
+  font-weight:bold;
+}
+
+.total-card{
+  border-top:4px solid #2563eb;
+}
+
+.paid-card{
+  border-top:4px solid #16a34a;
+}
+
+.pending-card{
+  border-top:4px solid #dc2626;
+}
+
+.month-card{
+  border-top:4px solid #7c3aed;
+}
+
+/* FILTER */
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  align-items:end;
+}
+
+.filter-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:13px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  height:46px;
+}
+
+.filter-btn:hover{
+  background:#1d4ed8;
+}
+
+/* CURRENT SALARY */
+
+.salary-details{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.salary-info{
+  padding:18px;
+  border-radius:12px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+}
+
+.salary-info small{
+  display:block;
+  color:#64748b;
+  margin-bottom:8px;
+  font-size:12px;
+}
+
+.salary-info strong{
+  font-size:22px;
+}
+
+.salary-info.total{
+  border-top:4px solid #2563eb;
+}
+
+.salary-info.paid{
+  border-top:4px solid #16a34a;
+}
+
+.salary-info.pending{
+  border-top:4px solid #dc2626;
+}
+
+.salary-info.status-card{
+  border-top:4px solid #d97706;
+}
+
+/* PAYMENT */
+
+.payment-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+/* TABLE */
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
+}
+
+th{
+  background:#172554;
+  color:white;
+  padding:14px;
+  text-align:left;
+  font-size:13px;
+}
+
+td{
+  padding:14px;
+  border-bottom:1px solid #e2e8f0;
+  font-size:14px;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+.badge{
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.badge-paid{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge-partial{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.badge-pending{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.edit-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:8px 12px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.edit-btn:hover{
+  background:#1d4ed8;
+}
+
+.empty{
+  text-align:center;
+  color:#64748b;
+  padding:25px;
+}
+
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(15,23,42,.55);
+  padding:20px;
+  overflow:auto;
+}
+
+.modal-content{
+  max-width:550px;
+  margin:70px auto;
+  background:white;
+  border-radius:16px;
+  padding:25px;
+  position:relative;
+}
+
+.close-btn{
+  position:absolute;
+  right:18px;
+  top:15px;
+  border:none;
+  background:#fee2e2;
+  color:#dc2626;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.modal-title{
+  margin-bottom:22px;
+}
+
+.modal-title h2{
+  font-size:21px;
+  margin-bottom:5px;
+}
+
+.modal-title p{
+  font-size:13px;
+  color:#64748b;
+}
+
+.modal-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:15px;
+}
+
+/* MOBILE */
+
+@media(max-width:1000px){
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .filter-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .salary-details{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:700px){
+
+  .header{
+    padding:12px 15px;
+  }
+
+  .brand img{
+    width:42px;
+    height:42px;
+  }
+
+  .brand h1{
+    font-size:14px;
+  }
+
+  .brand p{
+    font-size:10px;
+  }
+
+  .header-buttons{
+    gap:6px;
+  }
+
+  .back-btn,
+  .dashboard-btn{
+    padding:9px 10px;
+    font-size:12px;
+  }
+
+  .box{
+    padding:18px;
+  }
+
+  .form-grid,
+  .filter-grid,
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .salary-details{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+
+  .summary-card .number{
+    font-size:20px;
+  }
+
+  .salary-info strong{
+    font-size:18px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+<img
+  src="kumaun institute logo.png"
+  alt="Kumaun Institute Logo"
+>
+
+<div>
+  <h1>Kumaun Institute of Computer Education</h1>
+  <p>Teacher Salary Management</p>
+</div>
+
+  </div>
+
+  <div class="header-buttons">
+
+<button
+  class="back-btn"
+  onclick="location.href='owner-teachers.html'"
+>
+  ← Back
+</button>
+
+<button
+  class="dashboard-btn"
+  onclick="location.href='index.html'"
+>
+ Dashboard
+</button>
+
+  </div>
+
+</header>
+
+<div class="container">
+
+  <div class="box">
+
+<div class="title">
+  <h2>💰 Teacher Salary Dashboard</h2>
+  <p>Teacher ki monthly salary, paid amount aur pending salary manage karein.</p>
+</div>
+
+<div class="filter-grid">
+
+  <div class="form-group">
+
+    <label>👨‍🏫 Select Teacher</label>
+
+    <select id="teacherSelect">
+      <option value="">Loading teachers...</option>
+    </select>
+
+  </div>
+
+  <div class="form-group">
+
+    <label>📅 Select Month</label>
+
+    <select id="monthSelect"></select>
+
+  </div>
+
+  <div class="form-group">
+
+    <label>📆 Select Year</label>
+
+    <select id="yearSelect"></select>
+
+  </div>
+
+  <div class="form-group">
+
+    <label>&nbsp;</label>
+
+    <button
+      class="filter-btn"
+      onclick="loadSelectedSalary()"
+    >
+      🔍 View Salary
+    </button>
+
+  </div>
+
+</div>
+
+  </div>
+
+  <div class="summary-grid">
+
+<div class="summary-card total-card">
+
+  <div class="icon">💰</div>
+
+  <h3>Selected Month Salary</h3>
+
+  <div
+    class="number"
+    id="summaryTotalSalary"
+  >
+    ₹0
+  </div>
+
+</div>
+
+<div class="summary-card paid-card">
+
+  <div class="icon">🟢</div>
+
+  <h3>Paid Salary</h3>
+
+  <div
+    class="number"
+    id="summaryPaidSalary"
+  >
+    ₹0
+  </div>
+
+</div>
+
+<div class="summary-card pending-card">
+
+  <div class="icon">🔴</div>
+
+  <h3>Pending Salary</h3>
+
+  <div
+    class="number"
+    id="summaryPendingSalary"
+  >
+    ₹0
+  </div>
+
+</div>
+
+<div class="summary-card month-card">
+
+  <div class="icon">📅</div>
+
+  <h3>Selected Month</h3>
+
+  <div
+    class="number"
+    id="summaryMonth"
+    style="font-size:18px;"
+  >
+    —
+  </div>
+
+</div>
+
+  </div>
+
+  <div class="box">
+
+<div class="title">
+
+  <h2>📊 Selected Month Salary Details</h2>
+
+  <p>Is month ki current salary information.</p>
+
+</div>
+
+<div class="salary-details">
+
+  <div class="salary-info total">
+
+    <small>Total Monthly Salary</small>
+
+    <strong id="currentTotal">
+      ₹0
+    </strong>
+
+  </div>
+
+  <div class="salary-info paid">
+
+    <small>Total Paid</small>
+
+    <strong id="currentPaid">
+      ₹0
+    </strong>
+
+  </div>
+
+  <div class="salary-info pending">
+
+    <small>Pending Amount</small>
+
+    <strong id="currentPending">
+      ₹0
+    </strong>
+
+  </div>
+
+  <div class="salary-info status-card">
+
+    <small>Payment Status</small>
+
+    <strong id="currentStatus">
+      No Record
+    </strong>
+
+  </div>
+
+</div>
+
+  </div>
+
+  <div class="box">
+
+<div class="title">
+
+  <h2>✏️ Set / Edit Monthly Salary</h2>
+
+  <p>Selected teacher aur month ke liye total monthly salary set karein.</p>
+
+</div>
+
+<div class="form-grid">
+
+  <div class="form-group">
+
+    <label>💰 Total Monthly Salary</label>
+
+    <input
+      type="number"
+      id="totalSalaryInput"
+      placeholder="Example: 8000"
+      min="0"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>📅 Salary Month</label>
+
+    <input
+      type="text"
+      id="selectedMonthText"
+      disabled
+      value="Select teacher and month"
+    >
+
+  </div>
+
+</div>
+
+<div
+  id="salaryStatus"
+  class="status"
+></div>
+
+<button
+  class="save-btn"
+  id="saveSalaryButton"
+  onclick="saveMonthlySalary()"
+>
+  💾 Save / Update Monthly Salary
+</button>
+
+  </div>
+
+  <div class="box">
+
+<div class="title">
+
+  <h2>💵 Add Salary Payment</h2>
+
+  <p>Agar pehle ₹5000 diye aur baad mein ₹2000 aur diye, to sirf ₹2000 add karein. Total paid automatically update ho jayega.</p>
+
+</div>
+
+<div class="payment-grid">
+
+  <div class="form-group">
+
+    <label>💸 Add New Payment Amount</label>
+
+    <input
+      type="number"
+      id="paymentAmount"
+      placeholder="Example: 2000"
+      min="0"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>📅 Payment Date</label>
+
+    <input
+      type="date"
+      id="paymentDate"
+    >
+
+  </div>
+
+</div>
+
+<div
+  id="paymentStatus"
+  class="status"
+></div>
+
+<button
+  class="secondary-btn"
+  id="addPaymentButton"
+  onclick="addSalaryPayment()"
+>
+  ➕ Add Payment
+</button>
+
+  </div>
+
+  <div class="box">
+
+<div class="title">
+
+  <h2>📋 Salary History</h2>
+
+  <p>Selected teacher ki previous aur current months ki salary history.</p>
+
+</div>
+
+<div class="table-wrapper">
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Month</th>
+        <th>Total Salary</th>
+        <th>Paid Salary</th>
+        <th>Pending Salary</th>
+        <th>Last Payment</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+
+    </thead>
+
+    <tbody id="salaryHistory">
+
+      <tr>
+
+        <td
+          colspan="7"
+          class="empty"
+        >
+          Teacher select karke salary history dekhein.
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+  </div>
+
+</div>
+
+<div
+  class="modal"
+  id="editModal"
+>
+
+  <div class="modal-content">
+
+<button
+  class="close-btn"
+  onclick="closeEditModal()"
+>
+  ×
+</button>
+
+<div class="modal-title">
+
+  <h2>✏️ Edit Salary Record</h2>
+
+  <p>Monthly salary record ko update karein.</p>
+
+</div>
+
+<input
+  type="hidden"
+  id="editRecordId"
+>
+
+<div class="modal-grid">
+
+  <div class="form-group">
+
+    <label>💰 Total Salary</label>
+
+    <input
+      type="number"
+      id="editTotalSalary"
+      min="0"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>🟢 Paid Salary</label>
+
+    <input
+      type="number"
+      id="editPaidSalary"
+      min="0"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>📅 Payment Date</label>
+
+    <input
+      type="date"
+      id="editPaymentDate"
+    >
+
+  </div>
+
+</div>
+
+<div
+  id="editStatus"
+  class="status"
+></div>
+
+<button
+  class="save-btn"
+  onclick="updateSalaryRecord()"
+>
+  💾 Update Salary Record
+</button>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   GLOBAL VARIABLES
+========================================= */
+
+let currentSalaryRecord = null;
+
+let selectedTeacherName = "";
+
+
+/* =========================================
+   SET TODAY PAYMENT DATE
+========================================= */
+
+const today =
+  new Date()
+    .toISOString()
+    .split("T")[0];
+
+document.getElementById(
+  "paymentDate"
+).value = today;
+
+
+/* =========================================
+   LOAD MONTHS
+========================================= */
+
+function loadMonths(){
+
+  const monthSelect =
+    document.getElementById(
+      "monthSelect"
+    );
+
+  monthSelect.innerHTML = "";
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const currentMonth =
+    new Date().getMonth();
+
+  months.forEach(
+    function(month,index){
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        index + 1;
+
+      option.textContent =
+        month;
+
+      if(index === currentMonth){
+
+        option.selected = true;
+
+      }
+
+      monthSelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   LOAD YEARS - AUTO FUTURE YEARS
+========================================= */
+
+function loadYears(){
+
+  const yearSelect =
+    document.getElementById(
+      "yearSelect"
+    );
+
+  const currentYear =
+    new Date().getFullYear();
+
+  const startYear = 2020;
+
+  const endYear = 5000;
+
+  yearSelect.innerHTML = "";
+
+  for(
+    let year = startYear;
+    year <= endYear;
+    year++
+  ){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value = year;
+
+    option.textContent = year;
+
+    if(year === currentYear){
+
+      option.selected = true;
+
+    }
+
+    yearSelect.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD TEACHERS
+========================================= */
+
+async function loadTeachers(){
+
+  const select =
+    document.getElementById(
+      "teacherSelect"
+    );
+
+  select.innerHTML =
+    '<option value="">Loading teachers...</option>';
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teachers")
+        .select(
+          "id, name, subject, status"
+        )
+        .eq(
+          "status",
+          "Active"
+        )
+        .order(
+          "name",
+          {
+            ascending:true
+          }
+        );
+
+    if(error){
+      throw error;
+    }
+
+    select.innerHTML =
+      '<option value="">-- Select Teacher --</option>';
+
+    if(
+      !data ||
+      data.length === 0
+    ){
+
+      select.innerHTML +=
+        '<option value="">No active teachers found</option>';
+
+      return;
+
+    }
+
+    data.forEach(
+      function(teacher){
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          teacher.id;
+
+        option.textContent =
+          teacher.name +
+          (
+            teacher.subject
+            ?
+            " - " +
+            teacher.subject
+            :
+            ""
+          );
+
+        option.dataset.name =
+          teacher.name;
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Teachers load error:",
+      error
+    );
+
+    select.innerHTML =
+      '<option value="">Teachers load nahi hue</option>';
+
+    showStatus(
+      "salaryStatus",
+      "❌ Teachers load nahi hue: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   GET SELECTED SALARY MONTH
+========================================= */
+
+function getSalaryMonth(){
+
+  const month =
+    Number(
+      document.getElementById(
+        "monthSelect"
+      ).value
+    );
+
+  const year =
+    Number(
+      document.getElementById(
+        "yearSelect"
+      ).value
+    );
+
+  return (
+    year +
+    "-" +
+    String(month).padStart(2,"0") +
+    "-01"
+  );
+
+}
+
+
+/* =========================================
+   GET MONTH NAME
+========================================= */
+
+function getMonthName(){
+
+  const month =
+    Number(
+      document.getElementById(
+        "monthSelect"
+      ).value
+    );
+
+  const year =
+    Number(
+      document.getElementById(
+        "yearSelect"
+      ).value
+    );
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  return (
+    months[month - 1] +
+    " " +
+    year
+  );
+
+}
+
+
+/* =========================================
+   SHOW STATUS
+========================================= */
+
+function showStatus(
+  elementId,
+  message,
+  type
+){
+
+  const element =
+    document.getElementById(
+      elementId
+    );
+
+  element.textContent =
+    message;
+
+  element.className =
+    "status " +
+    type;
+
+}
+
+
+/* =========================================
+   FORMAT MONEY
+========================================= */
+
+function formatMoney(amount){
+
+  return (
+    "₹" +
+    Number(
+      amount || 0
+    ).toLocaleString(
+      "en-IN",
+      {
+        maximumFractionDigits:2
+      }
+    )
+  );
+
+}
+
+
+/* =========================================
+   CALCULATE STATUS
+========================================= */
+
+function calculateSalaryStatus(
+  total,
+  paid
+){
+
+  total =
+    Number(total || 0);
+
+  paid =
+    Number(paid || 0);
+
+  if(
+    total <= 0
+  ){
+    return "Pending";
+  }
+
+  if(
+    paid <= 0
+  ){
+    return "Pending";
+  }
+
+  if(
+    paid >= total
+  ){
+    return "Paid";
+  }
+
+  return "Partial";
+
+}
+
+
+/* =========================================
+   RESET CURRENT VIEW
+========================================= */
+
+function resetCurrentSalary(){
+
+  currentSalaryRecord =
+    null;
+
+  document.getElementById(
+    "summaryTotalSalary"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "summaryPaidSalary"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "summaryPendingSalary"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "currentTotal"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "currentPaid"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "currentPending"
+  ).textContent =
+    "₹0";
+
+  document.getElementById(
+    "currentStatus"
+  ).textContent =
+    "No Record";
+
+}
+
+
+/* =========================================
+   LOAD SELECTED SALARY
+========================================= */
+
+async function loadSelectedSalary(){
+
+  const teacherId =
+    document.getElementById(
+      "teacherSelect"
+    ).value;
+
+  if(!teacherId){
+
+    alert(
+      "Please teacher select karein."
+    );
+
+    return;
+
+  }
+
+  const teacherSelect =
+    document.getElementById(
+      "teacherSelect"
+    );
+
+  selectedTeacherName =
+    teacherSelect
+      .options[
+        teacherSelect.selectedIndex
+      ]
+      .dataset.name ||
+    "";
+
+  const salaryMonth =
+    getSalaryMonth();
+
+  const monthName =
+    getMonthName();
+
+  document.getElementById(
+    "selectedMonthText"
+  ).value =
+    monthName;
+
+  document.getElementById(
+    "summaryMonth"
+  ).textContent =
+    monthName;
+
+  resetCurrentSalary();
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "salary_month",
+          salaryMonth
+        )
+        .maybeSingle();
+
+    if(error){
+      throw error;
+    }
+
+    if(data){
+
+      currentSalaryRecord =
+        data;
+
+      displayCurrentSalary(
+        data
+      );
+
+      document.getElementById(
+        "totalSalaryInput"
+      ).value =
+        Number(
+          data.total_salary || 0
+        );
+
+    }
+    else{
+
+      document.getElementById(
+        "totalSalaryInput"
+      ).value =
+        "";
+
+      resetCurrentSalary();
+
+      document.getElementById(
+        "summaryMonth"
+      ).textContent =
+        monthName;
+
+    }
+
+    loadSalaryHistory(
+      teacherId
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Load salary error:",
+      error
+    );
+
+    alert(
+      "❌ Salary load nahi hui: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   DISPLAY CURRENT SALARY
+========================================= */
+
+function displayCurrentSalary(record){
+
+  const total =
+    Number(
+      record.total_salary || 0
+    );
+
+  const paid =
+    Number(
+      record.paid_salary || 0
+    );
+
+  const pending =
+    Math.max(
+      0,
+      total - paid
+    );
+
+  const status =
+    calculateSalaryStatus(
+      total,
+      paid
+    );
+
+  document.getElementById(
+    "summaryTotalSalary"
+  ).textContent =
+    formatMoney(total);
+
+  document.getElementById(
+    "summaryPaidSalary"
+  ).textContent =
+    formatMoney(paid);
+
+  document.getElementById(
+    "summaryPendingSalary"
+  ).textContent =
+    formatMoney(pending);
+
+  document.getElementById(
+    "currentTotal"
+  ).textContent =
+    formatMoney(total);
+
+  document.getElementById(
+    "currentPaid"
+  ).textContent =
+    formatMoney(paid);
+
+  document.getElementById(
+    "currentPending"
+  ).textContent =
+    formatMoney(pending);
+
+  document.getElementById(
+    "currentStatus"
+  ).textContent =
+    status;
+
+}
+
+
+/* =========================================
+   SAVE MONTHLY SALARY
+========================================= */
+
+async function saveMonthlySalary(){
+
+  const teacherId =
+    document.getElementById(
+      "teacherSelect"
+    ).value;
+
+  const totalSalary =
+    Number(
+      document.getElementById(
+        "totalSalaryInput"
+      ).value
+    );
+
+  const salaryMonth =
+    getSalaryMonth();
+
+  const button =
+    document.getElementById(
+      "saveSalaryButton"
+    );
+
+  if(!teacherId){
+
+    showStatus(
+      "salaryStatus",
+      "❌ Please teacher select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(
+    !Number.isFinite(totalSalary) ||
+    totalSalary < 0
+  ){
+
+    showStatus(
+      "salaryStatus",
+      "❌ Valid total salary enter karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Saving...";
+
+  try{
+
+    const {
+      data: existingRecord,
+      error: checkError
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "salary_month",
+          salaryMonth
+        )
+        .maybeSingle();
+
+    if(checkError){
+      throw checkError;
+    }
+
+    if(existingRecord){
+
+      const currentPaid =
+        Number(
+          existingRecord.paid_salary || 0
+        );
+
+      const newPending =
+        Math.max(
+          0,
+          totalSalary -
+          currentPaid
+        );
+
+      const newStatus =
+        calculateSalaryStatus(
+          totalSalary,
+          currentPaid
+        );
+
+      const {
+        error:updateError
+      } =
+        await supabaseClient
+          .from("teacher_salaries")
+          .update({
+            total_salary:
+              totalSalary,
+            pending_salary:
+              newPending,
+            status:
+              newStatus
+          })
+          .eq(
+            "id",
+            existingRecord.id
+          );
+
+      if(updateError){
+        throw updateError;
+      }
+
+      showStatus(
+        "salaryStatus",
+        "✅ Monthly salary successfully update ho gayi.",
+        "success"
+      );
+
+    }
+    else{
+
+      const {
+        error:insertError
+      } =
+        await supabaseClient
+          .from("teacher_salaries")
+          .insert([
+            {
+              teacher_id:
+                teacherId,
+              salary_month:
+                salaryMonth,
+              total_salary:
+                totalSalary,
+              paid_salary:
+                0,
+              pending_salary:
+                totalSalary,
+              payment_date:
+                null,
+              status:
+                "Pending"
+            }
+          ]);
+
+      if(insertError){
+        throw insertError;
+      }
+
+      showStatus(
+        "salaryStatus",
+        "✅ New monthly salary record successfully create ho gaya.",
+        "success"
+      );
+
+    }
+
+    await loadSelectedSalary();
+
+  }
+  catch(error){
+
+    console.error(
+      "Save salary error:",
+      error
+    );
+
+    showStatus(
+      "salaryStatus",
+      "❌ Salary save nahi hui: " +
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "💾 Save / Update Monthly Salary";
+
+  }
+
+}
+
+
+/* =========================================
+   ADD SALARY PAYMENT
+========================================= */
+
+async function addSalaryPayment(){
+
+  const teacherId =
+    document.getElementById(
+      "teacherSelect"
+    ).value;
+
+  const paymentAmount =
+    Number(
+      document.getElementById(
+        "paymentAmount"
+      ).value
+    );
+
+  const paymentDate =
+    document.getElementById(
+      "paymentDate"
+    ).value;
+
+  const salaryMonth =
+    getSalaryMonth();
+
+  const button =
+    document.getElementById(
+      "addPaymentButton"
+    );
+
+  if(!teacherId){
+
+    showStatus(
+      "paymentStatus",
+      "❌ Please teacher select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(
+    !Number.isFinite(paymentAmount) ||
+    paymentAmount <= 0
+  ){
+
+    showStatus(
+      "paymentStatus",
+      "❌ Valid payment amount enter karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const {
+      data: record,
+      error: checkError
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "salary_month",
+          salaryMonth
+        )
+        .maybeSingle();
+
+    if(checkError){
+      throw checkError;
+    }
+
+    if(!record){
+
+      showStatus(
+        "paymentStatus",
+        "❌ Pehle is month ki total salary set karein.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    const oldPaid =
+      Number(
+        record.paid_salary || 0
+      );
+
+    const totalSalary =
+      Number(
+        record.total_salary || 0
+      );
+
+    const newPaid =
+      oldPaid +
+      paymentAmount;
+
+    const newPending =
+      Math.max(
+        0,
+        totalSalary -
+        newPaid
+      );
+
+    const newStatus =
+      calculateSalaryStatus(
+        totalSalary,
+        newPaid
+      );
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Adding Payment...";
+
+    const {
+      error:updateError
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .update({
+          paid_salary:
+            newPaid,
+          pending_salary:
+            newPending,
+          payment_date:
+            paymentDate ||
+            today,
+          status:
+            newStatus
+        })
+        .eq(
+          "id",
+          record.id
+        );
+
+    if(updateError){
+      throw updateError;
+    }
+
+    document.getElementById(
+      "paymentAmount"
+    ).value =
+      "";
+
+    showStatus(
+      "paymentStatus",
+      "✅ Payment successfully add ho gaya. Total paid salary automatically update ho gayi.",
+      "success"
+    );
+
+    await loadSelectedSalary();
+
+  }
+  catch(error){
+
+    console.error(
+      "Payment error:",
+      error
+    );
+
+    showStatus(
+      "paymentStatus",
+      "❌ Payment add nahi hua: " +
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "➕ Add Payment";
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD SALARY HISTORY
+========================================= */
+
+async function loadSalaryHistory(
+  teacherId
+){
+
+  const tbody =
+    document.getElementById(
+      "salaryHistory"
+    );
+
+  tbody.innerHTML =
+    '<tr>' +
+    '<td colspan="7" class="empty">' +
+    'Loading salary history...' +
+    '</td>' +
+    '</tr>';
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .order(
+          "salary_month",
+          {
+            ascending:false
+          }
+        );
+
+    if(error){
+      throw error;
+    }
+
+    tbody.innerHTML =
+      "";
+
+    if(
+      !data ||
+      data.length === 0
+    ){
+
+      tbody.innerHTML =
+        '<tr>' +
+        '<td colspan="7" class="empty">' +
+        'Is teacher ki abhi koi salary history nahi hai.' +
+        '</td>' +
+        '</tr>';
+
+      return;
+
+    }
+
+    data.forEach(
+      function(record){
+
+        const total =
+          Number(
+            record.total_salary || 0
+          );
+
+        const paid =
+          Number(
+            record.paid_salary || 0
+          );
+
+        const pending =
+          Math.max(
+            0,
+            total - paid
+          );
+
+        const status =
+          calculateSalaryStatus(
+            total,
+            paid
+          );
+
+        const salaryDate =
+          new Date(
+            record.salary_month +
+            "T00:00:00"
+          );
+
+        const monthText =
+          salaryDate.toLocaleDateString(
+            "en-IN",
+            {
+              month:"long",
+              year:"numeric"
+            }
+          );
+
+        let paymentDateText =
+          "—";
+
+        if(record.payment_date){
+
+          paymentDateText =
+            new Date(
+              record.payment_date +
+              "T00:00:00"
+            ).toLocaleDateString(
+              "en-IN",
+              {
+                day:"2-digit",
+                month:"short",
+                year:"numeric"
+              }
+            );
+
+        }
+
+        let badgeClass =
+          "badge-pending";
+
+        if(status === "Paid"){
+
+          badgeClass =
+            "badge-paid";
+
+        }
+        else if(
+          status === "Partial"
+        ){
+
+          badgeClass =
+            "badge-partial";
+
+        }
+
+        tbody.innerHTML +=
+          "<tr>" +
+
+          "<td>" +
+          monthText +
+          "</td>" +
+
+          "<td>" +
+          formatMoney(total) +
+          "</td>" +
+
+          "<td>" +
+          formatMoney(paid) +
+          "</td>" +
+
+          "<td>" +
+          formatMoney(pending) +
+          "</td>" +
+
+          "<td>" +
+          paymentDateText +
+          "</td>" +
+
+          '<td><span class="badge ' +
+          badgeClass +
+          '">' +
+          status +
+          "</span></td>" +
+
+          '<td>' +
+          '<button ' +
+          'class="edit-btn" ' +
+          'onclick="openEditModal(' +
+          '\'' + record.id + '\'' +
+          ',' +
+          total +
+          ',' +
+          paid +
+          ',' +
+          '\'' +
+          (record.payment_date || "") +
+          '\'' +
+          ')"' +
+          '>' +
+          '✏️ Edit' +
+          '</button>' +
+          '</td>' +
+
+          "</tr>";
+
+      }
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "History error:",
+      error
+    );
+
+    tbody.innerHTML =
+      '<tr>' +
+      '<td colspan="7" class="empty">' +
+      '❌ Salary history load nahi hui.' +
+      '</td>' +
+      '</tr>';
+
+  }
+
+}
+
+
+/* =========================================
+   OPEN EDIT MODAL
+========================================= */
+
+function openEditModal(
+  id,
+  total,
+  paid,
+  paymentDate
+){
+
+  document.getElementById(
+    "editRecordId"
+  ).value =
+    id;
+
+  document.getElementById(
+    "editTotalSalary"
+  ).value =
+    total;
+
+  document.getElementById(
+    "editPaidSalary"
+  ).value =
+    paid;
+
+  document.getElementById(
+    "editPaymentDate"
+  ).value =
+    paymentDate || "";
+
+  document.getElementById(
+    "editStatus"
+  ).className =
+    "status";
+
+  document.getElementById(
+    "editModal"
+  ).style.display =
+    "block";
+
+}
+
+
+/* =========================================
+   CLOSE EDIT MODAL
+========================================= */
+
+function closeEditModal(){
+
+  document.getElementById(
+    "editModal"
+  ).style.display =
+    "none";
+
+}
+
+
+/* =========================================
+   UPDATE SALARY RECORD
+========================================= */
+
+async function updateSalaryRecord(){
+
+  const id =
+    document.getElementById(
+      "editRecordId"
+    ).value;
+
+  const total =
+    Number(
+      document.getElementById(
+        "editTotalSalary"
+      ).value
+    );
+
+  const paid =
+    Number(
+      document.getElementById(
+        "editPaidSalary"
+      ).value
+    );
+
+  const paymentDate =
+    document.getElementById(
+      "editPaymentDate"
+    ).value;
+
+  if(
+    !Number.isFinite(total) ||
+    total < 0
+  ){
+
+    showStatus(
+      "editStatus",
+      "❌ Valid total salary enter karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(
+    !Number.isFinite(paid) ||
+    paid < 0
+  ){
+
+    showStatus(
+      "editStatus",
+      "❌ Valid paid salary enter karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const pending =
+    Math.max(
+      0,
+      total - paid
+    );
+
+  const status =
+    calculateSalaryStatus(
+      total,
+      paid
+    );
+
+  try{
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("teacher_salaries")
+        .update({
+          total_salary:
+            total,
+          paid_salary:
+            paid,
+          pending_salary:
+            pending,
+          payment_date:
+            paymentDate ||
+            null,
+          status:
+            status
+        })
+        .eq(
+          "id",
+          id
+        );
+
+    if(error){
+      throw error;
+    }
+
+    showStatus(
+      "editStatus",
+      "✅ Salary record successfully update ho gaya.",
+      "success"
+    );
+
+    setTimeout(
+      async function(){
+
+        closeEditModal();
+
+        await loadSelectedSalary();
+
+      },
+      700
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Edit error:",
+      error
+    );
+
+    showStatus(
+      "editStatus",
+      "❌ Salary update nahi hui: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   CLOSE MODAL OUTSIDE CLICK
+========================================= */
+
+window.onclick =
+  function(event){
+
+    const modal =
+      document.getElementById(
+        "editModal"
+      );
+
+    if(
+      event.target === modal
+    ){
+
+      closeEditModal();
+
+    }
+
+  };
+
+
+/* =========================================
+   AUTO RELOAD ON MONTH CHANGE
+========================================= */
+
+document
+  .getElementById(
+    "monthSelect"
+  )
+  .addEventListener(
+    "change",
+    function(){
+
+      const teacherId =
+        document.getElementById(
+          "teacherSelect"
+        ).value;
+
+      if(teacherId){
+
+        loadSelectedSalary();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "yearSelect"
+  )
+  .addEventListener(
+    "change",
+    function(){
+
+      const teacherId =
+        document.getElementById(
+          "teacherSelect"
+        ).value;
+
+      if(teacherId){
+
+        loadSelectedSalary();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "teacherSelect"
+  )
+  .addEventListener(
+    "change",
+    function(){
+
+      resetCurrentSalary();
+
+      document.getElementById(
+        "salaryHistory"
+      ).innerHTML =
+        '<tr>' +
+        '<td colspan="7" class="empty">' +
+        'View Salary button click karke history dekhein.' +
+        '</td>' +
+        '</tr>';
+
+    }
+  );
+
+
+/* =========================================
+   START
+========================================= */
+
+loadMonths();
+
+loadYears();
+
+loadTeachers();
+
+</script>
+
+</body>
+</html>

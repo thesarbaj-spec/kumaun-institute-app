@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Settings | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f1f5f9;
+    color:#172554;
+}
+
+.header{
+    min-height:75px;
+    padding:12px 25px;
+    background:#172b68;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.header-logo{
+    width:50px;
+    height:50px;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:3px;
+    font-size:12px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:10px 17px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.back-btn:hover{
+    background:rgba(255,255,255,.12);
+}
+
+.container{
+    width:94%;
+    max-width:650px;
+    margin:30px auto;
+}
+
+.loading{
+    background:white;
+    padding:30px;
+    border-radius:16px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.error-box{
+    display:none;
+    background:#fff1f2;
+    color:#991b1b;
+    border:1px solid #fecdd3;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-size:14px;
+}
+
+.success-box{
+    display:none;
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-size:14px;
+}
+
+.settings-content{
+    display:none;
+}
+
+.profile-card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.profile-title{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.student-info{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:15px;
+}
+
+.student-name{
+    font-size:18px;
+    font-weight:800;
+    color:#172b68;
+}
+
+.student-mobile{
+    margin-top:6px;
+    font-size:14px;
+    color:#64748b;
+}
+
+.password-card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.card-title{
+    font-size:21px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.card-text{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:22px;
+}
+
+.form-group{
+    margin-bottom:17px;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+    color:#475569;
+    font-size:13px;
+    font-weight:700;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    font-size:15px;
+}
+
+input:focus{
+    border-color:#2563eb;
+}
+
+.password-note{
+    margin-top:6px;
+    color:#94a3b8;
+    font-size:11px;
+}
+
+.change-btn{
+    width:100%;
+    border:none;
+    background:#172b68;
+    color:white;
+    padding:14px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.change-btn:hover{
+    background:#1e3a8a;
+}
+
+.change-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.footer{
+    text-align:center;
+    padding:25px;
+    color:#64748b;
+    font-size:12px;
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-logo{
+        width:43px;
+        height:43px;
+    }
+
+    .header-title{
+        font-size:15px;
+    }
+
+    .header-subtitle{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .container{
+        width:96%;
+        margin:18px auto;
+    }
+
+    .password-card,
+    .profile-card{
+        padding:18px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-left">
+
+        <div class="header-logo">
+
+            <img
+                src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+                alt="Institute Logo"
+            >
+
+        </div>
+
+        <div>
+
+            <div class="header-title">
+                Kumaun Institute of Computer Education
+            </div>
+
+            <div class="header-subtitle">
+                Student Settings
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='student-dashboard.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <div
+        id="errorBox"
+        class="error-box"
+    >
+    </div>
+
+
+    <div
+        id="successBox"
+        class="success-box"
+    >
+    </div>
+
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading settings...
+    </div>
+
+
+
+    <div
+        id="settingsContent"
+        class="settings-content"
+    >
+
+
+        <section class="profile-card">
+
+            <div class="profile-title">
+                👤 My Account
+            </div>
+
+
+            <div class="student-info">
+
+                <div
+                    id="studentName"
+                    class="student-name"
+                >
+                    Student
+                </div>
+
+
+                <div
+                    id="studentMobile"
+                    class="student-mobile"
+                >
+                    Mobile: -
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="password-card">
+
+
+            <div class="card-title">
+                🔐 Change Password
+            </div>
+
+
+            <div class="card-text">
+                Password change karne ke liye apna current password aur naya password enter karein.
+            </div>
+
+
+
+            <form id="passwordForm">
+
+
+                <div class="form-group">
+
+                    <label>
+                        🔐 Current Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="currentPassword"
+                        placeholder="Enter current password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        🆕 New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="newPassword"
+                        placeholder="Enter new password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <div class="password-note">
+                        Password minimum 6 characters ka hona chahiye.
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        🔐 Confirm New Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Re-enter new password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    id="changeBtn"
+                    class="change-btn"
+                >
+                    Change Password
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    © 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentUser = null;
+
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loading =
+    document.getElementById("loading");
+
+const settingsContent =
+    document.getElementById(
+        "settingsContent"
+    );
+
+const errorBox =
+    document.getElementById(
+        "errorBox"
+    );
+
+const successBox =
+    document.getElementById(
+        "successBox"
+    );
+
+const passwordForm =
+    document.getElementById(
+        "passwordForm"
+    );
+
+const currentPassword =
+    document.getElementById(
+        "currentPassword"
+    );
+
+const newPassword =
+    document.getElementById(
+        "newPassword"
+    );
+
+const confirmPassword =
+    document.getElementById(
+        "confirmPassword"
+    );
+
+const changeBtn =
+    document.getElementById(
+        "changeBtn"
+    );
+
+
+
+/* =========================================
+   SHOW ERROR
+========================================= */
+
+function showError(message){
+
+    successBox.style.display =
+        "none";
+
+    errorBox.textContent =
+        message;
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+
+/* =========================================
+   SHOW SUCCESS
+========================================= */
+
+function showSuccess(message){
+
+    errorBox.style.display =
+        "none";
+
+    successBox.textContent =
+        message;
+
+    successBox.style.display =
+        "block";
+
+}
+
+
+
+/* =========================================
+   HIDE MESSAGES
+========================================= */
+
+function hideMessages(){
+
+    errorBox.style.display =
+        "none";
+
+    successBox.style.display =
+        "none";
+
+}
+
+
+
+/* =========================================
+   FIND STUDENT
+========================================= */
+
+async function findStudent(){
+
+    const {
+        data:sessionData,
+        error:sessionError
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+
+    if(sessionError){
+
+        throw sessionError;
+
+    }
+
+
+
+    const session =
+        sessionData.session;
+
+
+
+    if(
+        !session ||
+        !session.user
+    ){
+
+        window.location.href =
+            "student-login.html";
+
+        return null;
+
+    }
+
+
+
+    currentUser =
+        session.user;
+
+
+
+    const {
+        data:student,
+        error:studentError
+    } =
+    await supabaseClient
+    .from("Students")
+    .select("*")
+    .eq(
+        "auth_user_id",
+        currentUser.id
+    )
+    .maybeSingle();
+
+
+
+    if(studentError){
+
+        throw studentError;
+
+    }
+
+
+
+    if(!student){
+
+        throw new Error(
+            "Student profile nahi mili."
+        );
+
+    }
+
+
+
+    return student;
+
+}
+
+
+
+/* =========================================
+   SHOW STUDENT DETAILS
+========================================= */
+
+function showStudent(student){
+
+    document.getElementById(
+        "studentName"
+    ).textContent =
+        student.name || "Student";
+
+
+    document.getElementById(
+        "studentMobile"
+    ).textContent =
+        "📱 Mobile: " +
+        (
+            student.phone ||
+            "-"
+        );
+
+}
+
+
+
+/* =========================================
+   CHANGE PASSWORD
+========================================= */
+
+passwordForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        hideMessages();
+
+
+
+        const oldPassword =
+            currentPassword.value;
+
+
+        const password =
+            newPassword.value;
+
+
+        const confirm =
+            confirmPassword.value;
+
+
+
+        if(!oldPassword){
+
+            showError(
+                "Please enter your current password."
+            );
+
+            return;
+
+        }
+
+
+
+        if(password.length < 6){
+
+            showError(
+                "New password kam se kam 6 characters ka hona chahiye."
+            );
+
+            return;
+
+        }
+
+
+
+        if(
+            password !== confirm
+        ){
+
+            showError(
+                "New password aur confirm password same nahi hain."
+            );
+
+            return;
+
+        }
+
+
+
+        if(
+            oldPassword === password
+        ){
+
+            showError(
+                "New password current password se different hona chahiye."
+            );
+
+            return;
+
+        }
+
+
+
+        changeBtn.disabled =
+            true;
+
+
+        changeBtn.textContent =
+            "Verifying...";
+
+
+
+        try{
+
+
+            /* VERIFY CURRENT PASSWORD */
+
+            const {
+                error:verifyError
+            } =
+            await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:
+                    currentUser.email,
+
+                password:
+                    oldPassword
+
+            });
+
+
+
+            if(verifyError){
+
+                showError(
+                    "Current password galat hai."
+                );
+
+
+                changeBtn.disabled =
+                    false;
+
+
+                changeBtn.textContent =
+                    "Change Password";
+
+                return;
+
+            }
+
+
+
+            changeBtn.textContent =
+                "Changing Password...";
+
+
+
+            /* UPDATE PASSWORD */
+
+            const {
+                error:updateError
+            } =
+            await supabaseClient
+            .auth
+            .updateUser({
+
+                password:
+                    password
+
+            });
+
+
+
+            if(updateError){
+
+                throw updateError;
+
+            }
+
+
+
+            passwordForm.reset();
+
+
+
+            showSuccess(
+                "✅ Password successfully change ho gaya."
+            );
+
+
+
+            changeBtn.disabled =
+                false;
+
+
+            changeBtn.textContent =
+                "Change Password";
+
+
+        }
+
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            showError(
+                "Password change nahi ho paaya: " +
+                error.message
+            );
+
+
+            changeBtn.disabled =
+                false;
+
+
+            changeBtn.textContent =
+                "Change Password";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+async function startPage(){
+
+    try{
+
+
+        const student =
+            await findStudent();
+
+
+
+        if(!student){
+
+            return;
+
+        }
+
+
+
+        showStudent(
+            student
+        );
+
+
+
+        loading.style.display =
+            "none";
+
+
+
+        settingsContent.style.display =
+            "block";
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        loading.style.display =
+            "none";
+
+
+        showError(
+            "Settings page load nahi ho paaya: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+
+startPage();
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Teacher | Kumaun Institute of Computer Education</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:50px;
+  height:50px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:3px;
+}
+
+.brand h1{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.back-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.container{
+  max-width:1100px;
+  margin:25px auto;
+  padding:0 15px;
+}
+
+.box{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.title{
+  margin-bottom:22px;
+}
+
+.title h2{
+  font-size:24px;
+  margin-bottom:5px;
+}
+
+.title p{
+  color:#64748b;
+  font-size:14px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:7px;
+  color:#334155;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#2563eb;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+/* PHOTO */
+
+.photo-section{
+  grid-column:1/-1;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:18px;
+  background:#f8fafc;
+}
+
+.photo-section h3{
+  font-size:16px;
+  margin-bottom:12px;
+}
+
+.photo-area{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.photo-preview{
+  width:130px;
+  height:130px;
+  border-radius:14px;
+  border:2px dashed #94a3b8;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  color:#64748b;
+  font-size:13px;
+  text-align:center;
+}
+
+.photo-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.photo-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.photo-btn{
+  border:none;
+  padding:11px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.camera-btn{
+  background:#2563eb;
+  color:white;
+}
+
+.upload-btn{
+  background:#e2e8f0;
+  color:#172554;
+}
+
+.remove-btn{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+input[type="file"]{
+  display:none;
+}
+
+/* CAMERA MODAL */
+
+.camera-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.camera-modal.show{
+  display:flex;
+}
+
+.camera-box{
+  width:100%;
+  max-width:600px;
+  background:#111827;
+  border-radius:16px;
+  padding:15px;
+  box-shadow:0 15px 50px rgba(0,0,0,.5);
+}
+
+.camera-title{
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.camera-title h3{
+  font-size:17px;
+}
+
+.close-camera{
+  border:none;
+  background:#ef4444;
+  color:white;
+  width:35px;
+  height:35px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.camera-video-wrap{
+  width:100%;
+  background:#000;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+#cameraVideo{
+  width:100%;
+  display:block;
+  max-height:65vh;
+  object-fit:cover;
+}
+
+.camera-controls{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
+}
+
+.camera-control-btn{
+  border:none;
+  padding:12px 17px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.capture-btn{
+  background:#22c55e;
+  color:white;
+}
+
+.switch-btn{
+  background:#3b82f6;
+  color:white;
+}
+
+.cancel-btn{
+  background:#ef4444;
+  color:white;
+}
+
+.status{
+  margin-top:12px;
+  padding:10px;
+  border-radius:8px;
+  display:none;
+  font-size:13px;
+}
+
+.status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.status.info{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+/* BOTTOM BUTTONS */
+
+.submit-area{
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.submit-btn,
+.dashboard-btn{
+  width:100%;
+  border:none;
+  color:white;
+  padding:14px 20px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.submit-btn{
+  background:#172554;
+}
+
+.submit-btn:hover{
+  background:#1e3a8a;
+}
+
+.submit-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.dashboard-btn{
+  background:#2563eb;
+}
+
+.dashboard-btn:hover{
+  background:#1d4ed8;
+}
+
+@media(max-width:700px){
+
+.header{
+  padding:12px 15px;
+}
+
+.brand img{
+  width:42px;
+  height:42px;
+}
+
+.brand h1{
+  font-size:15px;
+}
+
+.brand p{
+  font-size:10px;
+}
+
+.form-grid{
+  grid-template-columns:1fr;
+}
+
+.form-group.full,
+.photo-section{
+  grid-column:auto;
+}
+
+.box{
+  padding:18px;
+}
+
+.photo-area{
+  justify-content:center;
+}
+
+.photo-buttons{
+  justify-content:center;
+}
+
+.submit-area{
+  flex-direction:column;
+}
+
+.submit-btn,
+.dashboard-btn{
+  width:100%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+      <h1>Kumaun Institute of Computer Education</h1>
+      <p>Owner Management Dashboard</p>
+    </div>
+
+  </div>
+
+  <button
+    class="back-btn"
+    onclick="location.href='index.html'"
+  >
+    ← Dashboard
+  </button>
+
+</header>
+
+
+<div class="container">
+
+  <div class="box">
+
+    <div class="title">
+
+      <h2>👨‍🏫 Add New Teacher</h2>
+
+      <p>
+        Teacher ki complete details yahan add karein.
+      </p>
+
+    </div>
+
+
+    <form id="teacherForm">
+
+      <div class="form-grid">
+
+
+        <!-- PHOTO -->
+
+        <div class="photo-section">
+
+          <h3>📷 Teacher Photo</h3>
+
+          <div class="photo-area">
+
+            <div
+              class="photo-preview"
+              id="photoPreview"
+            >
+              No Photo
+            </div>
+
+            <div class="photo-buttons">
+
+              <button
+                type="button"
+                class="photo-btn camera-btn"
+                onclick="openCamera()"
+              >
+                📷 Open Camera
+              </button>
+
+              <label
+                for="photoUpload"
+                class="photo-btn upload-btn"
+              >
+                🖼️ Choose Photo
+              </label>
+
+              <button
+                type="button"
+                class="photo-btn remove-btn"
+                onclick="removePhoto()"
+              >
+                ❌ Remove
+              </button>
+
+              <input
+                type="file"
+                id="photoUpload"
+                accept="image/*"
+                onchange="handlePhotoUpload(event)"
+              >
+
+            </div>
+
+          </div>
+
+          <div
+            id="photoStatus"
+            class="status"
+          ></div>
+
+        </div>
+
+
+        <!-- TEACHER NAME -->
+
+        <div class="form-group">
+
+          <label>
+            🧑 Teacher Name *
+          </label>
+
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter teacher name"
+            required
+          >
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+          <label>
+            Email
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            placeholder="teacher@example.com"
+          >
+
+        </div>
+
+
+        <!-- PHONE -->
+
+        <div class="form-group">
+
+          <label>
+            Phone
+          </label>
+
+          <input
+            type="tel"
+            id="phone"
+            placeholder="Enter phone number"
+          >
+
+        </div>
+
+
+        <!-- SUBJECT -->
+
+        <div class="form-group">
+
+          <label>
+            📚 Subject
+          </label>
+
+          <input
+            type="text"
+            id="subject"
+            placeholder="Enter subject"
+          >
+
+        </div>
+
+
+        <!-- BATCH TIMING -->
+
+        <div class="form-group">
+
+          <label>
+            🕐 Batch Timing
+          </label>
+
+          <input
+            type="text"
+            id="batch_timing"
+            placeholder="Example: 9:00 AM - 11:00 AM"
+          >
+
+        </div>
+
+
+        <!-- DOB -->
+
+        <div class="form-group">
+
+          <label>
+            🎂 Date of Birth
+          </label>
+
+          <input
+            type="date"
+            id="dob"
+          >
+
+        </div>
+
+
+        <!-- JOINING DATE -->
+
+        <div class="form-group">
+
+          <label>
+            📅 Joining Date
+          </label>
+
+          <input
+            type="date"
+            id="joining_date"
+          >
+
+        </div>
+
+
+        <!-- MONTHLY SALARY -->
+
+        <div class="form-group">
+
+          <label>
+            💰 Monthly Salary
+          </label>
+
+          <input
+            type="number"
+            id="monthly_salary"
+            placeholder="Enter monthly salary"
+            min="0"
+          >
+
+        </div>
+
+
+        <!-- PAID SALARY -->
+
+        <div class="form-group">
+
+          <label>
+            💵 Paid Salary
+          </label>
+
+          <input
+            type="number"
+            id="salary_paid"
+            placeholder="Enter salary already paid"
+            min="0"
+            value="0"
+          >
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="form-group">
+
+          <label>
+            🟢 Status
+          </label>
+
+          <select id="status">
+
+            <option value="Active">
+              Active
+            </option>
+
+            <option value="Inactive">
+              Inactive
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div class="form-group full">
+
+          <label>
+            🏠 Address
+          </label>
+
+          <textarea
+            id="address"
+            placeholder="Enter teacher address"
+          ></textarea>
+
+        </div>
+
+
+      </div>
+
+
+      <div
+        id="formStatus"
+        class="status"
+      ></div>
+
+
+      <!-- ADD TEACHER + DASHBOARD -->
+
+      <div class="submit-area">
+
+        <button
+          type="submit"
+          class="submit-btn"
+          id="saveButton"
+        >
+          ➕ Add Teacher
+        </button>
+
+        <button
+          type="button"
+          class="dashboard-btn"
+          onclick="location.href='owner-dashboard.html'"
+        >
+          ← Back to Dashboard
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- CAMERA MODAL -->
+
+<div
+  id="cameraModal"
+  class="camera-modal"
+>
+
+  <div class="camera-box">
+
+    <div class="camera-title">
+
+      <h3>
+        📷 Take Teacher Photo
+      </h3>
+
+      <button
+        class="close-camera"
+        type="button"
+        onclick="closeCamera()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="camera-video-wrap">
+
+      <video
+        id="cameraVideo"
+        autoplay
+        playsinline
+        muted
+      ></video>
+
+    </div>
+
+
+    <div class="camera-controls">
+
+      <button
+        type="button"
+        class="camera-control-btn switch-btn"
+        onclick="switchCamera()"
+      >
+        🔄 Switch Camera
+      </button>
+
+      <button
+        type="button"
+        class="camera-control-btn capture-btn"
+        onclick="capturePhoto()"
+      >
+        📸 Capture Photo
+      </button>
+
+      <button
+        type="button"
+        class="camera-control-btn cancel-btn"
+        onclick="closeCamera()"
+      >
+        ❌ Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<canvas
+  id="cameraCanvas"
+  style="display:none;"
+></canvas>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   GLOBAL VARIABLES
+========================================= */
+
+let selectedPhotoFile = null;
+
+let cameraStream = null;
+
+let currentCamera = "environment";
+
+
+/* =========================================
+   PHOTO UPLOAD
+========================================= */
+
+function handlePhotoUpload(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file){
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+
+    showPhotoStatus(
+      "Please select a valid image.",
+      "error"
+    );
+
+    return;
+  }
+
+  selectedPhotoFile = file;
+
+  showPhotoPreview(file);
+
+  showPhotoStatus(
+    "Photo selected successfully.",
+    "success"
+  );
+
+}
+
+
+/* =========================================
+   SHOW PHOTO PREVIEW
+========================================= */
+
+function showPhotoPreview(file){
+
+  const preview =
+    document.getElementById(
+      "photoPreview"
+    );
+
+  const reader =
+    new FileReader();
+
+  reader.onload =
+    function(e){
+
+      preview.innerHTML = `
+        <img
+          src="${e.target.result}"
+          alt="Teacher Photo"
+        >
+      `;
+
+    };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* =========================================
+   REMOVE PHOTO
+========================================= */
+
+function removePhoto(){
+
+  selectedPhotoFile = null;
+
+  document.getElementById(
+    "photoUpload"
+  ).value = "";
+
+  document.getElementById(
+    "photoPreview"
+  ).innerHTML =
+    "No Photo";
+
+  showPhotoStatus(
+    "Photo removed.",
+    "info"
+  );
+
+}
+
+
+/* =========================================
+   OPEN CAMERA
+========================================= */
+
+async function openCamera(){
+
+  const modal =
+    document.getElementById(
+      "cameraModal"
+    );
+
+  const video =
+    document.getElementById(
+      "cameraVideo"
+    );
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    showPhotoStatus(
+      "Is browser me camera access supported nahi hai. Choose Photo option use karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  try{
+
+    stopCamera();
+
+    cameraStream =
+      await navigator.mediaDevices.getUserMedia({
+
+        video:{
+          facingMode:{
+            ideal:currentCamera
+          },
+          width:{
+            ideal:1280
+          },
+          height:{
+            ideal:720
+          }
+        },
+
+        audio:false
+
+      });
+
+    video.srcObject =
+      cameraStream;
+
+    modal.classList.add(
+      "show"
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Camera error:",
+      error
+    );
+
+    let message =
+      "Camera open nahi ho paya.";
+
+    if(
+      error.name ===
+      "NotAllowedError"
+    ){
+
+      message =
+        "Camera permission denied hai. Browser settings me camera permission Allow karein.";
+
+    }
+    else if(
+      error.name === "NotFoundError" ||
+      error.name === "DevicesNotFoundError"
+    ){
+
+      message =
+        "Camera device nahi mila. Laptop ka webcam available/connected hai ya nahi check karein.";
+
+    }
+    else if(
+      error.name ===
+      "NotReadableError"
+    ){
+
+      message =
+        "Camera kisi doosre app me use ho raha hai. Doosre camera apps/browser tabs close karke dobara try karein.";
+
+    }
+    else if(
+      error.name ===
+      "SecurityError"
+    ){
+
+      message =
+        "Browser ne camera access block kiya hai. Website ko secure HTTPS connection par open karein.";
+
+    }
+
+    showPhotoStatus(
+      message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   SWITCH CAMERA
+========================================= */
+
+async function switchCamera(){
+
+  currentCamera =
+    currentCamera ===
+    "environment"
+    ?
+    "user"
+    :
+    "environment";
+
+  await openCamera();
+
+}
+
+
+/* =========================================
+   CAPTURE PHOTO
+========================================= */
+
+function capturePhoto(){
+
+  const video =
+    document.getElementById(
+      "cameraVideo"
+    );
+
+  const canvas =
+    document.getElementById(
+      "cameraCanvas"
+    );
+
+  if(
+    !cameraStream ||
+    !video.videoWidth
+  ){
+
+    showPhotoStatus(
+      "Camera abhi ready nahi hai. Thoda wait karke dobara Capture karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  canvas.width =
+    video.videoWidth;
+
+  canvas.height =
+    video.videoHeight;
+
+  const context =
+    canvas.getContext(
+      "2d"
+    );
+
+  context.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  canvas.toBlob(
+    function(blob){
+
+      if(!blob){
+        return;
+      }
+
+      selectedPhotoFile =
+        new File(
+          [blob],
+          "teacher-camera-photo.jpg",
+          {
+            type:"image/jpeg"
+          }
+        );
+
+      showPhotoPreview(
+        selectedPhotoFile
+      );
+
+      closeCamera();
+
+      showPhotoStatus(
+        "📸 Photo capture ho gayi.",
+        "success"
+      );
+
+    },
+    "image/jpeg",
+    0.9
+  );
+
+}
+
+
+/* =========================================
+   CLOSE CAMERA
+========================================= */
+
+function closeCamera(){
+
+  const modal =
+    document.getElementById(
+      "cameraModal"
+    );
+
+  modal.classList.remove(
+    "show"
+  );
+
+  stopCamera();
+
+}
+
+
+/* =========================================
+   STOP CAMERA
+========================================= */
+
+function stopCamera(){
+
+  if(cameraStream){
+
+    cameraStream
+      .getTracks()
+      .forEach(
+        function(track){
+
+          track.stop();
+
+        }
+      );
+
+    cameraStream = null;
+
+  }
+
+  const video =
+    document.getElementById(
+      "cameraVideo"
+    );
+
+  if(video){
+
+    video.srcObject =
+      null;
+
+  }
+
+}
+
+
+/* =========================================
+   PHOTO STATUS
+========================================= */
+
+function showPhotoStatus(
+  message,
+  type
+){
+
+  const element =
+    document.getElementById(
+      "photoStatus"
+    );
+
+  element.textContent =
+    message;
+
+  element.className =
+    "status " + type;
+
+}
+
+
+/* =========================================
+   FORM STATUS
+========================================= */
+
+function showFormStatus(
+  message,
+  type
+){
+
+  const element =
+    document.getElementById(
+      "formStatus"
+    );
+
+  element.textContent =
+    message;
+
+  element.className =
+    "status " + type;
+
+}
+
+
+/* =========================================
+   UPLOAD PHOTO TO SUPABASE
+========================================= */
+
+async function uploadTeacherPhoto(){
+
+  if(!selectedPhotoFile){
+
+    return null;
+
+  }
+
+  const extension =
+    selectedPhotoFile.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+  const safeExtension =
+    extension === "png"
+    ?
+    "png"
+    :
+    "jpg";
+
+  const fileName =
+    "teacher-" +
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .substring(2,8) +
+    "." +
+    safeExtension;
+
+  const filePath =
+    "teachers/" +
+    fileName;
+
+  const {
+    error:uploadError
+  } =
+  await supabaseClient
+    .storage
+    .from("teacher-photos")
+    .upload(
+      filePath,
+      selectedPhotoFile,
+      {
+        cacheControl:"3600",
+        upsert:false,
+        contentType:
+          selectedPhotoFile.type
+      }
+    );
+
+  if(uploadError){
+
+    throw uploadError;
+
+  }
+
+  const {
+    data
+  } =
+  supabaseClient
+    .storage
+    .from("teacher-photos")
+    .getPublicUrl(
+      filePath
+    );
+
+  return data.publicUrl;
+
+}
+
+
+/* =========================================
+   SAVE TEACHER
+========================================= */
+
+document
+  .getElementById(
+    "teacherForm"
+  )
+  .addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+      const saveButton =
+        document.getElementById(
+          "saveButton"
+        );
+
+      const name =
+        document.getElementById(
+          "name"
+        ).value.trim();
+
+      const email =
+        document.getElementById(
+          "email"
+        ).value.trim();
+
+      const phone =
+        document.getElementById(
+          "phone"
+        ).value.trim();
+
+      const subject =
+        document.getElementById(
+          "subject"
+        ).value.trim();
+
+      const batchTiming =
+        document.getElementById(
+          "batch_timing"
+        ).value.trim();
+
+      const dob =
+        document.getElementById(
+          "dob"
+        ).value || null;
+
+      const joiningDate =
+        document.getElementById(
+          "joining_date"
+        ).value || null;
+
+      const monthlySalary =
+        Number(
+          document.getElementById(
+            "monthly_salary"
+          ).value
+        ) || 0;
+
+      const salaryPaid =
+        Number(
+          document.getElementById(
+            "salary_paid"
+          ).value
+        ) || 0;
+
+      const status =
+        document.getElementById(
+          "status"
+        ).value;
+
+      const address =
+        document.getElementById(
+          "address"
+        ).value.trim();
+
+      if(!name){
+
+        showFormStatus(
+          "Teacher name required hai.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if(monthlySalary < 0){
+
+        showFormStatus(
+          "Monthly salary invalid hai.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if(salaryPaid < 0){
+
+        showFormStatus(
+          "Paid salary invalid hai.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      saveButton.disabled =
+        true;
+
+      saveButton.textContent =
+        "Saving...";
+
+      try{
+
+        showFormStatus(
+          "Teacher details save ho rahi hain...",
+          "info"
+        );
+
+        let photoUrl = null;
+
+        if(selectedPhotoFile){
+
+          showFormStatus(
+            "Photo upload ho rahi hai...",
+            "info"
+          );
+
+          photoUrl =
+            await uploadTeacherPhoto();
+
+        }
+
+        const {
+          error
+        } =
+        await supabaseClient
+          .from("teachers")
+          .insert([
+
+            {
+              name:name,
+              email:email || null,
+              phone:phone || null,
+              subject:subject || null,
+              batch_timing:batchTiming || null,
+              dob:dob,
+              joining_date:joiningDate,
+              monthly_salary:monthlySalary,
+              salary_paid:salaryPaid,
+              status:status,
+              address:address || null,
+              photo_url:photoUrl
+            }
+
+          ]);
+
+        if(error){
+
+          throw error;
+
+        }
+
+        showFormStatus(
+          "✅ Teacher successfully add ho gaya!",
+          "success"
+        );
+
+        document
+          .getElementById(
+            "teacherForm"
+          )
+          .reset();
+
+        selectedPhotoFile =
+          null;
+
+        document.getElementById(
+          "photoPreview"
+        ).innerHTML =
+          "No Photo";
+
+        setTimeout(
+          function(){
+
+            location.href =
+              "owner-teachers.html";
+
+          },
+          1200
+        );
+
+      }
+      catch(error){
+
+        console.error(
+          "Save teacher error:",
+          error
+        );
+
+        showFormStatus(
+          "❌ Teacher save nahi hua: " +
+          error.message,
+          "error"
+        );
+
+      }
+      finally{
+
+        saveButton.disabled =
+          false;
+
+        saveButton.textContent =
+          "➕ Add Teacher";
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   STOP CAMERA ON PAGE EXIT
+========================================= */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    stopCamera();
+
+  }
+);
+
+
+/* =========================================
+   ESC KEY CLOSE CAMERA
+========================================= */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key === "Escape"){
+
+      closeCamera();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>

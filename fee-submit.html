@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fee Submit | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#172554;
+}
+
+.header{
+    background:#172b68;
+    color:white;
+    padding:14px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+    background:white;
+    border-radius:10px;
+    padding:4px;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    font-size:12px;
+    margin-top:4px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    background:white;
+    color:#172b68;
+    border:0;
+    padding:10px 16px;
+    border-radius:9px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.main{
+    width:94%;
+    max-width:1100px;
+    margin:25px auto;
+}
+
+.loading{
+    background:white;
+    padding:30px;
+    text-align:center;
+    border-radius:15px;
+    color:#64748b;
+}
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:12px;
+    margin-bottom:18px;
+    font-size:14px;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+}
+
+.student-info{
+    background:white;
+    border-radius:17px;
+    padding:22px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.student-info h2{
+    font-size:21px;
+    margin-bottom:16px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.info-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:15px;
+}
+
+.info-label{
+    font-size:12px;
+    color:#64748b;
+}
+
+.info-value{
+    margin-top:7px;
+    font-size:17px;
+    font-weight:800;
+    color:#172b68;
+    word-break:break-word;
+}
+
+.fee-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.fee-card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.fee-icon{
+    font-size:29px;
+}
+
+.fee-title{
+    margin-top:9px;
+    font-size:13px;
+    color:#64748b;
+}
+
+.fee-value{
+    margin-top:7px;
+    font-size:24px;
+    font-weight:800;
+    color:#172b68;
+}
+
+.remaining .fee-value{
+    color:#dc2626;
+}
+
+.payment-section{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    align-items:start;
+}
+
+.payment-box{
+    background:white;
+    border-radius:17px;
+    padding:23px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.payment-box h2{
+    font-size:20px;
+    margin-bottom:18px;
+}
+
+.qr-area{
+    text-align:center;
+}
+
+.qr-image{
+    width:100%;
+    max-width:310px;
+    aspect-ratio:1/1;
+    object-fit:contain;
+    border:1px solid #e2e8f0;
+    border-radius:15px;
+    padding:10px;
+    background:white;
+}
+
+.qr-text{
+    margin-top:15px;
+    color:#475569;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.payment-note{
+    margin-top:15px;
+    padding:13px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:700;
+    color:#475569;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    font-size:15px;
+    background:white;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+    border-color:#172b68;
+}
+
+.form-group textarea{
+    resize:vertical;
+    min-height:90px;
+}
+
+.file-note{
+    margin-top:6px;
+    font-size:11px;
+    color:#64748b;
+}
+
+.submit-btn{
+    width:100%;
+    border:0;
+    background:#16a34a;
+    color:white;
+    padding:14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:800;
+}
+
+.submit-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.history-section{
+    margin-top:20px;
+    background:white;
+    border-radius:17px;
+    padding:22px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.history-section h2{
+    font-size:20px;
+    margin-bottom:18px;
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1050px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px;
+    text-align:left;
+    border-bottom:1px solid #e2e8f0;
+}
+
+th{
+    font-size:12px;
+    color:#64748b;
+    background:#f8fafc;
+}
+
+td{
+    font-size:14px;
+}
+
+.payment-date{
+    font-weight:700;
+    color:#172b68;
+}
+
+.payment-time{
+    margin-top:4px;
+    font-size:12px;
+    color:#2563eb;
+    font-weight:600;
+}
+
+.status{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-approved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-rejected{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.screenshot-link{
+    display:inline-block;
+    padding:7px 10px;
+    background:#e0e7ff;
+    color:#3730a3;
+    border-radius:7px;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.empty{
+    text-align:center;
+    color:#64748b;
+    padding:25px;
+}
+
+.footer{
+    text-align:center;
+    padding:25px 10px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media(max-width:900px){
+
+    .info-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .payment-section{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .logo{
+        width:42px;
+        height:42px;
+    }
+
+    .header-title{
+        font-size:15px;
+    }
+
+    .header-subtitle{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 10px;
+        font-size:11px;
+    }
+
+    .main{
+        width:96%;
+        margin:15px auto;
+    }
+
+    .student-info,
+    .payment-box,
+    .history-section{
+        padding:16px;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+    }
+
+    .info-box{
+        padding:12px;
+    }
+
+    .info-label{
+        font-size:10px;
+    }
+
+    .info-value{
+        font-size:13px;
+    }
+
+    .fee-grid{
+        gap:9px;
+    }
+
+    .fee-card{
+        padding:14px 7px;
+    }
+
+    .fee-icon{
+        font-size:23px;
+    }
+
+    .fee-title{
+        font-size:10px;
+    }
+
+    .fee-value{
+        font-size:15px;
+    }
+
+    .payment-box h2,
+    .student-info h2,
+    .history-section h2{
+        font-size:17px;
+    }
+
+    .qr-image{
+        max-width:260px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-left">
+
+        <img
+            class="logo"
+            src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+            alt="Institute Logo"
+        >
+
+        <div>
+
+            <div class="header-title">
+                Kumaun Institute of Computer Education
+            </div>
+
+            <div class="header-subtitle">
+                Fee Payment Portal
+            </div>
+
+        </div>
+
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="location.href='student-dashboard.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+<main class="main">
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <div
+        id="loading"
+        class="loading">
+
+        Loading student information...
+
+    </div>
+
+
+    <div
+        id="content"
+        style="display:none;"
+    >
+
+
+        <section class="student-info">
+
+            <h2>👤 Student Information</h2>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Student Name
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="studentName"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Student ID
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="studentId"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Course
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="studentCourse"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Mobile
+                    </div>
+
+                    <div
+                        class="info-value"
+                        id="studentPhone"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="fee-grid">
+
+            <div class="fee-card">
+
+                <div class="fee-icon">
+                    💰
+                </div>
+
+                <div class="fee-title">
+                    Total Fee
+                </div>
+
+                <div
+                    class="fee-value"
+                    id="totalFee"
+                >
+                    ₹0
+                </div>
+
+            </div>
+
+
+            <div class="fee-card">
+
+                <div class="fee-icon">
+                    ✅
+                </div>
+
+                <div class="fee-title">
+                    Paid Fee
+                </div>
+
+                <div
+                    class="fee-value"
+                    id="paidFee"
+                >
+                    ₹0
+                </div>
+
+            </div>
+
+
+            <div class="fee-card remaining">
+
+                <div class="fee-icon">
+                    ⏳
+                </div>
+
+                <div class="fee-title">
+                    Remaining Fee
+                </div>
+
+                <div
+                    class="fee-value"
+                    id="remainingFee"
+                >
+                    ₹0
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="payment-section">
+
+
+            <div class="payment-box">
+
+                <h2>📱 Scan & Pay</h2>
+
+                <div class="qr-area">
+
+                    <img
+                        class="qr-image"
+                        src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/QR%20Code.jpg"
+                        alt="Payment QR Code"
+                    >
+
+                    <div class="qr-text">
+
+                        अपने किसी भी UPI App से QR Code Scan करके
+                        Payment करें।
+
+                    </div>
+
+
+                    <div class="payment-note">
+
+                        ⚠️ Payment करने के बाद नीचे अपना
+                        Transaction ID / UTR Number जरूर डालें।
+                        आपकी Payment पहले <b>Pending</b> रहेगी और
+                        Institute द्वारा Verify होने के बाद Approve होगी।
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="payment-box">
+
+                <h2>💳 Submit Payment Details</h2>
+
+
+                <form id="paymentForm">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Payment Amount (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="paymentAmount"
+                            placeholder="Enter payment amount"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Transaction ID / UTR Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="transactionId"
+                            placeholder="Enter Transaction / UTR ID"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Payment Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="paymentDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Payment Screenshot (Optional)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="paymentScreenshotInput"
+                            accept="image/png,image/jpeg,image/jpg,image/webp"
+                        >
+
+                        <div class="file-note">
+                            Screenshot optional. JPG, PNG & WEBP Upload karein.
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Payment Note (Optional)
+                        </label>
+
+                        <textarea
+                            id="paymentNote"
+                            placeholder="Any additional information..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="submit-btn"
+                    >
+                        Submit Payment Request
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="history-section">
+
+            <h2>📋 My Payment Requests</h2>
+
+            <div class="table-scroll">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Payment Date</th>
+                            <th>Payment Time</th>
+                            <th>Amount</th>
+                            <th>Transaction ID</th>
+                            <th>Screenshot</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="paymentHistory">
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="empty"
+                            >
+                                Loading payment history...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    © 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentStudent = null;
+
+
+/* =========================================
+   MONEY
+========================================= */
+
+function money(value){
+
+    return "₹" +
+    Number(value || 0)
+    .toLocaleString("en-IN");
+
+}
+
+
+/* =========================================
+   PAYMENT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const date =
+    new Date(value + "T00:00:00");
+
+    if(isNaN(date.getTime())){
+        return value;
+    }
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+/* =========================================
+   PAYMENT TIME
+   created_at se automatic time
+========================================= */
+
+function formatTime(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const date =
+    new Date(value);
+
+    if(isNaN(date.getTime())){
+        return "-";
+    }
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:true
+        }
+    );
+
+}
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+    message.className =
+    "message " + type;
+
+    message.textContent =
+    text;
+
+    message.style.display =
+    "block";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================
+   GET STUDENT ID
+========================================= */
+
+function getStudentId(student){
+
+    return (
+        student.student_id ||
+        student.registration_no ||
+        student.registration_number ||
+        student.admission_no ||
+        student.admission_number ||
+        student.id ||
+        "-"
+    );
+
+}
+
+
+/* =========================================
+   GET PHONE
+========================================= */
+
+function getPhone(student){
+
+    return (
+        student.phone ||
+        student.mobile ||
+        student.mobile_number ||
+        "-"
+    );
+
+}
+
+
+/* =========================================
+   FIND LOGGED IN STUDENT
+========================================= */
+
+async function findStudent(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+    if(error){
+        throw error;
+    }
+
+
+    if(
+        !data.session ||
+        !data.session.user
+    ){
+
+        location.href =
+        "student-login.html";
+
+        return null;
+
+    }
+
+
+    const authUserId =
+    data.session.user.id;
+
+
+    const {
+        data:student,
+        error:studentError
+    } =
+    await supabaseClient
+    .from("Students")
+    .select("*")
+    .eq(
+        "auth_user_id",
+        authUserId
+    )
+    .maybeSingle();
+
+
+    if(studentError){
+        throw studentError;
+    }
+
+
+    return student;
+
+}
+
+
+/* =========================================
+   SHOW STUDENT
+========================================= */
+
+function showStudent(student){
+
+    currentStudent =
+    student;
+
+
+    const studentId =
+    getStudentId(student);
+
+
+    const phone =
+    getPhone(student);
+
+
+    const total =
+    Number(
+        student.total_fee || 0
+    );
+
+
+    const paid =
+    Number(
+        student.paid_fee || 0
+    );
+
+
+    const remaining =
+    Math.max(
+        total - paid,
+        0
+    );
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent =
+    student.name || "-";
+
+
+    document.getElementById(
+        "studentId"
+    ).textContent =
+    studentId;
+
+
+    document.getElementById(
+        "studentCourse"
+    ).textContent =
+    student.course || "-";
+
+
+    document.getElementById(
+        "studentPhone"
+    ).textContent =
+    phone;
+
+
+    document.getElementById(
+        "totalFee"
+    ).textContent =
+    money(total);
+
+
+    document.getElementById(
+        "paidFee"
+    ).textContent =
+    money(paid);
+
+
+    document.getElementById(
+        "remainingFee"
+    ).textContent =
+    money(remaining);
+
+
+    document.getElementById(
+        "paymentAmount"
+    ).max =
+    remaining;
+
+
+    document.getElementById(
+        "paymentDate"
+    ).value =
+    new Date()
+    .toISOString()
+    .split("T")[0];
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+    "none";
+
+
+    document.getElementById(
+        "content"
+    ).style.display =
+    "block";
+
+}
+
+
+/* =========================================
+   UPLOAD SCREENSHOT
+========================================= */
+
+async function uploadScreenshot(
+    file
+){
+
+    if(!file){
+        return null;
+    }
+
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp"
+    ];
+
+
+    if(
+        !allowedTypes.includes(
+            file.type
+        )
+    ){
+
+        throw new Error(
+            "Sirf JPG, PNG ya WEBP image upload karein."
+        );
+
+    }
+
+
+    const fileExtension =
+    file.name
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+
+    const fileName =
+    currentStudent.id +
+    "/" +
+    Date.now() +
+    "-" +
+    Math.random()
+    .toString(36)
+    .substring(2) +
+    "." +
+    fileExtension;
+
+
+    const {
+        error:uploadError
+    } =
+    await supabaseClient
+    .storage
+    .from("payment-screenshots")
+    .upload(
+        fileName,
+        file
+    );
+
+
+    if(uploadError){
+        throw uploadError;
+    }
+
+
+    const {
+        data:publicUrlData
+    } =
+    supabaseClient
+    .storage
+    .from("payment-screenshots")
+    .getPublicUrl(
+        fileName
+    );
+
+
+    return publicUrlData.publicUrl;
+
+}
+
+
+/* =========================================
+   SUBMIT PAYMENT
+========================================= */
+
+document
+.getElementById("paymentForm")
+.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        if(!currentStudent){
+
+            showMessage(
+                "Student information load nahi hui.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const amount =
+        Number(
+            document.getElementById(
+                "paymentAmount"
+            ).value
+        );
+
+
+        const transactionId =
+        document.getElementById(
+            "transactionId"
+        )
+        .value
+        .trim();
+
+
+        const paymentDate =
+        document.getElementById(
+            "paymentDate"
+        ).value;
+
+
+        const screenshotFile =
+        document.getElementById(
+            "paymentScreenshotInput"
+        )
+        .files[0];
+
+
+        const note =
+        document.getElementById(
+            "paymentNote"
+        )
+        .value
+        .trim();
+
+
+        const total =
+        Number(
+            currentStudent.total_fee || 0
+        );
+
+
+        const paid =
+        Number(
+            currentStudent.paid_fee || 0
+        );
+
+
+        const remaining =
+        Math.max(
+            total - paid,
+            0
+        );
+
+
+        if(amount <= 0){
+
+            showMessage(
+                "Please valid payment amount enter karein.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(amount > remaining){
+
+            showMessage(
+                "Payment amount remaining fee se zyada nahi ho sakti.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!transactionId){
+
+            showMessage(
+                "Transaction ID / UTR Number enter karein.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!paymentDate){
+
+            showMessage(
+                "Payment date select karein.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const submitBtn =
+        document.getElementById(
+            "submitBtn"
+        );
+
+
+        submitBtn.disabled =
+        true;
+
+
+        submitBtn.textContent =
+        "Submitting...";
+
+
+        try{
+
+            let screenshotUrl =
+            null;
+
+
+            if(screenshotFile){
+
+                submitBtn.textContent =
+                "Uploading Screenshot...";
+
+
+                screenshotUrl =
+                await uploadScreenshot(
+                    screenshotFile
+                );
+
+            }
+
+
+            submitBtn.textContent =
+            "Saving Payment Request...";
+
+
+            const paymentData = {
+
+                student_id:
+                currentStudent.id,
+
+                amount:
+                amount,
+
+                transaction_id:
+                transactionId,
+
+                payment_date:
+                paymentDate,
+
+                screenshot_url:
+                screenshotUrl,
+
+                status:
+                "Pending"
+
+            };
+
+
+            if(note){
+
+                paymentData.note =
+                note;
+
+            }
+
+
+            /*
+                IMPORTANT:
+
+                created_at yahan manually nahi diya gaya.
+
+                Supabase table ka DEFAULT created_at
+                automatically current date + time save karega.
+            */
+
+
+            const {
+                error
+            } =
+            await supabaseClient
+            .from("fee_payments")
+            .insert([
+                paymentData
+            ]);
+
+
+            if(error){
+                throw error;
+            }
+
+
+            showMessage(
+                "✅ Payment Request Successfully Submit.",
+                "success"
+            );
+
+
+            document
+            .getElementById(
+                "paymentForm"
+            )
+            .reset();
+
+
+            document.getElementById(
+                "paymentDate"
+            ).value =
+            new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+            loadPaymentHistory();
+
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Payment request submit failed: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            submitBtn.disabled =
+            false;
+
+
+            submitBtn.textContent =
+            "Submit Payment Request";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   LOAD PAYMENT HISTORY
+========================================= */
+
+async function loadPaymentHistory(){
+
+    if(!currentStudent){
+        return;
+    }
+
+
+    const history =
+    document.getElementById(
+        "paymentHistory"
+    );
+
+
+    history.innerHTML =
+    `
+    <tr>
+        <td colspan="6" class="empty">
+            Loading...
+        </td>
+    </tr>
+    `;
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .from("fee_payments")
+    .select("*")
+    .eq(
+        "student_id",
+        currentStudent.id
+    )
+    .order(
+        "created_at",
+        {
+            ascending:false
+        }
+    );
+
+
+    if(error){
+
+        console.error(error);
+
+
+        history.innerHTML =
+        `
+        <tr>
+            <td colspan="6" class="empty">
+                Payment history load nahi hui.
+            </td>
+        </tr>
+        `;
+
+        return;
+
+    }
+
+
+    const payments =
+    data || [];
+
+
+    if(!payments.length){
+
+        history.innerHTML =
+        `
+        <tr>
+            <td colspan="6" class="empty">
+                Abhi tak koi payment request nahi hai.
+            </td>
+        </tr>
+        `;
+
+        return;
+
+    }
+
+
+    history.innerHTML =
+    "";
+
+
+    payments.forEach(
+        function(payment){
+
+            const status =
+            String(
+                payment.status ||
+                "Pending"
+            );
+
+
+            let statusClass =
+            "status-pending";
+
+
+            if(
+                status.toLowerCase() ===
+                "approved"
+            ){
+
+                statusClass =
+                "status-approved";
+
+            }
+
+
+            if(
+                status.toLowerCase() ===
+                "rejected"
+            ){
+
+                statusClass =
+                "status-rejected";
+
+            }
+
+
+            let screenshotHTML =
+            `<span style="color:#64748b;">No Screenshot</span>`;
+
+
+            if(payment.screenshot_url){
+
+                screenshotHTML =
+                `
+                <a
+                    href="${payment.screenshot_url}"
+                    target="_blank"
+                    class="screenshot-link"
+                >
+                    👁 View
+                </a>
+                `;
+
+            }
+
+
+            const row =
+            document.createElement(
+                "tr"
+            );
+
+
+            row.innerHTML =
+            `
+            <td>
+
+                <div class="payment-date">
+                    ${formatDate(
+                        payment.payment_date ||
+                        payment.created_at
+                    )}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="payment-time">
+                    🕐 ${formatTime(
+                        payment.created_at
+                    )}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+                    ${money(payment.amount)}
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                ${escapeHTML(
+                    payment.transaction_id || "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                ${screenshotHTML}
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="status ${statusClass}"
+                >
+                    ${escapeHTML(status)}
+                </span>
+
+            </td>
+            `;
+
+
+            history.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+async function startPage(){
+
+    try{
+
+        const student =
+        await findStudent();
+
+
+        if(!student){
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+            "none";
+
+
+            showMessage(
+                "Student record nahi mila.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        showStudent(
+            student
+        );
+
+
+        loadPaymentHistory();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+        "none";
+
+
+        showMessage(
+            "Page load nahi ho paaya: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+startPage();
+
+</script>
+
+</body>
+</html>

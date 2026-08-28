@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Complaints | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#1f2937;
+}
+
+.header{
+    background:#172554;
+    color:white;
+    padding:12px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.logo-box{
+    width:52px;
+    height:52px;
+    background:white;
+    border-radius:10px;
+    padding:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+}
+
+.logo-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.brand h2{
+    font-size:21px;
+}
+
+.brand p{
+    margin-top:4px;
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 16px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.main{
+    max-width:1500px;
+    margin:auto;
+    padding:25px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+}
+
+.refresh-btn{
+    background:#172554;
+    color:white;
+    border:0;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.summary-card h3{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:9px;
+}
+
+.summary-card strong{
+    font-size:28px;
+    color:#172554;
+}
+
+.pending-number{
+    color:#d97706 !important;
+}
+
+.progress-number{
+    color:#2563eb !important;
+}
+
+.resolved-number{
+    color:#16a34a !important;
+}
+
+.closed-number{
+    color:#64748b !important;
+}
+
+.filter-box{
+    background:white;
+    padding:16px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.filter-box label{
+    font-size:13px;
+    font-weight:bold;
+    color:#475569;
+}
+
+.filter-box select{
+    padding:10px 13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+    min-width:170px;
+}
+
+.box{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1450px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:14px 12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    vertical-align:top;
+}
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-size:13px;
+}
+
+td{
+    font-size:14px;
+}
+
+.student-name{
+    font-weight:800;
+    color:#172554;
+    margin-bottom:5px;
+}
+
+.student-course{
+    color:#64748b;
+    font-size:12px;
+}
+
+.subject{
+    font-weight:800;
+    color:#172554;
+    max-width:220px;
+}
+
+.complaint-text{
+    max-width:350px;
+    white-space:pre-wrap;
+    line-height:1.55;
+    color:#334155;
+    word-break:break-word;
+}
+
+.date-text{
+    white-space:nowrap;
+    color:#475569;
+}
+
+.status{
+    display:inline-block;
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-progress{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-resolved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-closed{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.status-default{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.status-select{
+    padding:9px 10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:white;
+    outline:none;
+    min-width:125px;
+}
+
+.update-btn{
+    margin-top:7px;
+    background:#172554;
+    color:white;
+    border:0;
+    padding:8px 11px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.loading,
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+@media(max-width:1100px){
+
+    .summary-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+}
+
+@media(max-width:750px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .logo-box{
+        width:43px;
+        height:43px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:11px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:15px;
+    }
+
+    .summary-card strong{
+        font-size:23px;
+    }
+
+    .filter-box{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .filter-box select{
+        width:100%;
+    }
+
+    .box{
+        padding:12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-left">
+
+    <div class="logo-box">
+
+        <img
+            src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+            alt="Kumaun Institute Logo">
+
+    </div>
+
+    <div class="brand">
+
+        <h2>Kumaun Institute of Computer Education</h2>
+
+        <p>Complaints Management System</p>
+
+    </div>
+
+</div>
+
+<button
+    class="back-btn"
+    onclick="location.href='index.html'">
+
+    ← Dashboard
+
+</button>
+
+</header>
+
+<main class="main">
+
+<div class="top">
+
+    <h1>📝 Student Complaints</h1>
+
+    <button
+        class="refresh-btn"
+        onclick="loadComplaints()">
+
+        ↻ Refresh
+
+    </button>
+
+</div>
+
+
+<div
+    id="message"
+    class="message">
+</div>
+
+
+<div class="summary-grid">
+
+    <div class="summary-card">
+
+        <h3>Total Complaints</h3>
+
+        <strong id="totalComplaints">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>Pending</h3>
+
+        <strong
+            id="pendingComplaints"
+            class="pending-number">
+
+            0
+
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>In Progress</h3>
+
+        <strong
+            id="progressComplaints"
+            class="progress-number">
+
+            0
+
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>Resolved</h3>
+
+        <strong
+            id="resolvedComplaints"
+            class="resolved-number">
+
+            0
+
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>Closed</h3>
+
+        <strong
+            id="closedComplaints"
+            class="closed-number">
+
+            0
+
+        </strong>
+
+    </div>
+
+</div>
+
+
+<div class="filter-box">
+
+    <label>
+        Filter Complaint Status:
+    </label>
+
+
+    <select
+        id="statusFilter"
+        onchange="applyFilter()">
+
+        <option value="all">
+            All Complaints
+        </option>
+
+        <option value="Pending">
+            Pending
+        </option>
+
+        <option value="In Progress">
+            In Progress
+        </option>
+
+        <option value="Resolved">
+            Resolved
+        </option>
+
+        <option value="Closed">
+            Closed
+        </option>
+
+    </select>
+
+</div>
+
+
+<section class="box">
+
+    <div class="table-scroll">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Student Details</th>
+                    <th>Student ID</th>
+                    <th>Mobile</th>
+                    <th>Complaint Subject</th>
+                    <th>Complaint</th>
+                    <th>Submitted Date</th>
+                    <th>Current Status</th>
+                    <th>Update Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="complaintsBody">
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="loading">
+
+                        Complaint records load ho rahe hain...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+</main>
+
+<script>
+
+/* =========================================
+   SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =========================================
+   GLOBAL DATA
+========================================= */
+
+let complaints = [];
+
+let studentsMap = {};
+
+
+
+/* =========================================
+   LOAD COMPLAINTS
+========================================= */
+
+async function loadComplaints(){
+
+    const body =
+    document.getElementById(
+        "complaintsBody"
+    );
+
+
+    body.innerHTML = `
+        <tr>
+            <td
+                colspan="8"
+                class="loading">
+
+                Loading complaint records...
+
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const {
+            data:complaintData,
+            error:complaintError
+        } =
+        await supabaseClient
+        .from("complaints")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+        if(complaintError){
+
+            throw complaintError;
+
+        }
+
+
+        complaints =
+        complaintData || [];
+
+
+        const {
+            data:studentData,
+            error:studentError
+        } =
+        await supabaseClient
+        .from("Students")
+        .select("*");
+
+
+        if(studentError){
+
+            throw studentError;
+
+        }
+
+
+        studentsMap = {};
+
+
+        (studentData || []).forEach(
+        function(student){
+
+            studentsMap[
+                String(student.id)
+            ] =
+            student;
+
+        });
+
+
+        updateSummary();
+
+        applyFilter();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    class="empty">
+
+                    ❌ ${escapeHTML(error.message)}
+
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            "Complaint records load nahi hue: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   APPLY FILTER
+========================================= */
+
+function applyFilter(){
+
+    const filter =
+    document.getElementById(
+        "statusFilter"
+    ).value;
+
+
+    let filteredComplaints =
+    complaints;
+
+
+    if(filter !== "all"){
+
+        filteredComplaints =
+        complaints.filter(
+        function(item){
+
+            return String(
+                item.status || "Pending"
+            )
+            .toLowerCase() ===
+            filter.toLowerCase();
+
+        });
+
+    }
+
+
+    displayComplaints(
+        filteredComplaints
+    );
+
+}
+
+
+
+/* =========================================
+   DISPLAY COMPLAINTS
+========================================= */
+
+function displayComplaints(list){
+
+    const body =
+    document.getElementById(
+        "complaintsBody"
+    );
+
+
+    body.innerHTML = "";
+
+
+    if(!list.length){
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    class="empty">
+
+                    📭 No complaints found.
+
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    list.forEach(
+    function(item){
+
+        const student =
+        studentsMap[
+            String(item.student_id)
+        ];
+
+
+        const studentName =
+        student &&
+        student.name
+        ? student.name
+        : "Unknown Student";
+
+
+        const studentId =
+        student
+        ? (
+            student.student_id ||
+            student.registration_no ||
+            student.registration_number ||
+            student.admission_no ||
+            student.id
+        )
+        : item.student_id;
+
+
+        const phone =
+        student
+        ? (
+            student.phone ||
+            student.mobile ||
+            student.mobile_number ||
+            "-"
+        )
+        : "-";
+
+
+        const course =
+        student &&
+        student.course
+        ? student.course
+        : "-";
+
+
+        const status =
+        item.status ||
+        "Pending";
+
+
+        const statusClass =
+        getStatusClass(
+            status
+        );
+
+
+        const row =
+        document.createElement(
+            "tr"
+        );
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <div class="student-name">
+
+                    ${escapeHTML(studentName)}
+
+                </div>
+
+                <div class="student-course">
+
+                    📚 ${escapeHTML(course)}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+
+                    ${escapeHTML(studentId)}
+
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                ${escapeHTML(phone)}
+
+            </td>
+
+
+            <td>
+
+                <div class="subject">
+
+                    ${escapeHTML(
+                        item.subject ||
+                        "No Subject"
+                    )}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="complaint-text">
+
+                    ${escapeHTML(
+                        item.complaint ||
+                        "-"
+                    )}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="date-text">
+
+                    ${formatDateTime(
+                        item.created_at
+                    )}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="status ${statusClass}">
+
+                    ${escapeHTML(status)}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <select
+                    id="status_${item.id}"
+                    class="status-select">
+
+                    <option
+                        value="Pending"
+                        ${status === "Pending" ? "selected" : ""}>
+
+                        Pending
+
+                    </option>
+
+                    <option
+                        value="In Progress"
+                        ${status === "In Progress" ? "selected" : ""}>
+
+                        In Progress
+
+                    </option>
+
+                    <option
+                        value="Resolved"
+                        ${status === "Resolved" ? "selected" : ""}>
+
+                        Resolved
+
+                    </option>
+
+                    <option
+                        value="Closed"
+                        ${status === "Closed" ? "selected" : ""}>
+
+                        Closed
+
+                    </option>
+
+                </select>
+
+
+                <br>
+
+
+                <button
+                    class="update-btn"
+                    onclick="updateComplaintStatus('${item.id}')">
+
+                    ✓ Update
+
+                </button>
+
+            </td>
+
+        `;
+
+
+        body.appendChild(
+            row
+        );
+
+    });
+
+}
+
+
+
+/* =========================================
+   UPDATE COMPLAINT STATUS
+========================================= */
+
+async function updateComplaintStatus(
+    complaintId
+){
+
+    const select =
+    document.getElementById(
+        "status_" + complaintId
+    );
+
+
+    if(!select){
+
+        showMessage(
+            "Status option nahi mila.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const newStatus =
+    select.value;
+
+
+    const complaint =
+    complaints.find(
+    function(item){
+
+        return String(item.id) ===
+        String(complaintId);
+
+    });
+
+
+    if(
+        complaint &&
+        String(
+            complaint.status || "Pending"
+        ) === newStatus
+    ){
+
+        showMessage(
+            "Status already " +
+            newStatus +
+            " hai.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmUpdate =
+    confirm(
+        "Complaint status '" +
+        newStatus +
+        "' ?"
+    );
+
+
+    if(!confirmUpdate){
+
+        return;
+
+    }
+
+
+    select.disabled =
+    true;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("complaints")
+        .update({
+
+            status:
+            newStatus
+
+        })
+        .eq(
+            "id",
+            complaintId
+        )
+        .select();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !data ||
+            !data.length
+        ){
+
+            throw new Error(
+                "Complaint status update nahi hua. Supabase RLS UPDATE policy check karein."
+            );
+
+        }
+
+
+        showMessage(
+            "✅ Complaint Status Successfully Updated.",
+            "Success"
+        );
+
+
+        await loadComplaints();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "❌ Complaint Update Failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+    finally{
+
+        select.disabled =
+        false;
+
+    }
+
+}
+
+
+
+/* =========================================
+   UPDATE SUMMARY
+========================================= */
+
+function updateSummary(){
+
+    const total =
+    complaints.length;
+
+
+    const pending =
+    complaints.filter(
+    function(item){
+
+        return String(
+            item.status || "Pending"
+        )
+        .toLowerCase() ===
+        "pending";
+
+    }).length;
+
+
+    const progress =
+    complaints.filter(
+    function(item){
+
+        const status =
+        String(
+            item.status || ""
+        ).toLowerCase();
+
+
+        return (
+            status === "in progress" ||
+            status === "in_progress"
+        );
+
+    }).length;
+
+
+    const resolved =
+    complaints.filter(
+    function(item){
+
+        return String(
+            item.status || ""
+        )
+        .toLowerCase() ===
+        "resolved";
+
+    }).length;
+
+
+    const closed =
+    complaints.filter(
+    function(item){
+
+        return String(
+            item.status || ""
+        )
+        .toLowerCase() ===
+        "closed";
+
+    }).length;
+
+
+    document.getElementById(
+        "totalComplaints"
+    ).textContent =
+    total;
+
+
+    document.getElementById(
+        "pendingComplaints"
+    ).textContent =
+    pending;
+
+
+    document.getElementById(
+        "progressComplaints"
+    ).textContent =
+    progress;
+
+
+    document.getElementById(
+        "resolvedComplaints"
+    ).textContent =
+    resolved;
+
+
+    document.getElementById(
+        "closedComplaints"
+    ).textContent =
+    closed;
+
+}
+
+
+
+/* =========================================
+   STATUS CLASS
+========================================= */
+
+function getStatusClass(status){
+
+    const value =
+    String(
+        status || ""
+    ).toLowerCase();
+
+
+    if(value === "pending"){
+
+        return "status-pending";
+
+    }
+
+
+    if(
+        value === "in progress" ||
+        value === "in_progress"
+    ){
+
+        return "status-progress";
+
+    }
+
+
+    if(value === "resolved"){
+
+        return "status-resolved";
+
+    }
+
+
+    if(value === "closed"){
+
+        return "status-closed";
+
+    }
+
+
+    return "status-default";
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDateTime(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+
+    message.className =
+    "message";
+
+
+    if(type === "success"){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    message.textContent =
+    text;
+
+
+    message.style.display =
+    "block";
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+
+    setTimeout(
+    function(){
+
+        message.style.display =
+        "none";
+
+    },
+    5000
+    );
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+loadComplaints();
+
+</script>
+
+</body>
+
+</html>

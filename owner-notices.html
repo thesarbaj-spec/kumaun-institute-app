@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
+>
+
+<title>Notice Management | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#172554;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+    min-height:75px;
+    padding:12px 25px;
+    background:#172b68;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.header-logo{
+    width:52px;
+    height:52px;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:3px;
+    font-size:12px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:10px 17px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.back-btn:hover{
+    background:white;
+    color:#172b68;
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+.container{
+    width:94%;
+    max-width:1100px;
+    margin:25px auto;
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+}
+
+
+/* =========================================
+   TOP
+========================================= */
+
+.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+}
+
+.refresh-btn{
+    border:0;
+    background:#172b68;
+    color:white;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+
+/* =========================================
+   BOX
+========================================= */
+
+.box{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:22px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-title{
+    font-size:21px;
+    margin-bottom:8px;
+}
+
+.form-subtitle{
+    color:#64748b;
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:22px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    color:#475569;
+    margin-bottom:8px;
+}
+
+input,
+textarea{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:13px;
+    font-size:15px;
+    outline:none;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#2563eb;
+}
+
+textarea{
+    min-height:150px;
+    resize:vertical;
+    line-height:1.6;
+}
+
+.form-actions{
+    display:flex;
+    gap:10px;
+}
+
+.post-btn{
+    flex:1;
+    border:0;
+    background:#172b68;
+    color:white;
+    padding:14px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.post-btn:hover{
+    background:#1e3a8a;
+}
+
+.post-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.cancel-btn{
+    display:none;
+    border:0;
+    background:#e2e8f0;
+    color:#334155;
+    padding:14px 20px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.summary{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+    color:#1e40af;
+    font-size:14px;
+}
+
+
+/* =========================================
+   NOTICE LIST
+========================================= */
+
+.notice-list{
+    display:grid;
+    gap:16px;
+}
+
+.notice-card{
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:0px 16px;
+    background:#fafcff;
+}
+
+.notice-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:8px;
+}
+
+.notice-title{
+    font-size:17px;
+    font-weight:800;
+    color:#172554;
+    word-break:break-word;
+}
+
+.notice-date{
+    margin-top:4px;
+    color:#64748b;
+    font-size:11px;
+}
+
+.notice-message{
+    color:#334155;
+    font-size:13px;
+    line-height:1;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.notice-actions{
+    display:flex;
+    gap:7px;
+    margin-top:12px;
+}
+
+.edit-btn{
+    border:0;
+    background:#dbeafe;
+    color:#1d4ed8;
+    padding:7px 12px;
+    border-radius:7px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.delete-btn{
+    border:0;
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:7px 12px;
+    border-radius:7px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    color:#64748b;
+    border:1px dashed #cbd5e1;
+    border-radius:14px;
+}
+
+.loading{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.footer{
+    text-align:center;
+    padding:20px;
+    color:#64748b;
+    font-size:13px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-logo{
+        width:43px;
+        height:43px;
+    }
+
+    .header-title{
+        font-size:15px;
+    }
+
+    .header-subtitle{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .container{
+        width:96%;
+        margin:15px auto;
+    }
+
+    .top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .box{
+        padding:18px;
+    }
+
+    .notice-top{
+        flex-direction:column;
+    }
+
+    .form-actions{
+        flex-direction:column;
+    }
+
+    .cancel-btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="header">
+
+<div class="header-left">
+
+    <div class="header-logo">
+
+        <img
+            src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+            alt="Kumaun Institute Logo"
+        >
+
+    </div>
+
+
+    <div>
+
+        <div class="header-title">
+            Kumaun Institute of Computer Education
+        </div>
+
+        <div class="header-subtitle">
+            Owner Notice Management System
+        </div>
+
+    </div>
+
+</div>
+
+
+<button
+    class="back-btn"
+    onclick="window.location.href='index.html'"
+>
+    ← Dashboard
+</button>
+
+</header>
+
+<main class="container">
+
+<!-- MESSAGE -->
+
+<div
+    id="message"
+    class="message"
+></div>
+
+
+
+<!-- TOP -->
+
+<div class="top">
+
+    <h1>
+        📢 Notice Management
+    </h1>
+
+
+    <button
+        class="refresh-btn"
+        onclick="loadNotices()"
+    >
+        ↻ Refresh
+    </button>
+
+</div>
+
+
+
+<!-- POST / EDIT NOTICE -->
+
+<section class="box">
+
+    <h2
+        id="formTitle"
+        class="form-title"
+    >
+        📢 Post New Notice
+    </h2>
+
+
+    <p class="form-subtitle">
+    </p>
+
+
+    <form id="noticeForm">
+
+
+        <div class="form-group">
+
+            <label>
+                Notice Title
+            </label>
+
+            <input
+                type="text"
+                id="noticeTitle"
+                placeholder="Subject / Title..."
+                required
+            >
+
+        </div>
+
+
+
+        <div class="form-group">
+
+            <label>
+                Notice Message
+            </label>
+
+            <textarea
+                id="noticeMessage"
+                placeholder="Notice..."
+                required
+            ></textarea>
+
+        </div>
+
+
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                id="submitBtn"
+                class="post-btn"
+            >
+                📢 Post Notice
+            </button>
+
+
+            <button
+                type="button"
+                id="cancelBtn"
+                class="cancel-btn"
+                onclick="cancelEdit()"
+            >
+                Cancel Edit
+            </button>
+
+        </div>
+
+
+    </form>
+
+</section>
+
+
+
+<!-- ALL NOTICES -->
+
+<section class="box">
+
+    <h2 class="form-title">
+        📋 All Posted Notices
+    </h2>
+
+
+    <p class="form-subtitle">
+    </p>
+
+
+    <div
+        id="noticeSummary"
+        class="summary"
+    >
+        Total notices loading...
+    </div>
+
+
+    <div
+        id="noticeList"
+        class="notice-list"
+    >
+
+        <div class="loading">
+            Notices loading...
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+
+© 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+<script>
+
+
+/* =========================================
+   SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let notices = [];
+
+let editingNoticeId = null;
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.className =
+        "message";
+
+
+    if(type === "success"){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    message.textContent =
+        text;
+
+
+    message.style.display =
+        "block";
+
+
+    setTimeout(
+        function(){
+
+            message.style.display =
+                "none";
+
+        },
+        5000
+    );
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDateTime(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   LOAD NOTICES
+========================================= */
+
+async function loadNotices(){
+
+    const noticeList =
+        document.getElementById(
+            "noticeList"
+        );
+
+
+    noticeList.innerHTML =
+        `
+        <div class="loading">
+            Notices loading...
+        </div>
+        `;
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("notices")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        notices =
+            data || [];
+
+
+        displayNotices();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        noticeList.innerHTML =
+            `
+            <div class="empty">
+                ❌ Notices loading failed:
+                ${escapeHTML(error.message)}
+            </div>
+            `;
+
+
+        showMessage(
+            "Notices loading failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   DISPLAY NOTICES
+========================================= */
+
+function displayNotices(){
+
+    const noticeList =
+        document.getElementById(
+            "noticeList"
+        );
+
+
+    const noticeSummary =
+        document.getElementById(
+            "noticeSummary"
+        );
+
+
+    noticeSummary.innerHTML =
+        `
+        📢 Total Notices:
+        <strong>${notices.length}</strong>
+        `;
+
+
+    if(!notices.length){
+
+        noticeList.innerHTML =
+            `
+            <div class="empty">
+                📭 Notice Not Found.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    noticeList.innerHTML =
+        "";
+
+
+    notices.forEach(
+        function(notice){
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "notice-card";
+
+
+            card.innerHTML =
+                `
+
+                <div class="notice-top">
+
+                    <div>
+
+                        <div class="notice-title">
+
+                            ${escapeHTML(
+                                notice.title ||
+                                "Untitled Notice"
+                            )}
+
+                        </div>
+
+
+                        <div class="notice-date">
+
+                            📅 Posted:
+                            ${formatDateTime(
+                                notice.created_at
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="notice-message">
+
+                    ${escapeHTML(
+                        notice.message ||
+                        "-"
+                    )}
+
+                </div>
+
+
+                <div class="notice-actions">
+
+                    <button
+                        class="edit-btn"
+                        onclick="editNotice(
+                            '${notice.id}'
+                        )"
+                    >
+                        ✏️ Edit
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteNotice(
+                            '${notice.id}'
+                        )"
+                    >
+                        🗑 Delete
+                    </button>
+
+                </div>
+
+                `;
+
+
+            noticeList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   POST OR UPDATE NOTICE
+========================================= */
+
+document.getElementById(
+    "noticeForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        const title =
+            document.getElementById(
+                "noticeTitle"
+            )
+            .value
+            .trim();
+
+
+        const message =
+            document.getElementById(
+                "noticeMessage"
+            )
+            .value
+            .trim();
+
+
+        if(!title){
+
+            showMessage(
+                "Please enter notice title.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!message){
+
+            showMessage(
+                "Please enter notice message.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const submitBtn =
+            document.getElementById(
+                "submitBtn"
+            );
+
+
+        submitBtn.disabled =
+            true;
+
+
+        try{
+
+            /* UPDATE NOTICE */
+
+            if(editingNoticeId){
+
+                submitBtn.textContent =
+                    "Updating...";
+
+
+                const {
+                    error
+                } =
+                await supabaseClient
+                .from("notices")
+                .update({
+
+                    title:title,
+
+                    message:message
+
+                })
+                .eq(
+                    "id",
+                    editingNoticeId
+                );
+
+
+                if(error){
+
+                    throw error;
+
+                }
+
+
+                showMessage(
+                    "✅ Notice Successfully Updated.",
+                    "success"
+                );
+
+
+                cancelEdit();
+
+            }
+
+
+            /* POST NEW NOTICE */
+
+            else{
+
+                submitBtn.textContent =
+                    "Posting...";
+
+
+                const {
+                    error
+                } =
+                await supabaseClient
+                .from("notices")
+                .insert([
+
+                    {
+
+                        title:title,
+
+                        message:message
+
+                    }
+
+                ]);
+
+
+                if(error){
+
+                    throw error;
+
+                }
+
+
+                document.getElementById(
+                    "noticeForm"
+                ).reset();
+
+
+                showMessage(
+                    "✅ Notice Successfully Post.",
+                    "success"
+                );
+
+            }
+
+
+            await loadNotices();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Notice not saved: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            submitBtn.disabled =
+                false;
+
+
+            submitBtn.textContent =
+                editingNoticeId
+                ? "💾 Update Notice"
+                : "📢 Post Notice";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   EDIT NOTICE
+========================================= */
+
+function editNotice(noticeId){
+
+    const notice =
+        notices.find(
+            function(item){
+
+                return String(item.id) ===
+                    String(noticeId);
+
+            }
+        );
+
+
+    if(!notice){
+
+        showMessage(
+            "Notice record not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    editingNoticeId =
+        notice.id;
+
+
+    document.getElementById(
+        "noticeTitle"
+    ).value =
+        notice.title || "";
+
+
+    document.getElementById(
+        "noticeMessage"
+    ).value =
+        notice.message || "";
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "✏️ Edit Notice";
+
+
+    document.getElementById(
+        "submitBtn"
+    ).textContent =
+        "💾 Update Notice";
+
+
+    document.getElementById(
+        "cancelBtn"
+    ).style.display =
+        "block";
+
+
+    window.scrollTo(
+        {
+            top:0,
+            behavior:"smooth"
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   CANCEL EDIT
+========================================= */
+
+function cancelEdit(){
+
+    editingNoticeId =
+        null;
+
+
+    document.getElementById(
+        "noticeForm"
+    ).reset();
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "📢 Post New Notice";
+
+
+    document.getElementById(
+        "submitBtn"
+    ).textContent =
+        "📢 Post Notice";
+
+
+    document.getElementById(
+        "cancelBtn"
+    ).style.display =
+        "none";
+
+}
+
+
+
+/* =========================================
+   DELETE NOTICE
+========================================= */
+
+async function deleteNotice(noticeId){
+
+    const notice =
+        notices.find(
+            function(item){
+
+                return String(item.id) ===
+                    String(noticeId);
+
+            }
+        );
+
+
+    if(!notice){
+
+        showMessage(
+            "Notice record not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Delete this notice?\n\n" +
+            (notice.title || "")
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient
+        .from("notices")
+        .delete()
+        .eq(
+            "id",
+            notice.id
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            "🗑 Notice Successfully Delete.",
+            "success"
+        );
+
+
+        if(
+            String(editingNoticeId) ===
+            String(notice.id)
+        ){
+
+            cancelEdit();
+
+        }
+
+
+        await loadNotices();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "❌ Notice delete failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   START
+========================================= */
+
+loadNotices();
+
+
+</script>
+
+</body>
+
+</html>

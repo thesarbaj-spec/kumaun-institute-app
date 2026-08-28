@@ -1,0 +1,4914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard | Kumaun Institute of Computer Education</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#eef4fb;
+    color:#102a68;
+}
+
+.header{
+    min-height:82px;
+    padding:12px 30px;
+    background:#12327f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.header-logo{
+    width:58px;
+    height:58px;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:22px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:4px;
+    font-size:14px;
+    color:#dbeafe;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.notification-btn{
+    position:relative;
+    width:44px;
+    height:44px;
+    border:1px solid rgba(255,255,255,.8);
+    background:rgba(255,255,255,.08);
+    color:white;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+}
+
+.notification-btn:hover{
+    background:rgba(255,255,255,.18);
+}
+
+.notification-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    min-width:20px;
+    height:20px;
+    padding:0 5px;
+    background:#ef4444;
+    color:white;
+    border:2px solid #12327f;
+    border-radius:20px;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    font-weight:800;
+}
+
+.notification-count.show{
+    display:flex;
+}
+
+.logout-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:11px 19px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:14px;
+}
+
+.notification-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.45);
+    backdrop-filter:blur(3px);
+    z-index:9998;
+    display:none;
+}
+
+.notification-overlay.show{
+    display:block;
+}
+
+.notification-panel{
+    position:fixed;
+    top:75px;
+    right:25px;
+    width:410px;
+    max-width:calc(100% - 30px);
+    max-height:calc(100vh - 100px);
+    background:white;
+    border-radius:20px;
+    box-shadow:0 20px 60px rgba(15,23,42,.25);
+    z-index:9999;
+    overflow:hidden;
+    display:none;
+}
+
+.notification-panel.show{
+    display:block;
+}
+
+.notification-panel-header{
+    padding:17px 18px;
+    background:#12327f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.notification-panel-title{
+    font-size:18px;
+    font-weight:800;
+}
+
+.notification-panel-actions{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.mark-all-btn{
+    border:1px solid rgba(255,255,255,.7);
+    background:rgba(255,255,255,.1);
+    color:white;
+    padding:7px 10px;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:700;
+}
+
+.close-notification-btn{
+    width:32px;
+    height:32px;
+    border:0;
+    background:rgba(255,255,255,.12);
+    color:white;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.notification-list{
+    max-height:calc(100vh - 180px);
+    overflow-y:auto;
+    padding:10px;
+}
+
+.notification-empty{
+    padding:45px 20px;
+    text-align:center;
+    color:#64748b;
+}
+
+.notification-empty-icon{
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+.notification-empty-title{
+    font-size:16px;
+    font-weight:800;
+    color:#334155;
+}
+
+.notification-empty-text{
+    font-size:12px;
+    margin-top:5px;
+}
+
+.notification-item{
+    position:relative;
+    padding:14px 13px;
+    margin-bottom:8px;
+    background:#f8fbff;
+    border:1px solid #dbe7f5;
+    border-radius:14px;
+    cursor:pointer;
+}
+
+.notification-item:hover{
+    background:#f1f6ff;
+}
+
+.notification-item.unread{
+    border-left:4px solid #12327f;
+    background:#edf4ff;
+}
+
+.notification-item-title{
+    color:#102a68;
+    font-size:14px;
+    font-weight:800;
+    padding-right:55px;
+}
+
+.notification-item-message{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+    margin-top:5px;
+}
+
+.notification-item-date{
+    color:#94a3b8;
+    font-size:10px;
+    margin-top:8px;
+}
+
+.notification-seen-btn{
+    position:absolute;
+    top:12px;
+    right:10px;
+    border:0;
+    background:#16a34a;
+    color:white;
+    border-radius:8px;
+    padding:5px 7px;
+    cursor:pointer;
+    font-size:10px;
+    font-weight:700;
+}
+
+.container{
+    width:94%;
+    max-width:1200px;
+    margin:25px auto;
+}
+
+.error-box{
+    display:none;
+    background:#fff1f2;
+    color:#991b1b;
+    border:1px solid #fecdd3;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:20px;
+}
+
+.welcome{
+    background:linear-gradient(135deg,#e5efff,#f7fbff);
+    border-radius:22px;
+    padding:22px 25px;
+    margin-bottom:22px;
+    box-shadow:0 6px 25px rgba(15,35,80,.06);
+}
+
+.welcome h2{
+    margin:0;
+    font-size:26px;
+}
+
+.welcome p{
+    margin:8px 0 0;
+    color:#64748b;
+    font-size:16px;
+}
+
+.loading{
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    color:#64748b;
+}
+
+#dashboard{
+    display:none;
+}
+
+.section{
+    background:white;
+    padding:24px;
+    border-radius:22px;
+    margin-bottom:22px;
+    box-shadow:0 6px 25px rgba(15,35,80,.06);
+}
+
+.section-title{
+    font-size:21px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.student-id-card{
+    width:100%;
+    max-width:900px;
+    aspect-ratio:1.58 / 1;
+    margin:0 auto;
+    background:
+        linear-gradient(
+            135deg,
+            #737b84 0%,
+            #f8fafc 13%,
+            #b9c0c7 28%,
+            #ffffff 43%,
+            #aeb6be 58%,
+            #f5f7f9 73%,
+            #8d969f 88%,
+            #e9edf1 100%
+        );
+    border:3px solid #6b737c;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:
+        0 18px 45px rgba(15,23,42,.28),
+        inset 0 0 0 1px rgba(255,255,255,.75);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+}
+
+.student-id-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            115deg,
+            transparent 0%,
+            rgba(255,255,255,.45) 22%,
+            transparent 38%,
+            rgba(255,255,255,.30) 55%,
+            transparent 72%,
+            rgba(255,255,255,.25) 88%,
+            transparent 100%
+        );
+    pointer-events:none;
+    z-index:0;
+}
+
+.student-id-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+        repeating-linear-gradient(
+            135deg,
+            rgba(255,255,255,.10) 0px,
+            rgba(255,255,255,.10) 1px,
+            transparent 1px,
+            transparent 7px
+        );
+    opacity:.35;
+    pointer-events:none;
+    z-index:0;
+}
+
+.id-card-header{
+    position:relative;
+    z-index:1;
+    background:
+        linear-gradient(
+            135deg,
+            #071b4a,
+            #12327f 45%,
+            #1d438f 70%,
+            #071b4a
+        );
+    color:white;
+    min-height:90px;
+    padding:12px 22px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    border-bottom:3px solid #7f8a95;
+    box-shadow:0 3px 10px rgba(0,0,0,.18);
+}
+
+.id-logo{
+    width:70px;
+    height:70px;
+    background:white;
+    border-radius:10px;
+    object-fit:contain;
+    flex-shrink:0;
+    padding:3px;
+    border:2px solid #d8dee4;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
+}
+
+.id-heading{
+    flex:1;
+    text-align:center;
+}
+
+.id-institute-name{
+    font-size:25px;
+    font-weight:800;
+    line-height:1.2;
+    text-shadow:0 2px 3px rgba(0,0,0,.25);
+}
+
+.id-institute-subtitle{
+    margin-top:6px;
+    font-size:12px;
+    letter-spacing:3px;
+    color:#dbeafe;
+}
+
+.id-card-body{
+    position:relative;
+    z-index:1;
+    flex:1;
+    display:grid;
+    grid-template-columns:165px 1fr;
+    gap:28px;
+    padding:22px 28px;
+    min-height:0;
+}
+
+.id-photo-area{
+    width:150px;
+    height:180px;
+    border:3px solid #66717c;
+    border-radius:12px;
+    overflow:hidden;
+    background:
+        linear-gradient(
+            145deg,
+            #d5dbe0,
+            #ffffff,
+            #9fa8b1
+        );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    align-self:center;
+    box-shadow:
+        0 5px 15px rgba(15,23,42,.22),
+        inset 0 0 0 2px rgba(255,255,255,.8);
+}
+
+.id-photo{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:none;
+}
+
+.photo-fallback{
+    font-size:55px;
+    color:#64717d;
+}
+
+.id-details{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    column-gap:35px;
+    row-gap:13px;
+    align-content:center;
+    min-width:0;
+}
+
+.id-row{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.id-label{
+    color:#4b5563;
+    font-size:11px;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    font-weight:800;
+}
+
+.id-value{
+    color:#172033;
+    font-size:16px;
+    font-weight:800;
+    word-break:break-word;
+    text-shadow:0 1px 0 rgba(255,255,255,.7);
+}
+
+.address-row{
+    grid-column:1/-1;
+}
+
+.id-card-footer{
+    position:relative;
+    z-index:1;
+    min-height:75px;
+    border-top:2px solid #8b949d;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.72),
+            rgba(194,201,207,.85)
+        );
+    padding:8px 28px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+}
+
+.signature-box{
+    width:220px;
+    text-align:center;
+    color:#172033;
+    font-size:11px;
+    font-weight:800;
+}
+
+.signature-image{
+    max-width:170px;
+    height:45px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 2px;
+}
+
+.id-download-area{
+    text-align:center;
+    margin-top:18px;
+}
+
+.download-id-btn{
+    border:0;
+    background:#12327f;
+    color:white;
+    padding:13px 25px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 6px 15px rgba(18,50,127,.2);
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:19px;
+    box-shadow:0 6px 25px rgba(15,35,80,.06);
+    text-align:center;
+    min-width:0;
+}
+
+.card-icon{
+    font-size:30px;
+}
+
+.card-title{
+    margin-top:10px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.card-value{
+    margin-top:7px;
+    font-size:19px;
+    font-weight:800;
+    color:#12327f;
+    word-break:break-word;
+}
+
+.dashboard-options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+}
+
+.option-card{
+    position:relative;
+    border:1px solid #dbe7f5;
+    background:#ffffff;
+    border-radius:17px;
+    padding:15px 18px;
+    text-align:left;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    min-height:82px;
+    transition:.2s;
+    box-shadow:0 3px 12px rgba(15,35,80,.04);
+}
+
+.option-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 22px rgba(15,35,80,.10);
+}
+
+.option-icon{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    flex-shrink:0;
+    background:#edf4ff;
+}
+
+.option-card:nth-child(2) .option-icon{
+    background:#e8f8ed;
+}
+
+.option-card:nth-child(3) .option-icon{
+    background:#f1eaff;
+}
+
+.option-card:nth-child(4) .option-icon{
+    background:#fff0df;
+}
+
+.option-card:nth-child(5) .option-icon{
+    background:#ffe9ee;
+}
+
+.option-card:nth-child(6) .option-icon{
+    background:#e1f8f5;
+}
+
+.option-card:nth-child(7) .option-icon{
+    background:#fff4d6;
+}
+
+.option-card:nth-child(8) .option-icon{
+    background:#e9efff;
+}
+
+.option-content{
+    min-width:0;
+}
+
+.option-title{
+    font-size:15px;
+    font-weight:800;
+    color:#102a68;
+}
+
+.option-subtitle{
+    font-size:11px;
+    color:#718096;
+    margin-top:5px;
+}
+
+.option-arrow{
+    margin-left:auto;
+    font-size:23px;
+    color:#0d65a8;
+    font-weight:bold;
+}
+
+.service-badge{
+    position:absolute;
+    top:8px;
+    right:8px;
+    min-width:22px;
+    height:22px;
+    padding:0 6px;
+    border-radius:20px;
+    background:#ef4444;
+    color:white;
+    border:2px solid white;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    font-weight:800;
+    z-index:2;
+}
+
+.service-badge.show{
+    display:flex;
+}
+
+.fee-box{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.fee-item{
+    background:#f7faff;
+    border:1px solid #dbe7f5;
+    border-radius:15px;
+    padding:17px;
+    text-align:center;
+}
+
+.fee-label{
+    color:#64748b;
+    font-size:13px;
+}
+
+.fee-value{
+    margin-top:8px;
+    font-size:21px;
+    font-weight:800;
+    color:#12327f;
+}
+
+.progress{
+    width:100%;
+    height:13px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:20px;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:#16a34a;
+    transition:width .5s ease;
+}
+
+.fee-status{
+    text-align:center;
+    margin-top:10px;
+    font-weight:700;
+    color:#64748b;
+}
+
+
+/* =========================
+   ATTENDANCE CALENDAR
+========================= */
+
+.calendar-section{
+    margin-top:22px;
+}
+
+.calendar-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+}
+
+.calendar-heading{
+    font-size:21px;
+    font-weight:800;
+}
+
+.calendar-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.calendar-nav-btn{
+    width:38px;
+    height:38px;
+    border:1px solid #dbe7f5;
+    background:#f7faff;
+    color:#12327f;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:800;
+}
+
+.calendar-nav-btn:hover{
+    background:#edf4ff;
+}
+
+.calendar-month-title{
+    min-width:150px;
+    text-align:center;
+    font-size:16px;
+    font-weight:800;
+    color:#12327f;
+}
+
+.calendar-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.att-summary{
+    padding:12px;
+    border-radius:13px;
+    text-align:center;
+    border:1px solid #dbe7f5;
+    background:#f8fbff;
+}
+
+.att-summary-label{
+    font-size:10px;
+    color:#64748b;
+}
+
+.att-summary-value{
+    margin-top:4px;
+    font-size:17px;
+    font-weight:800;
+    color:#12327f;
+}
+
+.calendar-wrap{
+    width:100%;
+    overflow-x:auto;
+}
+
+.calendar-grid{
+    min-width:650px;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+}
+
+.calendar-day-name{
+    padding:9px 5px;
+    text-align:center;
+    background:#12327f;
+    color:white;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.calendar-day{
+    min-height:72px;
+    border:1px solid #dbe7f5;
+    background:#fff;
+    border-radius:10px;
+    padding:7px;
+    position:relative;
+}
+
+.calendar-day.empty{
+    background:#f8fafc;
+    border-color:#eef2f7;
+}
+
+.calendar-day-number{
+    font-size:12px;
+    font-weight:800;
+    color:#334155;
+}
+
+.calendar-status{
+    margin-top:8px;
+    border-radius:7px;
+    padding:4px 3px;
+    text-align:center;
+    font-size:9px;
+    font-weight:800;
+}
+
+.calendar-status.present{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.calendar-status.absent{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.calendar-status.leave{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.calendar-status.holiday{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+.calendar-status.pending{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+.calendar-legend{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:16px;
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:10px;
+    color:#64748b;
+}
+
+.legend-dot{
+    width:11px;
+    height:11px;
+    border-radius:4px;
+}
+
+.legend-present{
+    background:#22c55e;
+}
+
+.legend-absent{
+    background:#ef4444;
+}
+
+.legend-leave{
+    background:#f59e0b;
+}
+
+.legend-pending{
+    background:#cbd5e1;
+}
+
+.calendar-loading{
+    text-align:center;
+    padding:20px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.about-section{
+    padding:0;
+    background:transparent;
+    box-shadow:none;
+}
+
+.about-btn{
+    width:100%;
+    min-height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:16px 20px;
+    background:#12327f;
+    color:white;
+    border:0;
+    border-radius:17px;
+    font-size:17px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.student-footer{
+    text-align:center;
+    padding:25px 10px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media(max-width:1000px){
+
+.cards{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.dashboard-options{
+    grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:650px){
+
+.header{
+    padding:10px 12px;
+    min-height:70px;
+}
+
+.header-title{
+    font-size:15px;
+}
+
+.header-subtitle{
+    font-size:11px;
+}
+
+.header-logo{
+    width:45px;
+    height:45px;
+}
+
+.header-right{
+    gap:6px;
+}
+
+.notification-btn{
+    width:38px;
+    height:38px;
+    font-size:18px;
+    border-radius:10px;
+}
+
+.logout-btn{
+    padding:8px 11px;
+    font-size:12px;
+}
+
+.notification-panel{
+    top:65px;
+    right:8px;
+    width:calc(100% - 16px);
+    max-width:none;
+    border-radius:17px;
+}
+
+.notification-panel-header{
+    padding:13px;
+}
+
+.notification-panel-title{
+    font-size:16px;
+}
+
+.container{
+    width:94%;
+    margin:15px auto;
+}
+
+.welcome{
+    padding:17px;
+    border-radius:19px;
+}
+
+.welcome h2{
+    font-size:21px;
+}
+
+.welcome p{
+    font-size:13px;
+}
+
+.section{
+    padding:15px;
+    border-radius:19px;
+}
+
+.section-title{
+    font-size:18px;
+}
+
+.student-id-card{
+    width:100%;
+    aspect-ratio:1.58/1;
+    border-radius:13px;
+    border-width:2px;
+}
+
+.id-card-header{
+    min-height:64px;
+    padding:7px 10px;
+    gap:8px;
+}
+
+.id-logo{
+    width:47px;
+    height:47px;
+}
+
+.id-institute-name{
+    font-size:13px;
+}
+
+.id-institute-subtitle{
+    font-size:7px;
+    letter-spacing:1.2px;
+    margin-top:3px;
+}
+
+.id-card-body{
+    grid-template-columns:82px 1fr;
+    gap:10px;
+    padding:10px 11px;
+}
+
+.id-photo-area{
+    width:76px;
+    height:96px;
+    border-radius:8px;
+    border-width:2px;
+}
+
+.photo-fallback{
+    font-size:28px;
+}
+
+.id-details{
+    grid-template-columns:repeat(2,1fr);
+    column-gap:10px;
+    row-gap:6px;
+}
+
+.id-label{
+    font-size:6.5px;
+    margin-bottom:2px;
+}
+
+.id-value{
+    font-size:9.5px;
+    line-height:1.15;
+}
+
+.id-card-footer{
+    min-height:48px;
+    padding:4px 8px;
+}
+
+.signature-box{
+    width:110px;
+    font-size:7px;
+}
+
+.signature-image{
+    max-width:90px;
+    height:27px;
+}
+
+.download-id-btn{
+    padding:10px 16px;
+    font-size:12px;
+}
+
+.cards{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.card{
+    padding:14px 8px;
+    border-radius:16px;
+}
+
+.card-icon{
+    font-size:24px;
+}
+
+.card-title{
+    font-size:11px;
+}
+
+.card-value{
+    font-size:15px;
+}
+
+.dashboard-options{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.option-card{
+    min-height:120px;
+    padding:15px 8px;
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    gap:7px;
+}
+
+.option-icon{
+    width:48px;
+    height:48px;
+    font-size:24px;
+}
+
+.option-title{
+    font-size:12px;
+    line-height:1.2;
+}
+
+.option-subtitle{
+    font-size:9px;
+    margin-top:2px;
+}
+
+.option-arrow{
+    display:none;
+}
+
+.fee-box{
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+}
+
+.fee-item{
+    padding:11px 5px;
+    border-radius:13px;
+}
+
+.fee-label{
+    font-size:9px;
+}
+
+.fee-value{
+    font-size:14px;
+}
+
+.progress{
+    height:11px;
+}
+
+.calendar-summary{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.calendar-top{
+    align-items:flex-start;
+}
+
+.calendar-heading{
+    font-size:18px;
+}
+
+.calendar-month-title{
+    min-width:125px;
+    font-size:14px;
+}
+
+}
+
+@media(max-width:380px){
+
+.id-institute-name{
+    font-size:11px;
+}
+
+.id-value{
+    font-size:8.5px;
+}
+
+.id-photo-area{
+    width:70px;
+    height:88px;
+}
+
+.id-card-body{
+    grid-template-columns:75px 1fr;
+}
+
+.option-card{
+    min-height:112px;
+}
+
+}
+
+@media print{
+
+@page{
+    size:A4 landscape;
+    margin:10mm;
+}
+
+body *{
+    visibility:hidden!important;
+}
+
+#studentIdCard,
+#studentIdCard *{
+    visibility:visible!important;
+}
+
+#studentIdCard{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    max-width:none;
+    aspect-ratio:1.58/1;
+    box-shadow:none;
+    margin:0;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-left">
+
+<div class="header-logo">
+<img
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+alt="Institute Logo">
+</div>
+
+<div>
+<div class="header-title">
+Kumaun Institute of Computer Education
+</div>
+
+<div class="header-subtitle">
+Student Dashboard
+</div>
+</div>
+
+</div>
+
+<div class="header-right">
+
+<button
+type="button"
+class="notification-btn"
+id="notificationBtn"
+title="Notifications">
+
+🔔
+
+<span
+id="notificationCount"
+class="notification-count">
+0
+</span>
+
+</button>
+
+<button
+class="logout-btn"
+id="logoutBtn">
+Logout
+</button>
+
+</div>
+</header>
+
+
+<div
+id="notificationOverlay"
+class="notification-overlay">
+</div>
+
+
+<div
+id="notificationPanel"
+class="notification-panel">
+
+<div class="notification-panel-header">
+
+<div class="notification-panel-title">
+🔔 Notifications
+</div>
+
+<div class="notification-panel-actions">
+
+<button
+type="button"
+class="mark-all-btn"
+id="markAllSeenBtn">
+Mark All Seen
+</button>
+
+<button
+type="button"
+class="close-notification-btn"
+id="closeNotificationBtn">
+×
+</button>
+
+</div>
+</div>
+
+<div
+id="notificationList"
+class="notification-list">
+
+<div class="notification-empty">
+
+<div class="notification-empty-icon">
+🔔
+</div>
+
+<div class="notification-empty-title">
+No notifications
+</div>
+
+<div class="notification-empty-text">
+You are all caught up.
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<main class="container">
+
+<div
+id="errorBox"
+class="error-box">
+</div>
+
+
+<div class="welcome">
+
+<h2 id="welcomeName">
+Welcome Student 👋
+</h2>
+
+<p>
+Student Portal
+</p>
+
+</div>
+
+
+<div
+id="loading"
+class="loading">
+Loading student information...
+</div>
+
+
+<div id="dashboard">
+
+
+<section class="section">
+
+<div class="section-title">
+🪪 Student ID Card
+</div>
+
+
+<div
+id="studentIdCard"
+class="student-id-card">
+
+
+<div class="id-card-header">
+
+<img
+class="id-logo"
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+alt="Institute Logo">
+
+<div class="id-heading">
+
+<div class="id-institute-name">
+Kumaun Institute of Computer Education
+</div>
+
+<div class="id-institute-subtitle">
+STUDENT IDENTITY CARD
+</div>
+
+</div>
+
+</div>
+
+
+<div class="id-card-body">
+
+
+<div class="id-photo-area">
+
+<img
+id="idPhoto"
+class="id-photo"
+src=""
+alt="Student Photo">
+
+<div
+id="photoFallback"
+class="photo-fallback">
+👤
+</div>
+
+</div>
+
+
+<div class="id-details">
+
+
+<div class="id-row">
+
+<span class="id-label">
+Student ID
+</span>
+
+<span
+class="id-value"
+id="idCardStudentId">
+---------------------
+</span>
+
+</div>
+
+
+<div class="id-row">
+
+<span class="id-label">
+Name
+</span>
+
+<span
+class="id-value"
+id="idCardName">
+----------------
+</span>
+
+</div>
+
+
+<div class="id-row">
+
+<span class="id-label">
+Mobile
+</span>
+
+<span
+class="id-value"
+id="idCardPhone">
+-----------------
+</span>
+
+</div>
+
+
+<div class="id-row">
+
+<span class="id-label">
+Course
+</span>
+
+<span
+class="id-value"
+id="idCardCourse">
+------------------
+</span>
+
+</div>
+
+
+<div class="id-row">
+
+<span class="id-label">
+Date of Birth
+</span>
+
+<span
+class="id-value"
+id="idCardDob">
+---------------
+</span>
+
+</div>
+
+
+<div class="id-row">
+
+<span class="id-label">
+Joining Date
+</span>
+
+<span
+class="id-value"
+id="idCardJoiningDate">
+-----------------------
+</span>
+
+</div>
+
+
+<div class="id-row address-row">
+
+<span class="id-label">
+Address
+</span>
+
+<span
+class="id-value"
+id="idCardAddress">
+-------------------
+</span>
+
+</div>
+
+
+</div>
+</div>
+
+
+<div class="id-card-footer">
+
+
+<div class="signature-box">
+
+<img
+class="signature-image"
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/App%20Developer%20Signature.png"
+alt="App Developer Signature">
+
+<div>
+App Developer
+</div>
+
+</div>
+
+
+<div class="signature-box">
+
+<img
+class="signature-image"
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/Institute%20Owner%20Signature.png"
+alt="Institute Owner Signature">
+
+<div>
+Institute Owner
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="id-download-area">
+
+<button
+type="button"
+class="download-id-btn"
+onclick="downloadStudentIDCard()">
+
+📥 Download ID Card
+
+</button>
+
+</div>
+
+</section>
+
+
+<div class="cards">
+
+<div class="card">
+
+<div class="card-icon">
+🆔
+</div>
+
+<div class="card-title">
+Student ID
+</div>
+
+<div
+class="card-value"
+id="studentId">
+-
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">
+📚
+</div>
+
+<div class="card-title">
+Course
+</div>
+
+<div
+class="card-value"
+id="course">
+-
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">
+💰
+</div>
+
+<div class="card-title">
+Total Fee
+</div>
+
+<div
+class="card-value"
+id="totalFee">
+₹0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">
+💵
+</div>
+
+<div class="card-title">
+Paid Fee
+</div>
+
+<div
+class="card-value"
+id="paidFee">
+₹0
+</div>
+
+</div>
+
+</div>
+
+
+<section class="section">
+
+<div class="section-title">
+📋 Student Services
+</div>
+
+<div class="dashboard-options">
+
+
+<button
+class="option-card"
+onclick="openPage('my-profile.html')">
+
+<span
+class="service-badge"
+id="badge-profile">
+0
+</span>
+
+<div class="option-icon">
+👤
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+My Profile
+</div>
+
+<div class="option-subtitle">
+View your profile
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('student-attendance.html')">
+
+<span
+class="service-badge"
+id="badge-attendance">
+0
+</span>
+
+<div class="option-icon">
+📑
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Attendance Report
+</div>
+
+<div class="option-subtitle">
+Monthly report
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('fee-submit.html')">
+
+<span
+class="service-badge"
+id="badge-fee">
+0
+</span>
+
+<div class="option-icon">
+💳
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Fee Submit
+</div>
+
+<div class="option-subtitle">
+Pay your fees
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('my-documents.html')">
+
+<span
+class="service-badge"
+id="badge-documents">
+0
+</span>
+
+<div class="option-icon">
+📄
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Diploma / Certificates
+</div>
+
+<div class="option-subtitle">
+View all documents
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('notices.html')">
+
+<span
+class="service-badge"
+id="badge-notices">
+0
+</span>
+
+<div class="option-icon">
+📢
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Notices
+</div>
+
+<div class="option-subtitle">
+Institute notices
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('complaint-box.html')">
+
+<span
+class="service-badge"
+id="badge-complaint">
+0
+</span>
+
+<div class="option-icon">
+📮
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Complaint
+</div>
+
+<div class="option-subtitle">
+Complaint Box
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('student-settings.html')">
+
+<span
+class="service-badge"
+id="badge-settings">
+0
+</span>
+
+<div class="option-icon">
+⚙️
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+Settings
+</div>
+
+<div class="option-subtitle">
+Change password
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+
+<button
+class="option-card"
+onclick="openPage('about.html')">
+
+<span
+class="service-badge"
+id="badge-about">
+0
+</span>
+
+<div class="option-icon">
+ℹ️
+</div>
+
+<div class="option-content">
+
+<div class="option-title">
+About
+</div>
+
+<div class="option-subtitle">
+Institute information
+</div>
+
+</div>
+
+<div class="option-arrow">
+›
+</div>
+
+</button>
+
+</div>
+</section>
+
+
+<section class="section">
+
+<div class="section-title">
+💰 Fee Details
+</div>
+
+<div class="fee-box">
+
+<div class="fee-item">
+
+<div class="fee-label">
+Total Fee
+</div>
+
+<div
+class="fee-value"
+id="feeTotal">
+₹0
+</div>
+
+</div>
+
+
+<div class="fee-item">
+
+<div class="fee-label">
+Paid
+</div>
+
+<div
+class="fee-value"
+id="feePaid">
+₹0
+</div>
+
+</div>
+
+
+<div class="fee-item">
+
+<div class="fee-label">
+Remaining
+</div>
+
+<div
+class="fee-value"
+id="feeRemaining">
+₹0
+</div>
+
+</div>
+
+</div>
+
+
+<div class="progress">
+
+<div
+class="progress-bar"
+id="feeProgress">
+</div>
+
+</div>
+
+
+<div
+class="fee-status"
+id="feeStatus">
+Fee Status
+</div>
+
+</section>
+
+
+<!-- =========================
+     CALENDAR VIEW
+========================= -->
+
+<section class="section calendar-section">
+
+<div class="calendar-top">
+
+<div class="calendar-heading">
+📅 Attendance Calendar
+</div>
+
+<div class="calendar-controls">
+
+<button
+type="button"
+class="calendar-nav-btn"
+id="prevMonthBtn">
+‹
+</button>
+
+<div
+class="calendar-month-title"
+id="calendarMonthTitle">
+Loading...
+</div>
+
+<button
+type="button"
+class="calendar-nav-btn"
+id="nextMonthBtn">
+›
+</button>
+
+</div>
+
+</div>
+
+
+<div class="calendar-summary">
+
+<div class="att-summary">
+
+<div class="att-summary-label">
+Present
+</div>
+
+<div
+class="att-summary-value"
+id="calendarPresent">
+0
+</div>
+
+</div>
+
+
+<div class="att-summary">
+
+<div class="att-summary-label">
+Absent
+</div>
+
+<div
+class="att-summary-value"
+id="calendarAbsent">
+0
+</div>
+
+</div>
+
+
+<div class="att-summary">
+
+<div class="att-summary-label">
+Leave
+</div>
+
+<div
+class="att-summary-value"
+id="calendarLeave">
+0
+</div>
+
+</div>
+
+
+<div class="att-summary">
+
+<div class="att-summary-label">
+Attendance
+</div>
+
+<div
+class="att-summary-value"
+id="calendarPercentage">
+0%
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="calendarLoading"
+class="calendar-loading">
+Loading attendance...
+</div>
+
+
+<div
+class="calendar-wrap"
+id="calendarWrap"
+style="display:none;">
+
+<div
+id="calendarGrid"
+class="calendar-grid">
+</div>
+
+</div>
+
+
+<div class="calendar-legend">
+
+<div class="legend-item">
+<span class="legend-dot legend-present"></span>
+Present
+</div>
+
+<div class="legend-item">
+<span class="legend-dot legend-absent"></span>
+Absent
+</div>
+
+<div class="legend-item">
+<span class="legend-dot legend-leave"></span>
+Leave
+</div>
+
+<div class="legend-item">
+<span class="legend-dot legend-pending"></span>
+No Record
+</div>
+
+</div>
+
+</section>
+
+
+<section class="section about-section">
+
+<button
+type="button"
+class="about-btn"
+onclick="window.location.href='about.html'">
+
+<span>ℹ️</span>
+<span>ABOUT</span>
+
+</button>
+
+</section>
+
+</div>
+
+</main>
+
+
+<footer class="student-footer">
+© 2026 Kumaun Institute of Computer Education
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+let currentStudent = null;
+let currentStudentId = null;
+
+let allNotifications = [];
+
+let calendarDate = new Date();
+
+let attendanceRecords = [];
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function textValue(value){
+
+    if(
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+    ){
+        return "-";
+    }
+
+    return String(value);
+}
+
+
+function formatDate(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const d = new Date(value);
+
+    if(isNaN(d.getTime())){
+        return textValue(value);
+    }
+
+    return d.toLocaleDateString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+}
+
+
+function money(value){
+
+    const number =
+        Number(value || 0);
+
+    return "₹" +
+        number.toLocaleString("en-IN");
+}
+
+
+function showError(message){
+
+    const box =
+        document.getElementById("errorBox");
+
+    box.textContent = message;
+    box.style.display = "block";
+}
+
+
+/* =====================================================
+   STUDENT FIELD HELPERS
+===================================================== */
+
+function getStudentId(student){
+
+    return (
+        student.student_id ||
+        student.registration_no ||
+        student.registration_number ||
+        student.admission_no ||
+        student.admission_number ||
+        student.id ||
+        "-"
+    );
+}
+
+
+function getPhone(student){
+
+    return (
+        student.phone ||
+        student.mobile ||
+        student.mobile_number ||
+        student.phone_number ||
+        "-"
+    );
+}
+
+
+function getCourse(student){
+
+    return (
+        student.course ||
+        student.course_name ||
+        "-"
+    );
+}
+
+
+function getDob(student){
+
+    return (
+        student.dob ||
+        student.date_of_birth ||
+        "-"
+    );
+}
+
+
+function getJoiningDate(student){
+
+    return (
+        student.joining_date ||
+        student.admission_date ||
+        "-"
+    );
+}
+
+
+function getAddress(student){
+
+    return (
+        student.address ||
+        student.student_address ||
+        student.full_address ||
+        "-"
+    );
+}
+
+
+/* =====================================================
+   PHOTO
+===================================================== */
+
+function getPhoto(student){
+
+    return (
+        student.photo_url ||
+        student.photo ||
+        student.profile_photo ||
+        student.profile_image ||
+        student.image_url ||
+        student.image ||
+        student.student_photo ||
+        student.student_photo_url ||
+        ""
+    );
+}
+
+
+function makePhotoUrl(value){
+
+    if(!value){
+        return "";
+    }
+
+    if(
+        value.startsWith("http://") ||
+        value.startsWith("https://")
+    ){
+        return value;
+    }
+
+    return (
+        "https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/student-photos/" +
+        value
+            .split("/")
+            .map(
+                part =>
+                    encodeURIComponent(part)
+            )
+            .join("/")
+    );
+}
+
+
+function setStudentPhoto(student){
+
+    const photoValue =
+        getPhoto(student);
+
+    const photo =
+        document.getElementById("idPhoto");
+
+    const fallback =
+        document.getElementById("photoFallback");
+
+    if(!photo){
+        return;
+    }
+
+    if(!photoValue){
+
+        photo.style.display = "none";
+        fallback.style.display = "block";
+
+        return;
+    }
+
+    const url =
+        makePhotoUrl(photoValue);
+
+    photo.src = url;
+
+    photo.onload = function(){
+
+        photo.style.display = "block";
+        fallback.style.display = "none";
+
+    };
+
+    photo.onerror = function(){
+
+        photo.style.display = "none";
+        fallback.style.display = "block";
+
+    };
+}
+
+
+/* =====================================================
+   PER STUDENT NOTIFICATION SEEN SYSTEM
+===================================================== */
+
+function getSeenKey(){
+
+    if(!currentStudentId){
+
+        return "student_notifications_seen";
+    }
+
+    return "student_notifications_seen_" +
+        String(currentStudentId);
+}
+
+
+function getSeenNotifications(){
+
+    try{
+
+        const saved =
+            localStorage.getItem(
+                getSeenKey()
+            );
+
+        if(!saved){
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    }catch(error){
+
+        console.warn(
+            "Seen notification read error:",
+            error
+        );
+
+        return [];
+    }
+}
+
+
+function saveSeenNotifications(list){
+
+    try{
+
+        localStorage.setItem(
+            getSeenKey(),
+            JSON.stringify(list)
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Seen notification save error:",
+            error
+        );
+    }
+}
+
+
+function isNotificationSeen(notificationId){
+
+    if(!notificationId){
+        return false;
+    }
+
+    const seen =
+        getSeenNotifications();
+
+    return seen.includes(
+        String(notificationId)
+    );
+}
+
+
+function markNotificationSeen(notificationId){
+
+    if(!notificationId){
+        return;
+    }
+
+    const id =
+        String(notificationId);
+
+    const seen =
+        getSeenNotifications();
+
+    if(!seen.includes(id)){
+
+        seen.push(id);
+
+        saveSeenNotifications(seen);
+    }
+}
+
+
+/* =====================================================
+   STABLE NOTIFICATION ID
+===================================================== */
+
+function makeNotificationId(source,item){
+
+    /*
+       IMPORTANT:
+       Database ID ko highest priority di gayi hai.
+       Isse owner notice ka ID same rahega aur
+       Seen notification dobara unread nahi hogi.
+    */
+
+    if(
+        item.id !== undefined &&
+        item.id !== null
+    ){
+
+        return source + "_id_" +
+            String(item.id);
+    }
+
+
+    if(
+        item.notice_id !== undefined &&
+        item.notice_id !== null
+    ){
+
+        return source + "_notice_" +
+            String(item.notice_id);
+    }
+
+
+    if(
+        item.notification_id !== undefined &&
+        item.notification_id !== null
+    ){
+
+        return source + "_notification_" +
+            String(item.notification_id);
+    }
+
+
+    const title =
+        item.title ||
+        item.notice_title ||
+        item.subject ||
+        item.heading ||
+        "";
+
+
+    const date =
+        item.created_at ||
+        item.date ||
+        "";
+
+
+    const message =
+        item.message ||
+        item.description ||
+        item.content ||
+        "";
+
+
+    return source +
+        "_" +
+        String(title).trim() +
+        "_" +
+        String(date) +
+        "_" +
+        String(message).trim();
+}
+
+
+/* =====================================================
+   FIND STUDENT
+===================================================== */
+
+async function findStudent(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(error){
+        throw error;
+    }
+
+
+    const session =
+        data.session;
+
+
+    if(
+        !session ||
+        !session.user
+    ){
+
+        window.location.href =
+            "student-login.html";
+
+        return null;
+    }
+
+
+    const authUserId =
+        session.user.id;
+
+
+    const result =
+        await supabaseClient
+            .from("Students")
+            .select("*")
+            .eq(
+                "auth_user_id",
+                authUserId
+            )
+            .maybeSingle();
+
+
+    if(result.error){
+        throw result.error;
+    }
+
+
+    if(!result.data){
+        return null;
+    }
+
+
+    return result.data;
+}
+
+
+/* =====================================================
+   SHOW STUDENT
+===================================================== */
+
+function showStudent(student){
+
+    currentStudent =
+        student;
+
+
+    currentStudentId =
+        getStudentId(student);
+
+
+    const name =
+        textValue(student.name);
+
+
+    const phone =
+        textValue(getPhone(student));
+
+
+    const course =
+        textValue(getCourse(student));
+
+
+    const dob =
+        getDob(student);
+
+
+    const joining =
+        getJoiningDate(student);
+
+
+    const address =
+        textValue(getAddress(student));
+
+
+    const studentId =
+        textValue(getStudentId(student));
+
+
+    const total =
+        Number(
+            student.total_fee || 0
+        );
+
+
+    const paid =
+        Number(
+            student.paid_fee || 0
+        );
+
+
+    const remaining =
+        Math.max(
+            total - paid,
+            0
+        );
+
+
+    document.getElementById(
+        "welcomeName"
+    ).textContent =
+        "Welcome " +
+        name +
+        " 👋";
+
+
+    document.getElementById(
+        "studentId"
+    ).textContent =
+        studentId;
+
+
+    document.getElementById(
+        "course"
+    ).textContent =
+        course;
+
+
+    document.getElementById(
+        "totalFee"
+    ).textContent =
+        money(total);
+
+
+    document.getElementById(
+        "paidFee"
+    ).textContent =
+        money(paid);
+
+
+    document.getElementById(
+        "idCardStudentId"
+    ).textContent =
+        studentId;
+
+
+    document.getElementById(
+        "idCardName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "idCardPhone"
+    ).textContent =
+        phone;
+
+
+    document.getElementById(
+        "idCardCourse"
+    ).textContent =
+        course;
+
+
+    document.getElementById(
+        "idCardDob"
+    ).textContent =
+        formatDate(dob);
+
+
+    document.getElementById(
+        "idCardJoiningDate"
+    ).textContent =
+        formatDate(joining);
+
+
+    document.getElementById(
+        "idCardAddress"
+    ).textContent =
+        address;
+
+
+    setStudentPhoto(student);
+
+
+    document.getElementById(
+        "feeTotal"
+    ).textContent =
+        money(total);
+
+
+    document.getElementById(
+        "feePaid"
+    ).textContent =
+        money(paid);
+
+
+    document.getElementById(
+        "feeRemaining"
+    ).textContent =
+        money(remaining);
+
+
+    let percent = 0;
+
+
+    if(total > 0){
+
+        percent =
+            (paid / total) * 100;
+    }
+
+
+    percent =
+        Math.min(
+            Math.max(percent,0),
+            100
+        );
+
+
+    document.getElementById(
+        "feeProgress"
+    ).style.width =
+        percent + "%";
+
+
+    document.getElementById(
+        "feeStatus"
+    ).textContent =
+        percent >= 100
+            ? "Fee Fully Paid"
+            : "Fee Pending";
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display =
+        "block";
+
+
+    loadNotifications();
+
+
+    loadAttendanceCalendar();
+}
+
+
+/* =====================================================
+   BADGES
+===================================================== */
+
+function setBadge(elementId,count){
+
+    const badge =
+        document.getElementById(elementId);
+
+
+    if(!badge){
+        return;
+    }
+
+
+    const number =
+        Number(count || 0);
+
+
+    if(number > 0){
+
+        badge.textContent =
+            number > 99
+                ? "99+"
+                : number;
+
+
+        badge.classList.add("show");
+
+    }else{
+
+        badge.textContent = "0";
+
+        badge.classList.remove("show");
+    }
+}
+
+
+function setNotificationCount(count){
+
+    const badge =
+        document.getElementById(
+            "notificationCount"
+        );
+
+
+    if(!badge){
+        return;
+    }
+
+
+    const number =
+        Number(count || 0);
+
+
+    if(number > 0){
+
+        badge.textContent =
+            number > 99
+                ? "99+"
+                : number;
+
+
+        badge.classList.add("show");
+
+    }else{
+
+        badge.textContent = "0";
+
+        badge.classList.remove("show");
+    }
+}
+
+
+function resetAllNotificationBadges(){
+
+    setNotificationCount(0);
+
+    setBadge("badge-profile",0);
+    setBadge("badge-attendance",0);
+    setBadge("badge-fee",0);
+    setBadge("badge-documents",0);
+    setBadge("badge-notices",0);
+    setBadge("badge-complaint",0);
+    setBadge("badge-settings",0);
+    setBadge("badge-about",0);
+}
+
+
+/* =====================================================
+   NORMAL NOTIFICATIONS
+===================================================== */
+
+async function loadNormalNotifications(){
+
+    try{
+
+        const {
+            data:sessionData
+        } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+        const authUserId =
+            sessionData &&
+            sessionData.session &&
+            sessionData.session.user
+                ? sessionData.session.user.id
+                : null;
+
+
+        const studentId =
+            currentStudent
+                ? (
+                    currentStudent.student_id ||
+                    currentStudent.registration_no ||
+                    currentStudent.registration_number ||
+                    currentStudent.admission_no ||
+                    currentStudent.admission_number ||
+                    currentStudent.id
+                )
+                : null;
+
+
+        let query =
+            supabaseClient
+                .from("notifications")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
+
+
+        if(
+            studentId !== null &&
+            studentId !== undefined &&
+            studentId !== ""
+        ){
+
+            query =
+                query.eq(
+                    "student_id",
+                    studentId
+                );
+
+        }else if(authUserId){
+
+            query =
+                query.eq(
+                    "user_id",
+                    authUserId
+                );
+        }
+
+
+        const {
+            data,
+            error
+        } =
+        await query;
+
+
+        if(error){
+
+            console.warn(
+                "Notification table error:",
+                error.message
+            );
+
+            return [];
+        }
+
+
+        return data || [];
+
+
+    }catch(error){
+
+        console.warn(
+            "Normal notifications failed:",
+            error
+        );
+
+        return [];
+    }
+}
+
+
+/* =====================================================
+   OWNER NOTICES
+===================================================== */
+
+async function loadOwnerNotices(){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from("notices")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+        if(error){
+
+            console.warn(
+                "Owner notices error:",
+                error.message
+            );
+
+            return [];
+        }
+
+
+        return data || [];
+
+
+    }catch(error){
+
+        console.warn(
+            "Owner notices failed:",
+            error
+        );
+
+        return [];
+    }
+}
+
+
+/* =====================================================
+   BUILD NOTIFICATIONS
+===================================================== */
+
+function buildNormalNotification(notification){
+
+    const title =
+        notification.title ||
+        notification.subject ||
+        notification.heading ||
+        notification.type ||
+        "Notification";
+
+
+    const message =
+        notification.message ||
+        notification.description ||
+        notification.body ||
+        notification.text ||
+        "New notification";
+
+
+    const type =
+        String(
+            notification.type ||
+            notification.category ||
+            notification.service ||
+            notification.page ||
+            notification.module ||
+            "notification"
+        )
+        .toLowerCase();
+
+
+    return {
+
+        id:
+            makeNotificationId(
+                "notification",
+                notification
+            ),
+
+        source:"notification",
+
+        title:
+            textValue(title),
+
+        message:
+            textValue(message),
+
+        type:type,
+
+        created_at:
+            notification.created_at ||
+            notification.date ||
+            null
+    };
+}
+
+
+function buildOwnerNotification(notice){
+
+    const title =
+        notice.title ||
+        notice.notice_title ||
+        notice.heading ||
+        notice.subject ||
+        "Institute Notice";
+
+
+    const message =
+        notice.message ||
+        notice.description ||
+        notice.content ||
+        notice.notice ||
+        notice.body ||
+        "New notice from institute";
+
+
+    return {
+
+        id:
+            makeNotificationId(
+                "notice",
+                notice
+            ),
+
+        source:"notice",
+
+        title:
+            textValue(title),
+
+        message:
+            textValue(message),
+
+        type:"notice",
+
+        created_at:
+            notice.created_at ||
+            notice.date ||
+            null
+    };
+}
+
+
+/* =====================================================
+   LOAD ALL NOTIFICATIONS
+===================================================== */
+
+async function loadNotifications(){
+
+    if(!currentStudent){
+        return;
+    }
+
+
+    try{
+
+        const [
+            normalNotifications,
+            ownerNotices
+        ] =
+        await Promise.all([
+            loadNormalNotifications(),
+            loadOwnerNotices()
+        ]);
+
+
+        const notifications =
+            normalNotifications.map(
+                buildNormalNotification
+            );
+
+
+        const ownerNotificationList =
+            ownerNotices.map(
+                buildOwnerNotification
+            );
+
+
+        allNotifications =
+            [
+                ...notifications,
+                ...ownerNotificationList
+            ];
+
+
+        /*
+           Duplicate protection.
+        */
+
+        const uniqueMap =
+            new Map();
+
+
+        allNotifications.forEach(
+            function(notification){
+
+                uniqueMap.set(
+                    String(notification.id),
+                    notification
+                );
+
+            }
+        );
+
+
+        allNotifications =
+            Array.from(
+                uniqueMap.values()
+            );
+
+
+        allNotifications.sort(
+            function(a,b){
+
+                const dateA =
+                    new Date(
+                        a.created_at || 0
+                    ).getTime();
+
+
+                const dateB =
+                    new Date(
+                        b.created_at || 0
+                    ).getTime();
+
+
+                return dateB - dateA;
+            }
+        );
+
+
+        const counts = {
+
+            profile:0,
+            attendance:0,
+            fee:0,
+            documents:0,
+            notices:0,
+            complaint:0,
+            settings:0,
+            about:0
+        };
+
+
+        const unreadNotifications =
+            allNotifications.filter(
+                function(notification){
+
+                    return !isNotificationSeen(
+                        notification.id
+                    );
+
+                }
+            );
+
+
+        unreadNotifications.forEach(
+            function(notification){
+
+                const rawType =
+                    String(
+                        notification.type || ""
+                    )
+                    .toLowerCase()
+                    .trim();
+
+
+                if(
+                    rawType.includes("profile") ||
+                    rawType.includes("student_profile")
+                ){
+
+                    counts.profile++;
+
+                }
+                else if(
+                    rawType.includes("attendance") ||
+                    rawType.includes("attend")
+                ){
+
+                    counts.attendance++;
+
+                }
+                else if(
+                    rawType.includes("fee") ||
+                    rawType.includes("payment")
+                ){
+
+                    counts.fee++;
+
+                }
+                else if(
+                    rawType.includes("document") ||
+                    rawType.includes("certificate") ||
+                    rawType.includes("diploma")
+                ){
+
+                    counts.documents++;
+
+                }
+                else if(
+                    rawType.includes("notice") ||
+                    rawType.includes("announcement")
+                ){
+
+                    counts.notices++;
+
+                }
+                else if(
+                    rawType.includes("complaint") ||
+                    rawType.includes("complain")
+                ){
+
+                    counts.complaint++;
+
+                }
+                else if(
+                    rawType.includes("setting") ||
+                    rawType.includes("password")
+                ){
+
+                    counts.settings++;
+
+                }
+                else if(
+                    rawType.includes("about")
+                ){
+
+                    counts.about++;
+                }
+
+            }
+        );
+
+
+        setNotificationCount(
+            unreadNotifications.length
+        );
+
+
+        setBadge(
+            "badge-profile",
+            counts.profile
+        );
+
+        setBadge(
+            "badge-attendance",
+            counts.attendance
+        );
+
+        setBadge(
+            "badge-fee",
+            counts.fee
+        );
+
+        setBadge(
+            "badge-documents",
+            counts.documents
+        );
+
+        setBadge(
+            "badge-notices",
+            counts.notices
+        );
+
+        setBadge(
+            "badge-complaint",
+            counts.complaint
+        );
+
+        setBadge(
+            "badge-settings",
+            counts.settings
+        );
+
+        setBadge(
+            "badge-about",
+            counts.about
+        );
+
+
+        if(
+            document
+                .getElementById(
+                    "notificationPanel"
+                )
+                .classList
+                .contains("show")
+        ){
+
+            renderNotifications();
+        }
+
+
+    }catch(error){
+
+        console.warn(
+            "All notification loading error:",
+            error
+        );
+
+        resetAllNotificationBadges();
+    }
+}
+
+
+/* =====================================================
+   ESCAPE HELPERS
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function escapeJs(value){
+
+    return String(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/\n/g,"\\n")
+        .replace(/\r/g,"\\r");
+}
+
+
+/* =====================================================
+   RENDER NOTIFICATION PANEL
+===================================================== */
+
+function renderNotifications(){
+
+    const list =
+        document.getElementById(
+            "notificationList"
+        );
+
+
+    if(!list){
+        return;
+    }
+
+
+    const unread =
+        allNotifications.filter(
+            function(notification){
+
+                return !isNotificationSeen(
+                    notification.id
+                );
+
+            }
+        );
+
+
+    if(unread.length === 0){
+
+        list.innerHTML = `
+
+        <div class="notification-empty">
+
+            <div class="notification-empty-icon">
+                ✅
+            </div>
+
+            <div class="notification-empty-title">
+                All caught up!
+            </div>
+
+            <div class="notification-empty-text">
+                There are no new notifications.
+            </div>
+
+        </div>
+
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        unread
+            .map(
+                function(notification){
+
+                    const date =
+                        notification.created_at
+                            ? new Date(
+                                notification.created_at
+                            ).toLocaleString(
+                                "en-IN",
+                                {
+                                    day:"2-digit",
+                                    month:"short",
+                                    year:"numeric",
+                                    hour:"2-digit",
+                                    minute:"2-digit"
+                                }
+                            )
+                            : "";
+
+
+                    return `
+
+                    <div
+                        class="notification-item unread"
+                        data-notification-id="${escapeHtml(notification.id)}">
+
+                        <div class="notification-item-title">
+                            ${escapeHtml(notification.title)}
+                        </div>
+
+                        <div class="notification-item-message">
+                            ${escapeHtml(notification.message)}
+                        </div>
+
+                        <div class="notification-item-date">
+                            ${escapeHtml(date)}
+                        </div>
+
+                        <button
+                            type="button"
+                            class="notification-seen-btn"
+                            onclick="event.stopPropagation(); markSingleNotificationSeen('${escapeJs(notification.id)}')">
+
+                            ✓ Seen
+
+                        </button>
+
+                    </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+}
+
+
+/* =====================================================
+   SINGLE SEEN
+===================================================== */
+
+function markSingleNotificationSeen(notificationId){
+
+    markNotificationSeen(
+        notificationId
+    );
+
+
+    /*
+       UI ko immediately update karna.
+       Database se dobara notification ko
+       unread nahi banaya jayega because ID
+       localStorage mein saved hai.
+    */
+
+    renderNotifications();
+
+
+    updateUnreadBadges();
+
+
+    loadNotifications();
+}
+
+
+/* =====================================================
+   UPDATE UNREAD BADGES
+===================================================== */
+
+function updateUnreadBadges(){
+
+    const counts = {
+
+        profile:0,
+        attendance:0,
+        fee:0,
+        documents:0,
+        notices:0,
+        complaint:0,
+        settings:0,
+        about:0
+    };
+
+
+    const unread =
+        allNotifications.filter(
+            function(notification){
+
+                return !isNotificationSeen(
+                    notification.id
+                );
+            }
+        );
+
+
+    unread.forEach(
+        function(notification){
+
+            const type =
+                String(
+                    notification.type || ""
+                )
+                .toLowerCase();
+
+
+            if(
+                type.includes("profile")
+            ){
+
+                counts.profile++;
+
+            }
+            else if(
+                type.includes("attendance") ||
+                type.includes("attend")
+            ){
+
+                counts.attendance++;
+
+            }
+            else if(
+                type.includes("fee") ||
+                type.includes("payment")
+            ){
+
+                counts.fee++;
+
+            }
+            else if(
+                type.includes("document") ||
+                type.includes("certificate") ||
+                type.includes("diploma")
+            ){
+
+                counts.documents++;
+
+            }
+            else if(
+                type.includes("notice") ||
+                type.includes("announcement")
+            ){
+
+                counts.notices++;
+
+            }
+            else if(
+                type.includes("complaint")
+            ){
+
+                counts.complaint++;
+
+            }
+            else if(
+                type.includes("setting") ||
+                type.includes("password")
+            ){
+
+                counts.settings++;
+
+            }
+            else if(
+                type.includes("about")
+            ){
+
+                counts.about++;
+            }
+
+        }
+    );
+
+
+    setNotificationCount(
+        unread.length
+    );
+
+
+    setBadge(
+        "badge-profile",
+        counts.profile
+    );
+
+    setBadge(
+        "badge-attendance",
+        counts.attendance
+    );
+
+    setBadge(
+        "badge-fee",
+        counts.fee
+    );
+
+    setBadge(
+        "badge-documents",
+        counts.documents
+    );
+
+    setBadge(
+        "badge-notices",
+        counts.notices
+    );
+
+    setBadge(
+        "badge-complaint",
+        counts.complaint
+    );
+
+    setBadge(
+        "badge-settings",
+        counts.settings
+    );
+
+    setBadge(
+        "badge-about",
+        counts.about
+    );
+}
+
+
+/* =====================================================
+   MARK ALL SEEN
+===================================================== */
+
+function markAllNotificationsSeen(){
+
+    if(
+        allNotifications.length === 0
+    ){
+        return;
+    }
+
+
+    const seen =
+        getSeenNotifications();
+
+
+    allNotifications.forEach(
+        function(notification){
+
+            const id =
+                String(notification.id);
+
+
+            if(!seen.includes(id)){
+
+                seen.push(id);
+            }
+
+        }
+    );
+
+
+    saveSeenNotifications(seen);
+
+
+    renderNotifications();
+
+
+    updateUnreadBadges();
+}
+
+
+/* =====================================================
+   NOTIFICATION PANEL
+===================================================== */
+
+function openNotificationPanel(){
+
+    const panel =
+        document.getElementById(
+            "notificationPanel"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "notificationOverlay"
+        );
+
+
+    panel.classList.add("show");
+
+    overlay.classList.add("show");
+
+
+    renderNotifications();
+}
+
+
+function closeNotificationPanel(){
+
+    document
+        .getElementById(
+            "notificationPanel"
+        )
+        .classList
+        .remove("show");
+
+
+    document
+        .getElementById(
+            "notificationOverlay"
+        )
+        .classList
+        .remove("show");
+}
+
+
+/* =====================================================
+   NOTIFICATION EVENTS
+===================================================== */
+
+document
+    .getElementById(
+        "notificationBtn"
+    )
+    .addEventListener(
+        "click",
+        function(event){
+
+            event.stopPropagation();
+
+            const panel =
+                document.getElementById(
+                    "notificationPanel"
+                );
+
+
+            if(
+                panel
+                    .classList
+                    .contains("show")
+            ){
+
+                closeNotificationPanel();
+
+            }else{
+
+                openNotificationPanel();
+            }
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "closeNotificationBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            closeNotificationPanel();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "notificationOverlay"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            closeNotificationPanel();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "markAllSeenBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            markAllNotificationsSeen();
+
+        }
+    );
+
+
+/* =====================================================
+   PAGE NAVIGATION
+===================================================== */
+
+function openPage(page){
+
+    window.location.href =
+        page;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+document
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        async function(){
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+            window.location.href =
+                "student-login.html";
+
+        }
+    );
+
+
+/* =====================================================
+   DOWNLOAD ID
+===================================================== */
+
+function downloadStudentIDCard(){
+
+    if(!currentStudent){
+
+        alert(
+            "Student information abhi load nahi hui."
+        );
+
+        return;
+    }
+
+
+    window.print();
+}
+
+
+/* =====================================================
+   ATTENDANCE HELPERS
+===================================================== */
+
+function getAttendanceDate(record){
+
+    return (
+        record.attendance_date ||
+        record.date ||
+        record.attendance_day ||
+        record.marked_date ||
+        record.created_at ||
+        ""
+    );
+}
+
+
+function getAttendanceStatus(record){
+
+    return String(
+        record.status ||
+        record.attendance_status ||
+        record.present_status ||
+        record.mark ||
+        ""
+    )
+    .toLowerCase()
+    .trim();
+}
+
+
+function normalizeAttendanceStatus(status){
+
+    if(
+        status === "p" ||
+        status === "present" ||
+        status === "1" ||
+        status === "true"
+    ){
+
+        return "present";
+    }
+
+
+    if(
+        status === "a" ||
+        status === "absent" ||
+        status === "0" ||
+        status === "false"
+    ){
+
+        return "absent";
+    }
+
+
+    if(
+        status.includes("leave") ||
+        status === "l"
+    ){
+
+        return "leave";
+    }
+
+
+    if(
+        status.includes("holiday")
+    ){
+
+        return "holiday";
+    }
+
+
+    return "pending";
+}
+
+
+/* =====================================================
+   LOAD ATTENDANCE
+===================================================== */
+
+async function loadAttendanceCalendar(){
+
+    if(!currentStudent){
+
+        return;
+    }
+
+
+    const loading =
+        document.getElementById(
+            "calendarLoading"
+        );
+
+
+    const wrap =
+        document.getElementById(
+            "calendarWrap"
+        );
+
+
+    loading.style.display =
+        "block";
+
+
+    wrap.style.display =
+        "none";
+
+
+    try{
+
+        const studentId =
+            getStudentId(
+                currentStudent
+            );
+
+
+        /*
+           First try student_id.
+        */
+
+        let result =
+            await supabaseClient
+                .from("attendance")
+                .select("*")
+                .eq(
+                    "student_id",
+                    studentId
+                );
+
+
+        /*
+           Agar student_id se data nahi mila,
+           auth_user_id se try.
+        */
+
+        if(
+            result.error ||
+            !result.data ||
+            result.data.length === 0
+        ){
+
+            const {
+                data:sessionData
+            } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+            const authUserId =
+                sessionData &&
+                sessionData.session &&
+                sessionData.session.user
+                    ? sessionData.session.user.id
+                    : null;
+
+
+            if(authUserId){
+
+                const secondResult =
+                    await supabaseClient
+                        .from("attendance")
+                        .select("*")
+                        .eq(
+                            "auth_user_id",
+                            authUserId
+                        );
+
+
+                if(
+                    !secondResult.error &&
+                    secondResult.data &&
+                    secondResult.data.length > 0
+                ){
+
+                    result =
+                        secondResult;
+                }
+            }
+        }
+
+
+        if(result.error){
+
+            console.warn(
+                "Attendance loading error:",
+                result.error.message
+            );
+
+            attendanceRecords = [];
+
+        }else{
+
+            attendanceRecords =
+                result.data || [];
+        }
+
+
+        renderCalendar();
+
+
+    }catch(error){
+
+        console.warn(
+            "Attendance calendar error:",
+            error
+        );
+
+
+        attendanceRecords = [];
+
+
+        renderCalendar();
+    }
+}
+
+
+/* =====================================================
+   GET RECORD FOR DATE
+===================================================== */
+
+function getAttendanceForDate(dateString){
+
+    const records =
+        attendanceRecords.filter(
+            function(record){
+
+                const value =
+                    getAttendanceDate(record);
+
+
+                if(!value){
+                    return false;
+                }
+
+
+                const d =
+                    new Date(value);
+
+
+                if(isNaN(d.getTime())){
+                    return false;
+                }
+
+
+                const local =
+                    d.getFullYear() +
+                    "-" +
+                    String(
+                        d.getMonth() + 1
+                    ).padStart(2,"0") +
+                    "-" +
+                    String(
+                        d.getDate()
+                    ).padStart(2,"0");
+
+
+                return local === dateString;
+
+            }
+        );
+
+
+    if(records.length === 0){
+
+        return null;
+    }
+
+
+    return records[records.length - 1];
+}
+
+
+/* =====================================================
+   RENDER CALENDAR
+===================================================== */
+
+function renderCalendar(){
+
+    const grid =
+        document.getElementById(
+            "calendarGrid"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "calendarLoading"
+        );
+
+
+    const wrap =
+        document.getElementById(
+            "calendarWrap"
+        );
+
+
+    const year =
+        calendarDate.getFullYear();
+
+
+    const month =
+        calendarDate.getMonth();
+
+
+    const monthName =
+        calendarDate.toLocaleDateString(
+            "en-IN",
+            {
+                month:"long",
+                year:"numeric"
+            }
+        );
+
+
+    document.getElementById(
+        "calendarMonthTitle"
+    ).textContent =
+        monthName;
+
+
+    const firstDay =
+        new Date(
+            year,
+            month,
+            1
+        );
+
+
+    const lastDay =
+        new Date(
+            year,
+            month + 1,
+            0
+        );
+
+
+    const totalDays =
+        lastDay.getDate();
+
+
+    let startingDay =
+        firstDay.getDay();
+
+
+    grid.innerHTML = "";
+
+
+    const names = [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+    ];
+
+
+    names.forEach(
+        function(name){
+
+            const el =
+                document.createElement(
+                    "div"
+                );
+
+
+            el.className =
+                "calendar-day-name";
+
+
+            el.textContent =
+                name;
+
+
+            grid.appendChild(el);
+
+        }
+    );
+
+
+    for(
+        let i = 0;
+        i < startingDay;
+        i++
+    ){
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "calendar-day empty";
+
+
+        grid.appendChild(empty);
+    }
+
+
+    let present = 0;
+    let absent = 0;
+    let leave = 0;
+
+
+    for(
+        let day = 1;
+        day <= totalDays;
+        day++
+    ){
+
+        const cell =
+            document.createElement(
+                "div"
+            );
+
+
+        cell.className =
+            "calendar-day";
+
+
+        const dateString =
+            year +
+            "-" +
+            String(
+                month + 1
+            ).padStart(2,"0") +
+            "-" +
+            String(day).padStart(2,"0");
+
+
+        const record =
+            getAttendanceForDate(
+                dateString
+            );
+
+
+        const number =
+            document.createElement(
+                "div"
+            );
+
+
+        number.className =
+            "calendar-day-number";
+
+
+        number.textContent =
+            day;
+
+
+        cell.appendChild(number);
+
+
+        const status =
+            document.createElement(
+                "div"
+            );
+
+
+        if(record){
+
+            const normalized =
+                normalizeAttendanceStatus(
+                    getAttendanceStatus(record)
+                );
+
+
+            status.className =
+                "calendar-status " +
+                normalized;
+
+
+            if(normalized === "present"){
+
+                status.textContent =
+                    "Present";
+
+                present++;
+
+            }
+            else if(normalized === "absent"){
+
+                status.textContent =
+                    "Absent";
+
+                absent++;
+
+            }
+            else if(normalized === "leave"){
+
+                status.textContent =
+                    "Leave";
+
+                leave++;
+
+            }
+            else if(normalized === "holiday"){
+
+                status.textContent =
+                    "Holiday";
+
+            }
+            else{
+
+                status.textContent =
+                    "No Record";
+            }
+
+        }else{
+
+            status.className =
+                "calendar-status pending";
+
+            status.textContent =
+                "No Record";
+        }
+
+
+        cell.appendChild(status);
+
+
+        grid.appendChild(cell);
+    }
+
+
+    const workingDays =
+        present +
+        absent +
+        leave;
+
+
+    let percentage = 0;
+
+
+    if(
+        present + absent > 0
+    ){
+
+        percentage =
+            Math.round(
+                (
+                    present /
+                    (
+                        present +
+                        absent
+                    )
+                ) *
+                100
+            );
+    }
+
+
+    document.getElementById(
+        "calendarPresent"
+    ).textContent =
+        present;
+
+
+    document.getElementById(
+        "calendarAbsent"
+    ).textContent =
+        absent;
+
+
+    document.getElementById(
+        "calendarLeave"
+    ).textContent =
+        leave;
+
+
+    document.getElementById(
+        "calendarPercentage"
+    ).textContent =
+        percentage + "%";
+
+
+    loading.style.display =
+        "none";
+
+
+    wrap.style.display =
+        "block";
+}
+
+
+/* =====================================================
+   CALENDAR NAVIGATION
+===================================================== */
+
+document
+    .getElementById(
+        "prevMonthBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            calendarDate.setMonth(
+                calendarDate.getMonth() - 1
+            );
+
+            renderCalendar();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "nextMonthBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            calendarDate.setMonth(
+                calendarDate.getMonth() + 1
+            );
+
+            renderCalendar();
+
+        }
+    );
+
+
+/* =====================================================
+   REALTIME OWNER NOTICES
+===================================================== */
+
+try{
+
+    supabaseClient
+        .channel(
+            "student-owner-notices-" +
+            String(
+                Math.random()
+            )
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"INSERT",
+                schema:"public",
+                table:"notices"
+            },
+            function(payload){
+
+                console.log(
+                    "New owner notice:",
+                    payload
+                );
+
+
+                /*
+                   Sirf INSERT ko new notification
+                   maana jayega.
+                */
+
+                loadNotifications();
+
+            }
+        )
+        .subscribe();
+
+}catch(error){
+
+    console.warn(
+        "Notice realtime unavailable:",
+        error
+    );
+}
+
+
+/* =====================================================
+   AUTO REFRESH
+===================================================== */
+
+setInterval(
+    function(){
+
+        if(currentStudent){
+
+            loadNotifications();
+
+        }
+
+    },
+    10000
+);
+
+
+/* =====================================================
+   START DASHBOARD
+===================================================== */
+
+async function startDashboard(){
+
+    try{
+
+        const student =
+            await findStudent();
+
+
+        if(!student){
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+
+
+            showError(
+                "Login ho gaya hai, lekin is login account ke saath Students table ka record nahi mila."
+            );
+
+
+            return;
+        }
+
+
+        showStudent(student);
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+
+        showError(
+            "Dashboard load nahi ho paaya: " +
+            error.message
+        );
+    }
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+startDashboard();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Login | Kumaun Institute of Computer Education</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#172554,#2563eb);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-box{
+  width:100%;
+  max-width:430px;
+  background:white;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.logo-area{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.logo-area img{
+  width:75px;
+  height:75px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#f8fafc;
+  padding:5px;
+  border:2px solid #e2e8f0;
+  margin-bottom:10px;
+}
+
+.logo-area h2{
+  color:#172554;
+  font-size:22px;
+  margin-bottom:6px;
+}
+
+.logo-area p{
+  color:#64748b;
+  font-size:13px;
+}
+
+.form-group{
+  margin-bottom:16px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:7px;
+  font-size:13px;
+  font-weight:bold;
+  color:#334155;
+}
+
+.form-group input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  outline:none;
+  font-size:14px;
+}
+
+.form-group input:focus{
+  border-color:#2563eb;
+}
+
+.login-btn,
+.back-btn,
+.reset-btn{
+  width:100%;
+  border:none;
+  padding:14px;
+  border-radius:9px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+.login-btn{
+  background:#172554;
+  color:white;
+}
+
+.login-btn:hover{
+  background:#1e3a8a;
+}
+
+.reset-btn{
+  background:#2563eb;
+  color:white;
+}
+
+.reset-btn:hover{
+  background:#1d4ed8;
+}
+
+.back-btn{
+  background:#e2e8f0;
+  color:#172554;
+  margin-top:12px;
+}
+
+.back-btn:hover{
+  background:#cbd5e1;
+}
+
+.forgot-password{
+  text-align:center;
+  margin-top:12px;
+}
+
+.forgot-password button{
+  border:none;
+  background:none;
+  color:#2563eb;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.forgot-password button:hover{
+  text-decoration:underline;
+}
+
+.status{
+  display:none;
+  margin-top:15px;
+  padding:11px;
+  border-radius:8px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.status.info{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.forgot-box{
+  display:none;
+}
+
+.login-section{
+  display:block;
+}
+
+.forgot-box h3{
+  color:#172554;
+  margin-bottom:8px;
+}
+
+.small-text{
+  color:#64748b;
+  font-size:13px;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+@media(max-width:500px){
+
+  body{
+    padding:15px;
+  }
+
+  .login-box{
+    padding:22px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+  <div class="logo-area">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <h2>👨‍🏫 Teacher Login</h2>
+
+    <p>
+      Kumaun Institute of Computer Education
+    </p>
+
+  </div>
+
+
+  <!-- LOGIN SECTION -->
+
+  <div
+    class="login-section"
+    id="loginSection"
+  >
+
+    <form id="loginForm">
+
+      <div class="form-group">
+
+        <label>
+          📧 Teacher Email
+        </label>
+
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Enter teacher email"
+          required
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          🔒 Password
+        </label>
+
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Enter password"
+          required
+        >
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="login-btn"
+        id="loginButton"
+      >
+        🔐 Login Dashboard
+      </button>
+
+
+      <button
+        type="button"
+        class="back-btn"
+        onclick="location.href='index.html'"
+      >
+        ← Back
+      </button>
+
+
+      <div class="forgot-password">
+
+        <button
+          type="button"
+          onclick="showForgotPassword()"
+        >
+          🔑 Forgot Password?
+        </button>
+
+      </div>
+
+
+      <div
+        id="loginStatus"
+        class="status"
+      ></div>
+
+    </form>
+
+  </div>
+
+
+
+  <!-- FORGOT PASSWORD SECTION -->
+
+  <div
+    class="forgot-box"
+    id="forgotBox"
+  >
+
+    <h3>
+      🔑 Forgot Password
+    </h3>
+
+    <p class="small-text">
+      Teacher Email, DOB aur Joining Date verify karke naya password banayein.
+    </p>
+
+
+    <div class="form-group">
+
+      <label>
+        📧 Teacher Email
+      </label>
+
+      <input
+        type="email"
+        id="resetEmail"
+        placeholder="Enter teacher email"
+      >
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>
+        🎂 Date of Birth
+      </label>
+
+      <input
+        type="date"
+        id="resetDob"
+      >
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>
+        📅 Joining Date
+      </label>
+
+      <input
+        type="date"
+        id="resetJoiningDate"
+      >
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>
+        🔒 New Password
+      </label>
+
+      <input
+        type="password"
+        id="newPassword"
+        placeholder="Enter new password"
+      >
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>
+        🔒 Confirm New Password
+      </label>
+
+      <input
+        type="password"
+        id="confirmNewPassword"
+        placeholder="Confirm new password"
+      >
+
+    </div>
+
+
+    <button
+      type="button"
+      class="reset-btn"
+      id="resetButton"
+      onclick="resetTeacherPassword()"
+    >
+      ✅ Set New Password
+    </button>
+
+
+    <button
+      type="button"
+      class="back-btn"
+      onclick="showLogin()"
+    >
+      ← Back to Login
+    </button>
+
+
+    <div
+      id="resetStatus"
+      class="status"
+    ></div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   SUPABASE CONFIG
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   SHOW STATUS
+========================================= */
+
+function showStatus(
+  elementId,
+  message,
+  type
+){
+
+  const element =
+    document.getElementById(
+      elementId
+    );
+
+  element.textContent =
+    message;
+
+  element.className =
+    "status " + type;
+
+}
+
+
+/* =========================================
+   SHOW FORGOT PASSWORD
+========================================= */
+
+function showForgotPassword(){
+
+  document
+    .getElementById(
+      "loginSection"
+    )
+    .style.display =
+    "none";
+
+  document
+    .getElementById(
+      "forgotBox"
+    )
+    .style.display =
+    "block";
+
+}
+
+
+/* =========================================
+   SHOW LOGIN
+========================================= */
+
+function showLogin(){
+
+  document
+    .getElementById(
+      "forgotBox"
+    )
+    .style.display =
+    "none";
+
+  document
+    .getElementById(
+      "loginSection"
+    )
+    .style.display =
+    "block";
+
+}
+
+
+/* =========================================
+   TEACHER LOGIN
+========================================= */
+
+document
+  .getElementById(
+    "loginForm"
+  )
+  .addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      const email =
+        document
+          .getElementById(
+            "loginEmail"
+          )
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById(
+            "loginPassword"
+          )
+          .value;
+
+      const loginButton =
+        document
+          .getElementById(
+            "loginButton"
+          );
+
+
+      loginButton.disabled =
+        true;
+
+      loginButton.textContent =
+        "Logging in...";
+
+
+      try{
+
+        showStatus(
+          "loginStatus",
+          "Login verify ho raha hai...",
+          "info"
+        );
+
+
+        const {
+          data,
+          error
+        } =
+        await supabaseClient
+          .auth
+          .signInWithPassword({
+
+            email:email,
+            password:password
+
+          });
+
+
+        if(error){
+
+          throw error;
+
+        }
+
+
+        showStatus(
+          "loginStatus",
+          "✅ Login successful!",
+          "success"
+        );
+
+
+        setTimeout(
+          function(){
+
+            location.href =
+              "teachers-dashboard.html";
+
+          },
+          700
+        );
+
+
+      }
+      catch(error){
+
+        console.error(
+          "Teacher login error:",
+          error
+        );
+
+
+        showStatus(
+          "loginStatus",
+          "❌ Email ya password galat hai.",
+          "error"
+        );
+
+      }
+      finally{
+
+        loginButton.disabled =
+          false;
+
+        loginButton.textContent =
+          "🔐 Login Dashboard";
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   RESET TEACHER PASSWORD
+========================================= */
+
+async function resetTeacherPassword(){
+
+  const email =
+    document
+      .getElementById(
+        "resetEmail"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+  const dob =
+    document
+      .getElementById(
+        "resetDob"
+      )
+      .value;
+
+  const joiningDate =
+    document
+      .getElementById(
+        "resetJoiningDate"
+      )
+      .value;
+
+  const newPassword =
+    document
+      .getElementById(
+        "newPassword"
+      )
+      .value;
+
+  const confirmNewPassword =
+    document
+      .getElementById(
+        "confirmNewPassword"
+      )
+      .value;
+
+  const resetButton =
+    document
+      .getElementById(
+        "resetButton"
+      );
+
+
+  if(
+    !email ||
+    !dob ||
+    !joiningDate ||
+    !newPassword ||
+    !confirmNewPassword
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ Sabhi details fill karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    newPassword.length < 6
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ Password kam se kam 6 characters ka hona chahiye.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    newPassword !==
+    confirmNewPassword
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ New Password aur Confirm New Password match nahi kar rahe.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  resetButton.disabled =
+    true;
+
+  resetButton.textContent =
+    "Verifying...";
+
+
+  try{
+
+
+    /* VERIFY TEACHER DETAILS */
+
+    const {
+      data:teacher,
+      error:teacherError
+    } =
+    await supabaseClient
+      .from("teachers")
+      .select(
+        "id,name,email,dob,joining_date"
+      )
+      .eq(
+        "email",
+        email
+      )
+      .eq(
+        "dob",
+        dob
+      )
+      .eq(
+        "joining_date",
+        joiningDate
+      )
+      .maybeSingle();
+
+
+    if(teacherError){
+
+      throw teacherError;
+
+    }
+
+
+    if(!teacher){
+
+      showStatus(
+        "resetStatus",
+        "❌ Teacher Email, DOB ya Joining Date match nahi hui.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    showStatus(
+      "resetStatus",
+      "Teacher verified. Password update ho raha hai...",
+      "info"
+    );
+
+
+    /* CALL PASSWORD RESET FUNCTION */
+
+    const {
+      data,
+      error:resetError
+    } =
+    await supabaseClient
+      .functions
+      .invoke(
+        "reset-teacher-password",
+        {
+
+          body:{
+            email:email,
+            newPassword:newPassword
+          }
+
+        }
+      );
+
+
+    if(resetError){
+
+      throw resetError;
+
+    }
+
+
+    if(
+      data &&
+      data.error
+    ){
+
+      throw new Error(
+        data.error
+      );
+
+    }
+
+
+    showStatus(
+      "resetStatus",
+      "✅ Password successfully change ho gaya! Ab naye password se login karein.",
+      "success"
+    );
+
+
+    document
+      .getElementById(
+        "newPassword"
+      )
+      .value =
+      "";
+
+    document
+      .getElementById(
+        "confirmNewPassword"
+      )
+      .value =
+      "";
+
+
+    setTimeout(
+      function(){
+
+        showLogin();
+
+      },
+      1500
+    );
+
+
+  }
+  catch(error){
+
+    console.error(
+      "Password reset error:",
+      error
+    );
+
+
+    showStatus(
+      "resetStatus",
+      "❌ Password change nahi hua: " +
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    resetButton.disabled =
+      false;
+
+    resetButton.textContent =
+      "✅ Set New Password";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

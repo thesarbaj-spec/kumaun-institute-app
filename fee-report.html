@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fee Collection Report | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#1f2937;
+}
+
+.header{
+    background:#172554;
+    color:white;
+    padding:13px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:52px;
+    height:52px;
+    background:white;
+    border-radius:10px;
+    padding:4px;
+    object-fit:contain;
+}
+
+.brand h2{
+    font-size:21px;
+}
+
+.brand p{
+    margin-top:4px;
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 16px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.main{
+    max-width:1450px;
+    margin:auto;
+    padding:25px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+    color:#172554;
+}
+
+.refresh-btn{
+    background:#172554;
+    color:white;
+    border:0;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+}
+
+.filter-box{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+
+    display:flex;
+    align-items:end;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.filter-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.filter-group label{
+    font-size:13px;
+    font-weight:bold;
+    color:#475569;
+}
+
+.filter-group select{
+    min-width:180px;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    outline:none;
+    background:white;
+    font-size:14px;
+}
+
+.filter-btn{
+    background:#172554;
+    color:white;
+    border:0;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.clear-btn{
+    background:#64748b;
+    color:white;
+    border:0;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.summary-card h3{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:9px;
+}
+
+.summary-card strong{
+    display:block;
+    font-size:25px;
+    color:#172554;
+    word-break:break-word;
+}
+
+.month-total{
+    color:#2563eb !important;
+}
+
+.year-total{
+    color:#16a34a !important;
+}
+
+.box{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.section-title{
+    font-size:20px;
+    color:#172554;
+    margin-bottom:18px;
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1000px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:14px 12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    vertical-align:middle;
+}
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-size:13px;
+}
+
+td{
+    font-size:14px;
+}
+
+.student-name{
+    font-weight:700;
+    color:#172554;
+}
+
+.loading,
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+
+.month-report-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.month-card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:16px;
+}
+
+.month-card h3{
+    font-size:15px;
+    color:#172554;
+    margin-bottom:8px;
+}
+
+.month-card p{
+    font-size:21px;
+    font-weight:800;
+    color:#16a34a;
+}
+
+.month-card span{
+    display:block;
+    margin-top:7px;
+    font-size:12px;
+    color:#64748b;
+}
+
+.year-summary{
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    border-radius:15px;
+    padding:22px;
+    text-align:center;
+}
+
+.year-summary h3{
+    color:#166534;
+    font-size:17px;
+    margin-bottom:10px;
+}
+
+.year-summary strong{
+    display:block;
+    font-size:32px;
+    color:#15803d;
+}
+
+.year-summary p{
+    margin-top:8px;
+    font-size:13px;
+    color:#475569;
+}
+
+.footer{
+    text-align:center;
+    padding:10px 15px 25px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media(max-width:1000px){
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .month-report-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .header{
+        padding:10px 13px;
+    }
+
+    .logo{
+        width:42px;
+        height:42px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 10px;
+        font-size:11px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .filter-box{
+        align-items:stretch;
+    }
+
+    .filter-group{
+        width:100%;
+    }
+
+    .filter-group select{
+        width:100%;
+    }
+
+    .filter-btn,
+    .clear-btn{
+        width:100%;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:15px;
+    }
+
+    .summary-card strong{
+        font-size:20px;
+    }
+
+    .box{
+        padding:14px;
+    }
+
+    .month-report-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .month-card{
+        padding:13px;
+    }
+
+    .month-card p{
+        font-size:17px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="brand">
+
+    <img
+        class="logo"
+        src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+        alt="Kumaun Institute Logo">
+
+    <div>
+
+        <h2>Kumaun Institute of Computer Education</h2>
+
+        <p>Monthly Fee Collection Reports</p>
+
+    </div>
+
+</div>
+
+
+<button
+    class="back-btn"
+    onclick="location.href='index.html'"
+>
+    ← Dashboard
+</button>
+
+</header>
+
+<main class="main">
+
+<div class="top">
+
+    <h1>📊 Fee Collection Report</h1>
+
+    <button
+        class="refresh-btn"
+        onclick="loadReports()"
+    >
+        ↻ Refresh
+    </button>
+
+</div>
+
+
+
+<div
+    id="message"
+    class="message"
+></div>
+
+
+
+<div class="filter-box">
+
+
+    <div class="filter-group">
+
+        <label>Select Year</label>
+
+        <select id="yearFilter">
+        </select>
+
+    </div>
+
+
+
+    <div class="filter-group">
+
+        <label>Select Month</label>
+
+        <select id="monthFilter">
+
+            <option value="all">
+                All Months
+            </option>
+
+            <option value="0">
+                January
+            </option>
+
+            <option value="1">
+                February
+            </option>
+
+            <option value="2">
+                March
+            </option>
+
+            <option value="3">
+                April
+            </option>
+
+            <option value="4">
+                May
+            </option>
+
+            <option value="5">
+                June
+            </option>
+
+            <option value="6">
+                July
+            </option>
+
+            <option value="7">
+                August
+            </option>
+
+            <option value="8">
+                September
+            </option>
+
+            <option value="9">
+                October
+            </option>
+
+            <option value="10">
+                November
+            </option>
+
+            <option value="11">
+                December
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <button
+        class="filter-btn"
+        onclick="applyFilter()"
+    >
+        🔍 View Report
+    </button>
+
+
+
+    <button
+        class="clear-btn"
+        onclick="clearFilter()"
+    >
+        Clear Filter
+    </button>
+
+
+</div>
+
+
+
+<div class="summary-grid">
+
+
+    <div class="summary-card">
+
+        <h3>Total Approved Payments</h3>
+
+        <strong id="totalPayments">
+            0
+        </strong>
+
+    </div>
+
+
+
+    <div class="summary-card">
+
+        <h3>Students Paid</h3>
+
+        <strong id="totalStudents">
+            0
+        </strong>
+
+    </div>
+
+
+
+    <div class="summary-card">
+
+        <h3>Selected Month Total</h3>
+
+        <strong
+            id="monthTotal"
+            class="month-total"
+        >
+            ₹0
+        </strong>
+
+    </div>
+
+
+
+    <div class="summary-card">
+
+        <h3>Selected Year Total</h3>
+
+        <strong
+            id="yearTotal"
+            class="year-total"
+        >
+            ₹0
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<section class="box">
+
+
+    <h2
+        class="section-title"
+        id="tableTitle"
+    >
+        👨‍🎓 Student Payment Details
+    </h2>
+
+
+    <div class="table-scroll">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Mobile</th>
+                    <th>Amount</th>
+                    <th>Transaction ID</th>
+                    <th>Payment Date</th>
+                    <th>Month</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="reportBody">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="loading"
+                    >
+                        Payment records loading...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</section>
+
+
+
+<section class="box">
+
+
+    <h2 class="section-title">
+        📅 Monthly Payment Summary
+    </h2>
+
+
+    <div
+        id="monthlyReport"
+        class="month-report-grid"
+    >
+
+        <div class="loading">
+            Monthly report loading...
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<section class="box">
+
+
+    <h2 class="section-title">
+        📆 Year Total Summary
+    </h2>
+
+
+    <div class="year-summary">
+
+        <h3 id="yearSummaryTitle">
+            Selected Year Total Collection
+        </h3>
+
+        <strong id="yearSummaryAmount">
+            ₹0
+        </strong>
+
+        <p id="yearSummaryText">
+            Approved payments of selected year
+        </p>
+
+    </div>
+
+
+</section>
+
+</main>
+
+<footer class="footer">
+
+© 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =========================================
+   GLOBAL VARIABLES
+========================================= */
+
+let allPayments = [];
+
+let studentsMap = {};
+
+let selectedYear =
+new Date().getFullYear();
+
+let selectedMonth = "all";
+
+
+
+const monthNames = [
+
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+
+];
+
+
+
+/* =========================================
+   LOAD REPORTS
+========================================= */
+
+async function loadReports(){
+
+    try{
+
+
+        const body =
+        document.getElementById(
+            "reportBody"
+        );
+
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="loading"
+                >
+                    Loading payment records...
+                </td>
+            </tr>
+        `;
+
+
+
+        const {
+            data:paymentData,
+            error:paymentError
+        } =
+        await supabaseClient
+        .from("fee_payments")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+
+        if(paymentError){
+
+            throw paymentError;
+
+        }
+
+
+
+        allPayments =
+        (paymentData || [])
+        .filter(
+            function(payment){
+
+                return String(
+                    payment.status || ""
+                )
+                .toLowerCase()
+                === "approved";
+
+            }
+        );
+
+
+
+        const {
+            data:studentData,
+            error:studentError
+        } =
+        await supabaseClient
+        .from("Students")
+        .select("*");
+
+
+
+        if(studentError){
+
+            throw studentError;
+
+        }
+
+
+
+        studentsMap = {};
+
+
+
+        (studentData || []).forEach(
+        function(student){
+
+            studentsMap[
+                String(student.id)
+            ] =
+            student;
+
+        });
+
+
+
+        populateYears();
+
+
+
+        applyFilter();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "Report load nahi hua: " +
+            error.message,
+            "error"
+        );
+
+
+        document.getElementById(
+            "reportBody"
+        ).innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+                    ❌ ${escapeHTML(error.message)}
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================
+   AUTO YEAR DROPDOWN
+========================================= */
+
+function populateYears(){
+
+
+    const yearFilter =
+    document.getElementById(
+        "yearFilter"
+    );
+
+
+    const currentYear =
+    new Date().getFullYear();
+
+
+
+    const years =
+    new Set();
+
+
+
+    /*
+    Current year always available
+    */
+
+    years.add(
+        currentYear
+    );
+
+
+
+    /*
+    Next year automatically available
+    */
+
+    years.add(
+        currentYear + 1
+    );
+
+
+
+    /*
+    All previous years from
+    existing payment records
+    */
+
+    allPayments.forEach(
+    function(payment){
+
+        const dateValue =
+        getPaymentDate(payment);
+
+
+        if(dateValue){
+
+            const date =
+            new Date(dateValue);
+
+
+            if(
+                !isNaN(
+                    date.getTime()
+                )
+            ){
+
+                years.add(
+                    date.getFullYear()
+                );
+
+            }
+
+        }
+
+    });
+
+
+
+    const yearList =
+    Array.from(years)
+    .sort(
+        function(a,b){
+
+            return b - a;
+
+        }
+    );
+
+
+
+    /*
+    Keep selected year if possible
+    */
+
+    if(
+        !years.has(
+            Number(selectedYear)
+        )
+    ){
+
+        selectedYear =
+        currentYear;
+
+    }
+
+
+
+    yearFilter.innerHTML =
+    "";
+
+
+
+    yearList.forEach(
+    function(year){
+
+
+        const option =
+        document.createElement(
+            "option"
+        );
+
+
+        option.value =
+        year;
+
+
+        option.textContent =
+        year;
+
+
+        if(
+            Number(year) ===
+            Number(selectedYear)
+        ){
+
+            option.selected =
+            true;
+
+        }
+
+
+        yearFilter.appendChild(
+            option
+        );
+
+
+    });
+
+
+}
+
+
+
+/* =========================================
+   GET PAYMENT DATE
+========================================= */
+
+function getPaymentDate(payment){
+
+
+    /*
+    payment_date agar database
+    me available hai to use karega
+    */
+
+    if(
+        payment.payment_date
+    ){
+
+        return payment.payment_date;
+
+    }
+
+
+
+    /*
+    Otherwise created_at use karega
+    */
+
+    return payment.created_at || null;
+
+
+}
+
+
+
+/* =========================================
+   APPLY FILTER
+========================================= */
+
+function applyFilter(){
+
+
+    selectedYear =
+    Number(
+        document.getElementById(
+            "yearFilter"
+        ).value
+    );
+
+
+    selectedMonth =
+    document.getElementById(
+        "monthFilter"
+    ).value;
+
+
+
+    const filteredPayments =
+    allPayments.filter(
+    function(payment){
+
+
+        const dateValue =
+        getPaymentDate(payment);
+
+
+        if(!dateValue){
+
+            return false;
+
+        }
+
+
+        const date =
+        new Date(dateValue);
+
+
+        if(
+            isNaN(
+                date.getTime()
+            )
+        ){
+
+            return false;
+
+        }
+
+
+
+        const paymentYear =
+        date.getFullYear();
+
+
+
+        const paymentMonth =
+        date.getMonth();
+
+
+
+        if(
+            paymentYear !==
+            selectedYear
+        ){
+
+            return false;
+
+        }
+
+
+
+        if(
+            selectedMonth !==
+            "all"
+        ){
+
+            if(
+                paymentMonth !==
+                Number(selectedMonth)
+            ){
+
+                return false;
+
+            }
+
+        }
+
+
+
+        return true;
+
+
+    });
+
+
+
+    displayStudentPayments(
+        filteredPayments
+    );
+
+
+    updateSummary(
+        filteredPayments
+    );
+
+
+    displayMonthlySummary();
+
+
+    displayYearSummary();
+
+
+}
+
+
+
+/* =========================================
+   CLEAR FILTER
+========================================= */
+
+function clearFilter(){
+
+
+    selectedYear =
+    new Date().getFullYear();
+
+
+    selectedMonth =
+    "all";
+
+
+
+    populateYears();
+
+
+
+    document.getElementById(
+        "monthFilter"
+    ).value =
+    "all";
+
+
+    applyFilter();
+
+
+}
+
+
+
+/* =========================================
+   DISPLAY STUDENT PAYMENTS
+========================================= */
+
+function displayStudentPayments(
+    paymentList
+){
+
+
+    const body =
+    document.getElementById(
+        "reportBody"
+    );
+
+
+    const title =
+    document.getElementById(
+        "tableTitle"
+    );
+
+
+
+    if(
+        selectedMonth ===
+        "all"
+    ){
+
+        title.textContent =
+        "👨‍🎓 Student Payment Details - " +
+        selectedYear;
+
+    }
+    else{
+
+        title.textContent =
+        "👨‍🎓 Student Payment Details - " +
+        monthNames[
+            Number(selectedMonth)
+        ] +
+        " " +
+        selectedYear;
+
+    }
+
+
+
+    body.innerHTML =
+    "";
+
+
+
+    if(!paymentList.length){
+
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+                    Period not approved payments.
+                </td>
+            </tr>
+        `;
+
+
+        return;
+
+    }
+
+
+
+    paymentList.forEach(
+    function(payment){
+
+
+        const student =
+        studentsMap[
+            String(
+                payment.student_id
+            )
+        ];
+
+
+
+        const studentName =
+        student && student.name
+        ? student.name
+        : "Unknown Student";
+
+
+
+        const studentId =
+        getStudentDisplayId(
+            student,
+            payment.student_id
+        );
+
+
+
+        const mobile =
+        getStudentPhone(
+            student
+        );
+
+
+
+        const dateValue =
+        getPaymentDate(
+            payment
+        );
+
+
+
+        const date =
+        new Date(
+            dateValue
+        );
+
+
+
+        const monthName =
+        !isNaN(
+            date.getTime()
+        )
+        ? monthNames[
+            date.getMonth()
+        ]
+        : "-";
+
+
+
+        const row =
+        document.createElement(
+            "tr"
+        );
+
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <div class="student-name">
+                    ${escapeHTML(studentName)}
+                </div>
+
+            </td>
+
+
+            <td>
+                ${escapeHTML(studentId)}
+            </td>
+
+
+            <td>
+                ${escapeHTML(mobile)}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    ${formatMoney(
+                        payment.amount
+                    )}
+                </strong>
+
+            </td>
+
+
+            <td>
+                ${escapeHTML(
+                    payment.transaction_id || "-"
+                )}
+            </td>
+
+
+            <td>
+                ${formatDate(
+                    dateValue
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHTML(monthName)}
+            </td>
+
+        `;
+
+
+
+        body.appendChild(
+            row
+        );
+
+
+    });
+
+
+}
+
+
+
+/* =========================================
+   STUDENT DISPLAY ID
+========================================= */
+
+function getStudentDisplayId(
+    student,
+    fallback
+){
+
+
+    if(!student){
+
+        return String(
+            fallback || "-"
+        );
+
+    }
+
+
+
+    return String(
+
+        student.student_id ||
+
+        student.registration_no ||
+
+        student.registration_number ||
+
+        student.admission_no ||
+
+        student.admission_number ||
+
+        student.id ||
+
+        fallback ||
+
+        "-"
+
+    );
+
+
+}
+
+
+
+/* =========================================
+   STUDENT PHONE
+========================================= */
+
+function getStudentPhone(student){
+
+
+    if(!student){
+
+        return "-";
+
+    }
+
+
+
+    return String(
+
+        student.phone ||
+
+        student.mobile ||
+
+        student.mobile_number ||
+
+        "-"
+
+    );
+
+
+}
+
+
+
+/* =========================================
+   UPDATE TOP SUMMARY
+========================================= */
+
+function updateSummary(
+    paymentList
+){
+
+
+    const totalPayments =
+    paymentList.length;
+
+
+
+    const studentIds =
+    new Set();
+
+
+
+    let monthAmount =
+    0;
+
+
+
+    paymentList.forEach(
+    function(payment){
+
+
+        studentIds.add(
+            String(
+                payment.student_id
+            )
+        );
+
+
+        monthAmount +=
+        Number(
+            payment.amount || 0
+        );
+
+
+    });
+
+
+
+    /*
+    Selected year ka total
+    month filter ke bina
+    */
+
+    const yearPayments =
+    allPayments.filter(
+    function(payment){
+
+
+        const dateValue =
+        getPaymentDate(
+            payment
+        );
+
+
+        if(!dateValue){
+
+            return false;
+
+        }
+
+
+        const date =
+        new Date(
+            dateValue
+        );
+
+
+        return (
+            !isNaN(
+                date.getTime()
+            ) &&
+            date.getFullYear() ===
+            selectedYear
+        );
+
+
+    });
+
+
+
+    let yearAmount =
+    0;
+
+
+
+    yearPayments.forEach(
+    function(payment){
+
+        yearAmount +=
+        Number(
+            payment.amount || 0
+        );
+
+    });
+
+
+
+    document.getElementById(
+        "totalPayments"
+    ).textContent =
+    totalPayments;
+
+
+
+    document.getElementById(
+        "totalStudents"
+    ).textContent =
+    studentIds.size;
+
+
+
+    document.getElementById(
+        "monthTotal"
+    ).textContent =
+    formatMoney(
+        monthAmount
+    );
+
+
+
+    document.getElementById(
+        "yearTotal"
+    ).textContent =
+    formatMoney(
+        yearAmount
+    );
+
+
+}
+
+
+
+/* =========================================
+   MONTHLY PAYMENT SUMMARY
+========================================= */
+
+function displayMonthlySummary(){
+
+
+    const container =
+    document.getElementById(
+        "monthlyReport"
+    );
+
+
+
+    container.innerHTML =
+    "";
+
+
+
+    for(
+        let month = 0;
+        month < 12;
+        month++
+    ){
+
+
+        const monthPayments =
+        allPayments.filter(
+        function(payment){
+
+
+            const dateValue =
+            getPaymentDate(
+                payment
+            );
+
+
+            if(!dateValue){
+
+                return false;
+
+            }
+
+
+            const date =
+            new Date(
+                dateValue
+            );
+
+
+            if(
+                isNaN(
+                    date.getTime()
+                )
+            ){
+
+                return false;
+
+            }
+
+
+
+            return (
+
+                date.getFullYear() ===
+                selectedYear
+
+                &&
+
+                date.getMonth() ===
+                month
+
+            );
+
+
+        });
+
+
+
+        let total =
+        0;
+
+
+
+        monthPayments.forEach(
+        function(payment){
+
+            total +=
+            Number(
+                payment.amount || 0
+            );
+
+        });
+
+
+
+        const card =
+        document.createElement(
+            "div"
+        );
+
+
+        card.className =
+        "month-card";
+
+
+        card.innerHTML = `
+
+            <h3>
+                ${monthNames[month]}
+            </h3>
+
+            <p>
+                ${formatMoney(total)}
+            </p>
+
+            <span>
+                ${monthPayments.length} Approved Payment${monthPayments.length === 1 ? "" : "s"}
+            </span>
+
+        `;
+
+
+        container.appendChild(
+            card
+        );
+
+
+    }
+
+
+}
+
+
+
+/* =========================================
+   YEAR TOTAL SUMMARY
+========================================= */
+
+function displayYearSummary(){
+
+
+    const yearPayments =
+    allPayments.filter(
+    function(payment){
+
+
+        const dateValue =
+        getPaymentDate(
+            payment
+        );
+
+
+        if(!dateValue){
+
+            return false;
+
+        }
+
+
+        const date =
+        new Date(
+            dateValue
+        );
+
+
+        return (
+
+            !isNaN(
+                date.getTime()
+            )
+
+            &&
+
+            date.getFullYear() ===
+            selectedYear
+
+        );
+
+
+    });
+
+
+
+    let totalAmount =
+    0;
+
+
+
+    yearPayments.forEach(
+    function(payment){
+
+        totalAmount +=
+        Number(
+            payment.amount || 0
+        );
+
+    });
+
+
+
+    const studentSet =
+    new Set();
+
+
+
+    yearPayments.forEach(
+    function(payment){
+
+        studentSet.add(
+            String(
+                payment.student_id
+            )
+        );
+
+    });
+
+
+
+    document.getElementById(
+        "yearSummaryTitle"
+    ).textContent =
+    selectedYear +
+    " Total Fee Collection";
+
+
+
+    document.getElementById(
+        "yearSummaryAmount"
+    ).textContent =
+    formatMoney(
+        totalAmount
+    );
+
+
+
+    document.getElementById(
+        "yearSummaryText"
+    ).textContent =
+    yearPayments.length +
+    " approved payments from " +
+    studentSet.size +
+    " student(s) in " +
+    selectedYear;
+
+
+}
+
+
+
+/* =========================================
+   FORMAT MONEY
+========================================= */
+
+function formatMoney(value){
+
+
+    const amount =
+    Number(value || 0);
+
+
+
+    return "₹" +
+    amount.toLocaleString(
+        "en-IN"
+    );
+
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+
+    const date =
+    new Date(value);
+
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+
+        }
+    );
+
+
+}
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+
+
+    message.className =
+    "message";
+
+
+
+    if(
+        type === "success"
+    ){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+
+    message.textContent =
+    text;
+
+
+
+    message.style.display =
+    "block";
+
+
+
+    setTimeout(
+    function(){
+
+        message.style.display =
+        "none";
+
+    },
+    5000
+    );
+
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+
+}
+
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+loadReports();
+
+
+</script>
+
+</body>
+</html>

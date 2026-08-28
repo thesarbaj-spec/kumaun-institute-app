@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teachers | Kumaun Institute of Computer Education</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+/* HEADER */
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:50px;
+  height:50px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:3px;
+}
+
+.brand h1{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.dashboard-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.dashboard-btn:hover{
+  background:#1d4ed8;
+}
+
+/* MAIN */
+
+.container{
+  max-width:1500px;
+  margin:25px auto;
+  padding:0 18px;
+}
+
+/* BOX */
+
+.box{
+  background:white;
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:22px;
+  box-shadow:0 5px 20px rgba(0,0,0,.07);
+  min-width:0;
+}
+
+/* BOX HEADER */
+
+.box-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.box-header h2{
+  font-size:21px;
+}
+
+.box-header p{
+  color:#64748b;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.add-teacher-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:11px 17px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.add-teacher-btn:hover{
+  background:#1d4ed8;
+}
+
+/* SEARCH */
+
+.search-box{
+  width:100%;
+  margin-bottom:18px;
+}
+
+.search-box input{
+  width:100%;
+  padding:13px 15px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+.search-box input:focus{
+  border-color:#2563eb;
+}
+
+/* TABLE */
+
+.table-container{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.teacher-table{
+  width:1450px;
+  min-width:1450px;
+  border-collapse:collapse;
+}
+
+.teacher-table th,
+.teacher-table td{
+  padding:12px 10px;
+  text-align:left;
+  border-bottom:1px solid #e5e7eb;
+  white-space:nowrap;
+}
+
+.teacher-table th{
+  background:#f8fafc;
+  color:#64748b;
+  font-size:12px;
+}
+
+.teacher-table td{
+  font-size:13px;
+}
+
+.teacher-photo{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #e2e8f0;
+}
+
+.photo-placeholder{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background:#e8efff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+.subject-badge{
+  background:#eff6ff;
+  color:#1d4ed8;
+  padding:6px 9px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.batch-badge{
+  background:#f0fdf4;
+  color:#15803d;
+  padding:6px 9px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.active-status{
+  color:#15803d;
+  font-weight:bold;
+}
+
+.inactive-status{
+  color:#dc2626;
+  font-weight:bold;
+}
+
+.loading{
+  text-align:center;
+  padding:25px !important;
+  color:#64748b;
+}
+
+.error{
+  color:#dc2626;
+  text-align:center;
+  padding:20px !important;
+}
+
+/* =========================================
+   MARK TEACHER ATTENDANCE
+========================================= */
+
+.attendance-title{
+  margin-bottom:22px;
+}
+
+.attendance-title h2{
+  font-size:21px;
+  margin-bottom:5px;
+}
+
+.attendance-title p{
+  color:#64748b;
+  font-size:13px;
+}
+
+.attendance-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.attendance-form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.attendance-form-group.full{
+  grid-column:1/-1;
+}
+
+.attendance-form-group label{
+  font-size:13px;
+  font-weight:bold;
+  color:#334155;
+  margin-bottom:7px;
+}
+
+.attendance-form-group select,
+.attendance-form-group input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+.attendance-form-group select:focus,
+.attendance-form-group input:focus{
+  border-color:#2563eb;
+}
+
+.attendance-status-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.attendance-status-option{
+  border:2px solid #e2e8f0;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  cursor:pointer;
+  text-align:center;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.attendance-status-option:hover{
+  border-color:#2563eb;
+}
+
+.attendance-status-option.active{
+  border-color:#2563eb;
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.attendance-status-option.present.active{
+  border-color:#16a34a;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.attendance-status-option.absent.active{
+  border-color:#dc2626;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.attendance-status-option.leave.active{
+  border-color:#d97706;
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.attendance-form-status{
+  margin-top:18px;
+  padding:12px;
+  border-radius:8px;
+  display:none;
+  font-size:14px;
+}
+
+.attendance-form-status.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.attendance-form-status.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.attendance-form-status.info{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.attendance-save-btn{
+  width:100%;
+  margin-top:22px;
+  border:none;
+  background:#172554;
+  color:white;
+  padding:15px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.attendance-save-btn:hover{
+  background:#1e3a8a;
+}
+
+.attendance-save-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* REPORT CARDS */
+
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.report-card{
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:20px;
+  background:#f8fafc;
+  cursor:pointer;
+  transition:.2s;
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.report-card:hover{
+  background:#eef4ff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 18px rgba(0,0,0,.08);
+}
+
+.report-icon{
+  width:52px;
+  height:52px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  background:#e8efff;
+}
+
+.report-card h3{
+  font-size:16px;
+  margin-bottom:4px;
+}
+
+.report-card p{
+  font-size:12px;
+  color:#64748b;
+}
+
+/* SALARY SEARCH */
+
+.teacher-filter{
+  position:relative;
+  margin-bottom:18px;
+}
+
+.teacher-filter input{
+  width:100%;
+  padding:13px 15px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  outline:none;
+  font-size:14px;
+}
+
+.teacher-filter input:focus{
+  border-color:#2563eb;
+}
+
+.filter-results{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  top:50px;
+  background:white;
+  border:1px solid #dbe2ea;
+  border-radius:9px;
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+  z-index:50;
+  max-height:250px;
+  overflow-y:auto;
+}
+
+.filter-results.show{
+  display:block;
+}
+
+.filter-result-item{
+  padding:12px 14px;
+  border-bottom:1px solid #f1f5f9;
+  cursor:pointer;
+}
+
+.filter-result-item:last-child{
+  border-bottom:none;
+}
+
+.filter-result-item:hover{
+  background:#f8fafc;
+}
+
+.filter-result-name{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.filter-result-info{
+  color:#64748b;
+  font-size:11px;
+  margin-top:3px;
+}
+
+/* SELECTED TEACHER */
+
+.selected-teacher{
+  display:none;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:18px;
+  align-items:center;
+  gap:12px;
+}
+
+.selected-teacher.show{
+  display:flex;
+}
+
+.selected-teacher img,
+.selected-teacher .selected-placeholder{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.selected-placeholder{
+  background:#e8efff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+}
+
+.selected-name{
+  font-size:16px;
+  font-weight:bold;
+}
+
+.selected-info{
+  color:#64748b;
+  font-size:12px;
+  margin-top:4px;
+}
+
+/* SALARY CARDS */
+
+.salary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.salary-card{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,.04);
+}
+
+.salary-icon{
+  font-size:25px;
+  margin-bottom:9px;
+}
+
+.salary-card h3{
+  font-size:13px;
+  color:#64748b;
+  font-weight:normal;
+}
+
+.salary-number{
+  margin-top:7px;
+  font-size:24px;
+  font-weight:bold;
+  color:#172554;
+}
+
+.salary-paid{
+  color:#15803d;
+}
+
+.salary-remaining{
+  color:#dc2626;
+}
+
+.no-teacher{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+  background:#f8fafc;
+  border-radius:10px;
+  font-size:14px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.salary-grid{
+  grid-template-columns:1fr;
+}
+
+.report-grid{
+  grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:650px){
+
+.header{
+  padding:12px 15px;
+}
+
+.brand img{
+  width:42px;
+  height:42px;
+}
+
+.brand h1{
+  font-size:15px;
+}
+
+.brand p{
+  font-size:10px;
+}
+
+.header-buttons{
+  gap:5px;
+}
+
+.dashboard-btn{
+  padding:8px 10px;
+  font-size:11px;
+}
+
+.container{
+  padding:0 10px;
+  margin:15px auto;
+}
+
+.box{
+  padding:15px;
+  border-radius:12px;
+}
+
+.box-header h2{
+  font-size:18px;
+}
+
+.add-teacher-btn{
+  width:100%;
+}
+
+.report-grid{
+  grid-template-columns:1fr;
+}
+
+.salary-grid{
+  grid-template-columns:1fr;
+}
+
+.attendance-form-grid{
+  grid-template-columns:1fr;
+}
+
+.attendance-form-group.full{
+  grid-column:auto;
+}
+
+.attendance-status-buttons{
+  grid-template-columns:1fr;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+<img
+  src="kumaun institute logo.png"
+  alt="Kumaun Institute Logo"
+>
+
+<div>
+
+  <h1>Kumaun Institute of Computer Education</h1>
+
+  <p>Teachers Management Dashboard</p>
+
+</div>
+
+  </div>
+
+  <div class="header-buttons">
+
+<button
+  class="dashboard-btn"
+  onclick="location.href='index.html'"
+>
+  ← Dashboard
+</button>
+
+  </div>
+
+</header>
+
+<div class="container">
+
+  <!-- =====================================
+       RECENT TEACHERS
+  ====================================== -->
+
+  <div class="box">
+
+<div class="box-header">
+
+  <div>
+
+    <h2>👨‍🏫 Recent Teachers</h2>
+
+  </div>
+
+  <button
+    class="add-teacher-btn"
+    onclick="location.href='add-teacher.html'"
+  >
+    ➕ Add Teacher
+  </button>
+
+</div>
+
+
+<div class="search-box">
+
+  <input
+    type="text"
+    id="teacherSearch"
+    placeholder="🔍 Search by name, email, phone, subject, batch timing..."
+  >
+
+</div>
+
+
+<div class="table-container">
+
+  <table class="teacher-table">
+
+    <thead>
+
+      <tr>
+
+        <th>Photo</th>
+
+        <th>Teacher Name</th>
+
+        <th>Email</th>
+
+        <th>Phone</th>
+
+        <th>Subject</th>
+
+        <th>Batch Timing</th>
+
+        <th>Date of Birth</th>
+
+        <th>Joining Date</th>
+
+        <th>Monthly Salary</th>
+
+        <th>Paid Salary</th>
+
+        <th>Remaining Salary</th>
+
+        <th>Status</th>
+
+        <th>Address</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="teacherTableBody">
+
+      <tr>
+
+        <td
+          colspan="13"
+          class="loading"
+        >
+          Loading teachers...
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+  </div>
+
+  <!-- =====================================
+       MARK TEACHER ATTENDANCE
+       ADDED HERE ONLY
+  ====================================== -->
+
+  <div class="box">
+
+<div class="attendance-title">
+
+  <h2>📋 Mark Teacher Attendance</h2>
+
+</div>
+
+
+<div class="attendance-form-grid">
+
+
+  <!-- TEACHER -->
+
+  <div class="attendance-form-group full">
+
+    <label>
+      👨‍🏫 Select Teacher *
+    </label>
+
+    <select id="attendanceTeacherSelect">
+
+      <option value="">
+        Loading teachers...
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- DATE -->
+
+  <div class="attendance-form-group">
+
+    <label>
+      📅 Attendance Date *
+    </label>
+
+    <input
+      type="date"
+      id="attendanceDate"
+    >
+
+  </div>
+
+
+  <!-- CHECK IN -->
+
+  <div class="attendance-form-group">
+
+    <label>
+      ⏰ Check-in Time
+    </label>
+
+    <input
+      type="time"
+      id="attendanceCheckIn"
+    >
+
+  </div>
+
+
+  <!-- STATUS -->
+
+  <div class="attendance-form-group full">
+
+    <label>
+      📌 Attendance Status *
+    </label>
+
+
+    <div class="attendance-status-buttons">
+
+
+      <button
+        type="button"
+        class="attendance-status-option present active"
+        onclick="selectTeacherAttendanceStatus('Present')"
+        id="attendancePresentBtn"
+      >
+        🟢 Present
+      </button>
+
+
+      <button
+        type="button"
+        class="attendance-status-option absent"
+        onclick="selectTeacherAttendanceStatus('Absent')"
+        id="attendanceAbsentBtn"
+      >
+        🔴 Absent
+      </button>
+
+
+      <button
+        type="button"
+        class="attendance-status-option leave"
+        onclick="selectTeacherAttendanceStatus('Leave')"
+        id="attendanceLeaveBtn"
+      >
+        🟡 Leave
+      </button>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="attendanceFormStatus"
+  class="attendance-form-status"
+></div>
+
+
+<button
+  class="attendance-save-btn"
+  id="attendanceSaveButton"
+  onclick="saveTeacherAttendance()"
+>
+  💾 Save Attendance
+</button>
+
+  </div>
+
+  <!-- =====================================
+       REPORTS
+  ====================================== -->
+
+  <div class="box">
+
+<div class="box-header">
+
+  <div>
+
+    <h2>📊 Teacher Reports</h2>
+
+    <p>Teacher Salary & Attendance Reports</p>
+
+  </div>
+
+</div>
+
+
+<div class="report-grid">
+
+  <div
+    class="report-card"
+    onclick="location.href='owner-teachers-salary-report.html'"
+  >
+
+    <div class="report-icon">
+      💰
+    </div>
+
+    <div>
+
+      <h3>Salary Report</h3>
+
+      <p>All Teachers Salary & Remaining Salary Reports</p>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="report-card"
+    onclick="location.href='teacher-attendance.html'"
+  >
+
+    <div class="report-icon">
+      📅
+    </div>
+
+    <div>
+
+      <h3>Attendance Report</h3>
+
+      <p>All Teachers Attendance Reports</p>
+
+    </div>
+
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- =====================================
+       TEACHER SALARY SUMMARY
+  ====================================== -->
+
+  <div class="box">
+
+<div class="box-header">
+
+  <div>
+
+    <h2>💰 Teacher Salary Summary</h2>
+  </div>
+
+</div>
+
+
+<div class="teacher-filter">
+
+  <input
+    type="text"
+    id="salaryTeacherSearch"
+    placeholder="🔍 Search teachers name..."
+    autocomplete="off"
+  >
+
+  <div
+    id="filterResults"
+    class="filter-results"
+  ></div>
+
+</div>
+
+
+<div
+  id="selectedTeacher"
+  class="selected-teacher"
+></div>
+
+
+<div
+  id="salaryEmpty"
+  class="no-teacher"
+>
+
+  🔍 Select Teachers Name.
+
+</div>
+
+
+<div
+  id="salaryCards"
+  class="salary-grid"
+  style="display:none;"
+>
+
+
+  <div class="salary-card">
+
+    <div class="salary-icon">
+      💰
+    </div>
+
+    <h3>
+      Monthly Salary
+    </h3>
+
+    <div
+      class="salary-number"
+      id="monthlySalary"
+    >
+      ₹0
+    </div>
+
+  </div>
+
+
+  <div class="salary-card">
+
+    <div class="salary-icon">
+      💵
+    </div>
+
+    <h3>
+      Salary Paid
+    </h3>
+
+    <div
+      class="salary-number salary-paid"
+      id="salaryPaid"
+    >
+      ₹0
+    </div>
+
+  </div>
+
+
+  <div class="salary-card">
+
+    <div class="salary-icon">
+      ⏳
+    </div>
+
+    <h3>
+      Salary Remaining
+    </h3>
+
+    <div
+      class="salary-number salary-remaining"
+      id="salaryRemaining"
+    >
+      ₹0
+    </div>
+
+  </div>
+
+
+</div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+let allTeachers = [];
+
+let selectedTeacherData = null;
+
+let selectedTeacherAttendanceStatus = "Present";
+
+
+/* =========================================
+   ATTENDANCE DATE
+========================================= */
+
+const attendanceToday =
+  new Date()
+    .toISOString()
+    .split("T")[0];
+
+document.getElementById(
+  "attendanceDate"
+).value =
+  attendanceToday;
+
+
+/* =========================================
+   CURRENT TIME
+========================================= */
+
+const attendanceNow =
+  new Date();
+
+const attendanceCurrentTime =
+  String(
+    attendanceNow.getHours()
+  ).padStart(2,"0")
+  +
+  ":"
+  +
+  String(
+    attendanceNow.getMinutes()
+  ).padStart(2,"0");
+
+document.getElementById(
+  "attendanceCheckIn"
+).value =
+  attendanceCurrentTime;
+
+
+/* =========================================
+   LOAD TEACHERS
+========================================= */
+
+async function loadTeachers(){
+
+  const tableBody =
+    document.getElementById(
+      "teacherTableBody"
+    );
+
+  const attendanceSelect =
+    document.getElementById(
+      "attendanceTeacherSelect"
+    );
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+      .from("teachers")
+      .select(`
+        id,
+        name,
+        email,
+        phone,
+        subject,
+        batch_timing,
+        dob,
+        joining_date,
+        monthly_salary,
+        salary_paid,
+        status,
+        address,
+        photo_url,
+        created_at
+      `)
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+    if(error){
+
+      console.error(
+        "Teachers error:",
+        error
+      );
+
+      tableBody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="13"
+            class="error"
+          >
+
+            ${escapeHTML(error.message)}
+
+          </td>
+
+        </tr>
+
+      `;
+
+      attendanceSelect.innerHTML =
+        '<option value="">Teachers load nahi hue</option>';
+
+      return;
+
+    }
+
+
+    allTeachers =
+      data || [];
+
+
+    renderTeachers(
+      allTeachers
+    );
+
+
+    /* ATTENDANCE TEACHER DROPDOWN */
+
+    attendanceSelect.innerHTML =
+      '<option value="">-- Select Teacher --</option>';
+
+
+    const activeTeachers =
+      allTeachers.filter(
+        function(teacher){
+
+          return String(
+            teacher.status || ""
+          ).toLowerCase() ===
+          "active";
+
+        }
+      );
+
+
+    activeTeachers.forEach(
+      function(teacher){
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          teacher.id;
+
+        option.textContent =
+          teacher.name +
+          (
+            teacher.subject
+            ?
+            " - " +
+            teacher.subject
+            :
+            ""
+          );
+
+        attendanceSelect.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+    if(!activeTeachers.length){
+
+      attendanceSelect.innerHTML +=
+        '<option value="">No active teachers found</option>';
+
+    }
+
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    tableBody.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="13"
+          class="error"
+        >
+
+          Teachers load nahi ho paye.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    attendanceSelect.innerHTML =
+      '<option value="">Teachers load nahi hue</option>';
+
+  }
+
+}
+
+
+/* =========================================
+   ATTENDANCE STATUS
+========================================= */
+
+function selectTeacherAttendanceStatus(
+  status
+){
+
+  selectedTeacherAttendanceStatus =
+    status;
+
+
+  document
+    .querySelectorAll(
+      ".attendance-status-option"
+    )
+    .forEach(
+      function(button){
+
+        button.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+
+  if(status === "Present"){
+
+    document
+      .getElementById(
+        "attendancePresentBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  if(status === "Absent"){
+
+    document
+      .getElementById(
+        "attendanceAbsentBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+    document.getElementById(
+      "attendanceCheckIn"
+    ).value = "";
+
+  }
+
+
+  if(status === "Leave"){
+
+    document
+      .getElementById(
+        "attendanceLeaveBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+    document.getElementById(
+      "attendanceCheckIn"
+    ).value = "";
+
+  }
+
+}
+
+
+/* =========================================
+   ATTENDANCE STATUS MESSAGE
+========================================= */
+
+function showAttendanceStatus(
+  message,
+  type
+){
+
+  const status =
+    document.getElementById(
+      "attendanceFormStatus"
+    );
+
+  status.textContent =
+    message;
+
+  status.className =
+    "attendance-form-status " +
+    type;
+
+}
+
+
+/* =========================================
+   SAVE TEACHER ATTENDANCE
+========================================= */
+
+async function saveTeacherAttendance(){
+
+  const saveButton =
+    document.getElementById(
+      "attendanceSaveButton"
+    );
+
+
+  const teacherId =
+    document.getElementById(
+      "attendanceTeacherSelect"
+    ).value;
+
+
+  const attendanceDate =
+    document.getElementById(
+      "attendanceDate"
+    ).value;
+
+
+  const checkIn =
+    document.getElementById(
+      "attendanceCheckIn"
+    ).value ||
+    null;
+
+
+  if(!teacherId){
+
+    showAttendanceStatus(
+      "Please teacher select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(!attendanceDate){
+
+    showAttendanceStatus(
+      "Attendance date select karein.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  saveButton.disabled =
+    true;
+
+  saveButton.textContent =
+    "Saving...";
+
+
+  try{
+
+    showAttendanceStatus(
+      "Attendance save ho rahi hai...",
+      "info"
+    );
+
+
+    const {
+      data: existingAttendance,
+      error: checkError
+    } =
+      await supabaseClient
+        .from("teacher_attendance")
+        .select("id")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "date",
+          attendanceDate
+        )
+        .maybeSingle();
+
+
+    if(checkError){
+      throw checkError;
+    }
+
+
+    if(existingAttendance){
+
+      const {
+        error:updateError
+      } =
+        await supabaseClient
+          .from("teacher_attendance")
+          .update({
+            status:
+              selectedTeacherAttendanceStatus,
+            check_in:
+              checkIn
+          })
+          .eq(
+            "id",
+            existingAttendance.id
+          );
+
+
+      if(updateError){
+        throw updateError;
+      }
+
+
+      showAttendanceStatus(
+        "✅ Attendance successfully update ho gayi!",
+        "success"
+      );
+
+    }
+    else{
+
+      const {
+        error:insertError
+      } =
+        await supabaseClient
+          .from("teacher_attendance")
+          .insert([
+            {
+              teacher_id:
+                teacherId,
+
+              date:
+                attendanceDate,
+
+              status:
+                selectedTeacherAttendanceStatus,
+
+              check_in:
+                checkIn
+            }
+          ]);
+
+
+      if(insertError){
+        throw insertError;
+      }
+
+
+      showAttendanceStatus(
+        "✅ Teacher attendance successfully save ho gayi!",
+        "success"
+      );
+
+    }
+
+  }
+  catch(error){
+
+    console.error(
+      "Save attendance error:",
+      error
+    );
+
+
+    showAttendanceStatus(
+      "❌ Attendance save nahi hui: " +
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    saveButton.disabled =
+      false;
+
+    saveButton.textContent =
+      "💾 Save Attendance";
+
+  }
+
+}
+
+
+/* =========================================
+   RENDER TEACHERS
+========================================= */
+
+function renderTeachers(
+  teachers
+){
+
+  const tableBody =
+    document.getElementById(
+      "teacherTableBody"
+    );
+
+
+  if(!teachers.length){
+
+    tableBody.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="13"
+          class="loading"
+        >
+
+          No teachers found.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  tableBody.innerHTML = "";
+
+
+  teachers.forEach(
+    function(teacher){
+
+      const monthlySalary =
+        Number(
+          teacher.monthly_salary
+        ) || 0;
+
+
+      const salaryPaid =
+        Number(
+          teacher.salary_paid
+        ) || 0;
+
+
+      const remainingSalary =
+        Math.max(
+          monthlySalary -
+          salaryPaid,
+          0
+        );
+
+
+      let photoHTML = `
+
+        <div class="photo-placeholder">
+          👨‍🏫
+        </div>
+
+      `;
+
+
+      if(teacher.photo_url){
+
+        photoHTML = `
+
+          <img
+            src="${escapeHTML(
+              teacher.photo_url
+            )}"
+            alt="Teacher Photo"
+            class="teacher-photo"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          >
+
+          <div
+            class="photo-placeholder"
+            style="display:none;"
+          >
+            👨‍🏫
+          </div>
+
+        `;
+
+      }
+
+
+      const status =
+        String(
+          teacher.status || ""
+        ).toLowerCase();
+
+
+      const statusClass =
+        status === "active"
+        ?
+        "active-status"
+        :
+        "inactive-status";
+
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${photoHTML}
+        </td>
+
+        <td>
+          <strong>
+            ${escapeHTML(
+              teacher.name || "-"
+            )}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHTML(
+            teacher.email || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            teacher.phone || "-"
+          )}
+        </td>
+
+        <td>
+
+          <span class="subject-badge">
+
+            ${escapeHTML(
+              teacher.subject || "-"
+            )}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          <span class="batch-badge">
+
+            ${escapeHTML(
+              teacher.batch_timing || "-"
+            )}
+
+          </span>
+
+        </td>
+
+        <td>
+          ${formatDate(
+            teacher.dob
+          )}
+        </td>
+
+        <td>
+          ${formatDate(
+            teacher.joining_date
+          )}
+        </td>
+
+        <td>
+
+          ₹${monthlySalary.toLocaleString(
+            "en-IN"
+          )}
+
+        </td>
+
+        <td>
+
+          ₹${salaryPaid.toLocaleString(
+            "en-IN"
+          )}
+
+        </td>
+
+        <td>
+
+          <strong>
+
+            ₹${remainingSalary.toLocaleString(
+              "en-IN"
+            )}
+
+          </strong>
+
+        </td>
+
+        <td class="${statusClass}">
+
+          ${escapeHTML(
+            teacher.status || "-"
+          )}
+
+        </td>
+
+        <td>
+
+          ${escapeHTML(
+            teacher.address || "-"
+          )}
+
+        </td>
+
+      `;
+
+
+      tableBody.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   MAIN TEACHER SEARCH
+========================================= */
+
+document
+  .getElementById(
+    "teacherSearch"
+  )
+  .addEventListener(
+    "input",
+    function(){
+
+      const searchText =
+        this.value
+          .trim()
+          .toLowerCase();
+
+
+      const filtered =
+        allTeachers.filter(
+          function(teacher){
+
+            const searchableText =
+
+              String(
+                teacher.name || ""
+              ).toLowerCase()
+
+              + " " +
+
+              String(
+                teacher.email || ""
+              ).toLowerCase()
+
+              + " " +
+
+              String(
+                teacher.phone || ""
+              ).toLowerCase()
+
+              + " " +
+
+              String(
+                teacher.subject || ""
+              ).toLowerCase()
+
+              + " " +
+
+              String(
+                teacher.batch_timing || ""
+              ).toLowerCase()
+
+              + " " +
+
+              String(
+                teacher.address || ""
+              ).toLowerCase();
+
+
+            return searchableText.includes(
+              searchText
+            );
+
+          }
+        );
+
+
+      renderTeachers(
+        filtered
+      );
+
+    }
+  );
+
+
+/* =========================================
+   SALARY TEACHER SEARCH
+========================================= */
+
+const salarySearch =
+  document.getElementById(
+    "salaryTeacherSearch"
+  );
+
+const filterResults =
+  document.getElementById(
+    "filterResults"
+  );
+
+
+salarySearch.addEventListener(
+  "input",
+  function(){
+
+    const searchText =
+      this.value
+        .trim()
+        .toLowerCase();
+
+
+    if(!searchText){
+
+      filterResults.innerHTML = "";
+
+      filterResults.classList.remove(
+        "show"
+      );
+
+      return;
+
+    }
+
+
+    const results =
+      allTeachers.filter(
+        function(teacher){
+
+          return String(
+            teacher.name || ""
+          )
+          .toLowerCase()
+          .includes(
+            searchText
+          );
+
+        }
+      );
+
+
+    if(!results.length){
+
+      filterResults.innerHTML = `
+
+        <div class="filter-result-item">
+
+          <div class="filter-result-name">
+
+            ❌ Teacher nahi mila
+
+          </div>
+
+          <div class="filter-result-info">
+
+            Naam dobara check karein.
+
+          </div>
+
+        </div>
+
+      `;
+
+      filterResults.classList.add(
+        "show"
+      );
+
+      return;
+
+    }
+
+
+    filterResults.innerHTML = "";
+
+
+    results
+      .slice(0,10)
+      .forEach(
+        function(teacher){
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "filter-result-item";
+
+
+          item.innerHTML = `
+
+            <div class="filter-result-name">
+
+              👨‍🏫
+              ${escapeHTML(
+                teacher.name || "-"
+              )}
+
+            </div>
+
+            <div class="filter-result-info">
+
+              ${escapeHTML(
+                teacher.phone || "-"
+              )}
+              •
+              ${escapeHTML(
+                teacher.subject || "-"
+              )}
+
+            </div>
+
+          `;
+
+
+          item.onclick =
+            function(){
+
+              selectTeacher(
+                teacher
+              );
+
+            };
+
+
+          filterResults.appendChild(
+            item
+          );
+
+        }
+      );
+
+
+    filterResults.classList.add(
+      "show"
+    );
+
+  }
+);
+
+
+/* =========================================
+   SELECT TEACHER
+========================================= */
+
+function selectTeacher(
+  teacher
+){
+
+  selectedTeacherData =
+    teacher;
+
+
+  salarySearch.value =
+    teacher.name || "";
+
+
+  filterResults.innerHTML = "";
+
+  filterResults.classList.remove(
+    "show"
+  );
+
+
+  const selected =
+    document.getElementById(
+      "selectedTeacher"
+    );
+
+
+  let photoHTML = `
+
+    <div class="selected-placeholder">
+      👨‍🏫
+    </div>
+
+  `;
+
+
+  if(teacher.photo_url){
+
+    photoHTML = `
+
+      <img
+        src="${escapeHTML(
+          teacher.photo_url
+        )}"
+        alt="Teacher Photo"
+      >
+
+    `;
+
+  }
+
+
+  selected.innerHTML = `
+
+    ${photoHTML}
+
+    <div>
+
+      <div class="selected-name">
+
+        ${escapeHTML(
+          teacher.name || "-"
+        )}
+
+      </div>
+
+      <div class="selected-info">
+
+        ${escapeHTML(
+          teacher.phone || "-"
+        )}
+
+        •
+
+        ${escapeHTML(
+          teacher.subject || "-"
+        )}
+
+        •
+
+        ${escapeHTML(
+          teacher.status || "-"
+        )}
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  selected.classList.add(
+    "show"
+  );
+
+
+  const monthlySalary =
+    Number(
+      teacher.monthly_salary
+    ) || 0;
+
+
+  const salaryPaid =
+    Number(
+      teacher.salary_paid
+    ) || 0;
+
+
+  const remaining =
+    Math.max(
+      monthlySalary -
+      salaryPaid,
+      0
+    );
+
+
+  document.getElementById(
+    "monthlySalary"
+  ).textContent =
+    "₹" +
+    monthlySalary.toLocaleString(
+      "en-IN"
+    );
+
+
+  document.getElementById(
+    "salaryPaid"
+  ).textContent =
+    "₹" +
+    salaryPaid.toLocaleString(
+      "en-IN"
+    );
+
+
+  document.getElementById(
+    "salaryRemaining"
+  ).textContent =
+    "₹" +
+    remaining.toLocaleString(
+      "en-IN"
+    );
+
+
+  document.getElementById(
+    "salaryEmpty"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "salaryCards"
+  ).style.display =
+    "grid";
+
+}
+
+
+/* =========================================
+   CLOSE SEARCH RESULTS OUTSIDE
+========================================= */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    const filter =
+      document.querySelector(
+        ".teacher-filter"
+      );
+
+
+    if(
+      filter &&
+      !filter.contains(
+        event.target
+      )
+    ){
+
+      filterResults.classList.remove(
+        "show"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================
+   DATE FORMAT
+========================================= */
+
+function formatDate(
+  value
+){
+
+  if(!value){
+    return "-";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    isNaN(
+      date.getTime()
+    )
+  ){
+
+    return value;
+
+  }
+
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+
+}
+
+
+/* =========================================
+   HTML SAFETY
+========================================= */
+
+function escapeHTML(
+  value
+){
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+loadTeachers();
+
+
+/* =========================================
+   AUTO REFRESH
+========================================= */
+
+setInterval(
+  function(){
+
+    loadTeachers();
+
+  },
+  30000
+);
+
+</script>
+
+</body>
+</html>

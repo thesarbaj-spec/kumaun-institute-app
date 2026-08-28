@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Add Student | Kumaun Institute</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    .form-box {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .top-logo {
+      width: 80px;
+      height: 80px;
+      display: block;
+      margin: 0 auto 15px;
+      object-fit: contain;
+    }
+
+    h1 {
+      text-align: center;
+      color: #172554;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    /* =========================
+       PHOTO AREA
+    ========================= */
+
+    .photo-area {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .photo-preview {
+      width: 150px;
+      height: 180px;
+      border: 2px dashed #b8c0cc;
+      border-radius: 10px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #777;
+      font-size: 13px;
+      position: relative;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* =========================
+       PHOTO BUTTONS
+    ========================= */
+
+    .photo-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .photo-btn {
+      border: none;
+      padding: 11px 15px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .upload-btn {
+      background: #2563eb;
+    }
+
+    .camera-btn {
+      background: #16a34a;
+    }
+
+    .capture-btn {
+      background: #dc2626;
+    }
+
+    .change-camera-btn {
+      background: #7c3aed;
+    }
+
+    .retake-btn {
+      background: #f59e0b;
+    }
+
+    .photo-buttons button:hover {
+      opacity: .9;
+    }
+
+    #studentPhoto {
+      display: none;
+    }
+
+    /* =========================
+       CAMERA
+    ========================= */
+
+    .camera-box {
+      display: none;
+      max-width: 400px;
+      margin: 15px auto;
+      padding: 12px;
+      background: #0f172a;
+      border-radius: 12px;
+    }
+
+    .camera-box.show {
+      display: block;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      max-height: 350px;
+      display: block;
+      border-radius: 8px;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .camera-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .camera-controls button {
+      border: none;
+      padding: 10px 13px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .camera-info {
+      color: white;
+      text-align: center;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .save-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .back-btn {
+      width: 100%;
+      padding: 12px;
+      background: #eee;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    @media(max-width:600px) {
+
+      body {
+        padding: 10px;
+      }
+
+      .form-box {
+        padding: 20px 15px;
+      }
+
+      .two {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .photo-preview {
+        width: 140px;
+        height: 170px;
+      }
+
+      .photo-btn {
+        font-size: 13px;
+        padding: 10px 12px;
+      }
+
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="form-box">
+
+<img
+  src="kumaun institute logo.png"
+  alt="Kumaun Institute Logo"
+  class="top-logo"
+>
+
+<h1>➕ Add New Student</h1>
+
+<p class="subtitle">
+  Kumaun Institute of Computer Education
+</p>
+
+<!-- =========================
+     STUDENT PHOTO
+========================= -->
+
+<div class="photo-area">
+
+  <div class="photo-preview" id="photoPreview">
+
+    <span id="photoText">
+      Passport Photo
+    </span>
+
+    <img
+      id="previewImage"
+      alt="Student Photo"
+    >
+
+  </div>
+
+  <!-- HIDDEN FILE INPUT -->
+
+  <input
+    type="file"
+    id="studentPhoto"
+    accept="image/png,image/jpeg,image/jpg"
+  >
+
+  <!-- PHOTO BUTTONS -->
+
+  <div class="photo-buttons">
+
+    <button
+      type="button"
+      class="photo-btn upload-btn"
+      onclick="openFilePicker()"
+    >
+      📁 Upload File
+    </button>
+
+    <button
+      type="button"
+      class="photo-btn camera-btn"
+      onclick="openCamera()"
+    >
+      📷 Open Camera
+    </button>
+
+    <button
+      type="button"
+      class="photo-btn retake-btn"
+      id="retakeButton"
+      onclick="retakePhoto()"
+      style="display:none;"
+    >
+      🔁 Retake
+    </button>
+
+  </div>
+
+  <!-- CAMERA -->
+
+  <div
+    class="camera-box"
+    id="cameraBox"
+  >
+
+    <video
+      id="cameraVideo"
+      autoplay
+      playsinline
+    ></video>
+
+    <div class="camera-controls">
+
+      <button
+        type="button"
+        class="capture-btn"
+        onclick="capturePhoto()"
+      >
+        📸 Capture
+      </button>
+
+      <button
+        type="button"
+        class="change-camera-btn"
+        onclick="changeCamera()"
+      >
+        🔄 Change Camera
+      </button>
+
+      <button
+        type="button"
+        class="photo-btn"
+        style="background:#475569;"
+        onclick="closeCamera()"
+      >
+        ✕ Close
+      </button>
+
+    </div>
+
+    <div class="camera-info" id="cameraInfo">
+      Camera ready
+    </div>
+
+  </div>
+
+  <canvas
+    id="cameraCanvas"
+    style="display:none;"
+  ></canvas>
+
+</div>
+
+
+<!-- =========================
+     FORM
+========================= -->
+
+<form id="studentForm">
+
+  <div class="field">
+
+    <label for="name">
+      Student Name *
+    </label>
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Enter student name"
+      required
+    >
+
+  </div>
+
+
+  <div class="two">
+
+    <div class="field">
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter email"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label for="phone">
+        Mobile Number *
+      </label>
+
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Enter mobile number"
+        required
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="field">
+
+    <label for="course">
+      Course *
+    </label>
+
+    <input
+      type="text"
+      id="course"
+      placeholder="Example: DCA, ADCA, Tally"
+      required
+    >
+
+  </div>
+
+
+  <div class="field">
+
+    <label for="batchTiming">
+      Batch Timing *
+    </label>
+
+    <select
+      id="batchTiming"
+      required
+    >
+
+      <option value="">
+        Select Batch Timing
+      </option>
+
+      <option value="07:00 AM - 08:00 AM">
+        07:00 AM - 08:00 AM
+      </option>
+
+      <option value="08:00 AM - 09:00 AM">
+        08:00 AM - 09:00 AM
+      </option>
+
+      <option value="09:00 AM - 10:00 AM">
+        09:00 AM - 10:00 AM
+      </option>
+
+      <option value="10:00 AM - 11:00 AM">
+        10:00 AM - 11:00 AM
+      </option>
+
+      <option value="11:00 AM - 12:00 PM">
+        11:00 AM - 12:00 PM
+      </option>
+
+      <option value="12:00 PM - 01:00 PM">
+        12:00 PM - 01:00 PM
+      </option>
+
+      <option value="01:00 PM - 02:00 PM">
+        01:00 PM - 02:00 PM
+      </option>
+
+      <option value="02:00 PM - 03:00 PM">
+        02:00 PM - 03:00 PM
+      </option>
+
+      <option value="03:00 PM - 04:00 PM">
+        03:00 PM - 04:00 PM
+      </option>
+
+      <option value="04:00 PM - 05:00 PM">
+        04:00 PM - 05:00 PM
+      </option>
+
+      <option value="05:00 PM - 06:00 PM">
+        05:00 PM - 06:00 PM
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="two">
+
+    <div class="field">
+
+      <label for="dob">
+        Date of Birth
+      </label>
+
+      <input
+        type="date"
+        id="dob"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label for="admissionDate">
+        Admission Date
+      </label>
+
+      <input
+        type="date"
+        id="admissionDate"
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="field">
+
+    <label for="address">
+      Address
+    </label>
+
+    <textarea
+      id="address"
+      placeholder="Enter student address"
+    ></textarea>
+
+  </div>
+
+
+  <div class="two">
+
+    <div class="field">
+
+      <label for="totalFee">
+        Total Fee
+      </label>
+
+      <input
+        type="number"
+        id="totalFee"
+        placeholder="₹ Total fee"
+        min="0"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label for="paidFee">
+        Paid Fee
+      </label>
+
+      <input
+        type="number"
+        id="paidFee"
+        placeholder="₹ Paid fee"
+        min="0"
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="field">
+
+    <label for="status">
+      Student Status
+    </label>
+
+    <select id="status">
+
+      <option value="active">
+        Active
+      </option>
+
+      <option value="passout">
+        Pass Out
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <button
+    type="submit"
+    class="save-btn"
+    id="saveButton"
+  >
+    💾 Save Student
+  </button>
+
+
+  <button
+    type="button"
+    class="back-btn"
+    onclick="location.href='index.html'"
+  >
+    ← Back to Dashboard
+  </button>
+
+
+  <div
+    class="message"
+    id="message"
+  ></div>
+
+</form>
+
+  </div>
+
+  <!-- SUPABASE -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================
+       CAMERA VARIABLES
+    ========================= */
+
+    let cameraStream = null;
+
+    let currentFacingMode = "environment";
+
+    let capturedPhotoFile = null;
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const photoInput =
+      document.getElementById("studentPhoto");
+
+    const previewImage =
+      document.getElementById("previewImage");
+
+    const photoText =
+      document.getElementById("photoText");
+
+    const cameraBox =
+      document.getElementById("cameraBox");
+
+    const cameraVideo =
+      document.getElementById("cameraVideo");
+
+    const cameraCanvas =
+      document.getElementById("cameraCanvas");
+
+    const cameraInfo =
+      document.getElementById("cameraInfo");
+
+    const retakeButton =
+      document.getElementById("retakeButton");
+
+
+    /* =========================
+       OPEN FILE PICKER
+    ========================= */
+
+    function openFilePicker() {
+
+      photoInput.click();
+
+    }
+
+
+    /* =========================
+       FILE UPLOAD PREVIEW
+    ========================= */
+
+    photoInput.addEventListener(
+      "change",
+      function() {
+
+        const file =
+          this.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        if (
+          !file.type.startsWith("image/")
+        ) {
+
+          alert(
+            "Sirf image file select karein."
+          );
+
+          this.value = "";
+
+          return;
+        }
+
+        capturedPhotoFile = file;
+
+        const imageURL =
+          URL.createObjectURL(file);
+
+        previewImage.src =
+          imageURL;
+
+        previewImage.style.display =
+          "block";
+
+        photoText.style.display =
+          "none";
+
+        retakeButton.style.display =
+          "inline-block";
+
+      }
+    );
+
+
+    /* =========================
+       OPEN CAMERA
+    ========================= */
+
+    async function openCamera() {
+
+      if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+      ) {
+
+        alert(
+          "Aapke browser me camera support nahi hai."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        await startCamera();
+
+        cameraBox.classList.add(
+          "show"
+        );
+
+      }
+      catch(error) {
+
+        console.error(
+          "Camera error:",
+          error
+        );
+
+        alert(
+          "Camera open nahi ho paya. Browser me camera permission Allow karein."
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       START CAMERA
+    ========================= */
+
+    async function startCamera() {
+
+      stopCamera();
+
+
+      const constraints = {
+
+        video: {
+
+          facingMode: {
+            ideal:
+              currentFacingMode
+          },
+
+          width: {
+            ideal: 1280
+          },
+
+          height: {
+            ideal: 720
+          }
+
+        },
+
+        audio: false
+
+      };
+
+
+      cameraStream =
+        await navigator.mediaDevices.getUserMedia(
+          constraints
+        );
+
+
+      cameraVideo.srcObject =
+        cameraStream;
+
+
+      cameraInfo.textContent =
+        currentFacingMode === "environment"
+          ? "📷 Back Camera"
+          : "🤳 Front Camera";
+
+    }
+
+
+    /* =========================
+       CHANGE CAMERA
+    ========================= */
+
+    async function changeCamera() {
+
+      if (!cameraStream) {
+
+        alert(
+          "Pehle camera open karein."
+        );
+
+        return;
+      }
+
+
+      currentFacingMode =
+        currentFacingMode === "environment"
+          ? "user"
+          : "environment";
+
+
+      try {
+
+        await startCamera();
+
+      }
+      catch(error) {
+
+        console.error(
+          "Change camera error:",
+          error
+        );
+
+        /*
+
+          Kuch laptops/browsers me
+          front/back camera available
+          nahi hota.
+
+          Isliye purani camera setting
+          par wapas try kar rahe hain.
+
+        */
+
+        currentFacingMode =
+          currentFacingMode === "environment"
+            ? "user"
+            : "environment";
+
+
+        try {
+
+          await startCamera();
+
+        }
+        catch(secondError) {
+
+          console.error(
+            secondError
+          );
+
+          alert(
+            "Camera change nahi ho paya."
+          );
+
+        }
+
+      }
+
+    }
+
+
+    /* =========================
+       CAPTURE PHOTO
+    ========================= */
+
+    function capturePhoto() {
+
+      if (!cameraStream) {
+
+        alert(
+          "Camera open nahi hai."
+        );
+
+        return;
+      }
+
+
+      const videoWidth =
+        cameraVideo.videoWidth;
+
+      const videoHeight =
+        cameraVideo.videoHeight;
+
+
+      if (
+        !videoWidth ||
+        !videoHeight
+      ) {
+
+        alert(
+          "Camera ready hone ka wait karein."
+        );
+
+        return;
+      }
+
+
+      cameraCanvas.width =
+        videoWidth;
+
+      cameraCanvas.height =
+        videoHeight;
+
+
+      const context =
+        cameraCanvas.getContext(
+          "2d"
+        );
+
+
+      context.drawImage(
+        cameraVideo,
+        0,
+        0,
+        videoWidth,
+        videoHeight
+      );
+
+
+      cameraCanvas.toBlob(
+        function(blob) {
+
+          if (!blob) {
+
+            alert(
+              "Photo capture nahi hui."
+            );
+
+            return;
+          }
+
+
+          capturedPhotoFile =
+            new File(
+              [
+                blob
+              ],
+              "student-camera-" +
+              Date.now() +
+              ".jpg",
+              {
+                type:
+                  "image/jpeg"
+              }
+            );
+
+
+          const imageURL =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          previewImage.src =
+            imageURL;
+
+          previewImage.style.display =
+            "block";
+
+          photoText.style.display =
+            "none";
+
+
+          retakeButton.style.display =
+            "inline-block";
+
+
+          closeCamera();
+
+
+        },
+        "image/jpeg",
+        0.90
+      );
+
+    }
+
+
+    /* =========================
+       RETAKE PHOTO
+    ========================= */
+
+    async function retakePhoto() {
+
+      capturedPhotoFile = null;
+
+      photoInput.value = "";
+
+      previewImage.src = "";
+
+      previewImage.style.display =
+        "none";
+
+      photoText.style.display =
+        "block";
+
+      retakeButton.style.display =
+        "none";
+
+
+      await openCamera();
+
+    }
+
+
+    /* =========================
+       CLOSE CAMERA
+    ========================= */
+
+    function closeCamera() {
+
+      stopCamera();
+
+      cameraBox.classList.remove(
+        "show"
+      );
+
+    }
+
+
+    /* =========================
+       STOP CAMERA
+    ========================= */
+
+    function stopCamera() {
+
+      if (cameraStream) {
+
+        cameraStream
+          .getTracks()
+          .forEach(
+            function(track) {
+
+              track.stop();
+
+            }
+          );
+
+        cameraStream = null;
+
+      }
+
+      cameraVideo.srcObject =
+        null;
+
+    }
+
+
+    /* =========================
+       SAVE STUDENT
+    ========================= */
+
+    const studentForm =
+      document.getElementById(
+        "studentForm"
+      );
+
+
+    studentForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+
+        const message =
+          document.getElementById(
+            "message"
+          );
+
+        const saveButton =
+          document.getElementById(
+            "saveButton"
+          );
+
+
+        message.style.display =
+          "block";
+
+        message.style.background =
+          "#dbeafe";
+
+        message.style.color =
+          "#1e40af";
+
+        message.textContent =
+          "Student save ho raha hai...";
+
+
+        saveButton.disabled =
+          true;
+
+        saveButton.textContent =
+          "Saving...";
+
+
+        try {
+
+          /* =========================
+             PHOTO
+          ========================= */
+
+          let photoUrl = null;
+
+
+          const photoFile =
+            capturedPhotoFile ||
+            photoInput.files[0];
+
+
+          /* =========================
+             UPLOAD PHOTO
+          ========================= */
+
+          if (photoFile) {
+
+            const fileExt =
+              photoFile.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+            const fileName =
+              Date.now() +
+              "-" +
+              Math.random()
+                .toString(36)
+                .substring(2) +
+              "." +
+              fileExt;
+
+
+            const filePath =
+              fileName;
+
+
+            const {
+              error: uploadError
+            } =
+              await supabaseClient
+                .storage
+                .from(
+                  "student-photos"
+                )
+                .upload(
+                  filePath,
+                  photoFile,
+                  {
+                    contentType:
+                      photoFile.type ||
+                      "image/jpeg",
+
+                    upsert:
+                      false
+                  }
+                );
+
+
+            if (uploadError) {
+
+              console.error(
+                uploadError
+              );
+
+              throw new Error(
+                "Photo upload nahi hui: " +
+                uploadError.message
+              );
+
+            }
+
+
+            const {
+              data: publicData
+            } =
+              supabaseClient
+                .storage
+                .from(
+                  "student-photos"
+                )
+                .getPublicUrl(
+                  filePath
+                );
+
+
+            photoUrl =
+              publicData.publicUrl;
+
+          }
+
+
+          /* =========================
+             STUDENT DATA
+          ========================= */
+
+          const student = {
+
+            name:
+              document
+                .getElementById("name")
+                .value
+                .trim(),
+
+
+            email:
+              document
+                .getElementById("email")
+                .value
+                .trim() ||
+              null,
+
+
+            phone:
+              document
+                .getElementById("phone")
+                .value
+                .trim(),
+
+
+            course:
+              document
+                .getElementById("course")
+                .value
+                .trim(),
+
+
+            batch_timing:
+              document
+                .getElementById(
+                  "batchTiming"
+                )
+                .value,
+
+
+            dob:
+              document
+                .getElementById("dob")
+                .value ||
+              null,
+
+
+            address:
+              document
+                .getElementById("address")
+                .value
+                .trim() ||
+              null,
+
+
+            admission_date:
+              document
+                .getElementById(
+                  "admissionDate"
+                )
+                .value ||
+              null,
+
+
+            total_fee:
+              Number(
+                document
+                  .getElementById(
+                    "totalFee"
+                  )
+                  .value
+              ) || 0,
+
+
+            paid_fee:
+              Number(
+                document
+                  .getElementById(
+                    "paidFee"
+                  )
+                  .value
+              ) || 0,
+
+
+            status:
+              document
+                .getElementById(
+                  "status"
+                )
+                .value,
+
+
+            photo_url:
+              photoUrl
+
+          };
+
+
+          /* =========================
+             INSERT STUDENT
+          ========================= */
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from("Students")
+              .insert([
+                student
+              ])
+              .select();
+
+
+          if (error) {
+
+            console.error(
+              error
+            );
+
+            throw new Error(
+              "Student save nahi hua: " +
+              error.message
+            );
+
+          }
+
+
+          /* =========================
+             SUCCESS
+          ========================= */
+
+          message.style.background =
+            "#dcfce7";
+
+          message.style.color =
+            "#166534";
+
+          message.textContent =
+            "✅ Student + Photo successfully saved!";
+
+
+          studentForm.reset();
+
+
+          capturedPhotoFile =
+            null;
+
+
+          previewImage.src =
+            "";
+
+          previewImage.style.display =
+            "none";
+
+          photoText.style.display =
+            "block";
+
+          retakeButton.style.display =
+            "none";
+
+
+        }
+        catch(error) {
+
+          console.error(
+            error
+          );
+
+
+          message.style.background =
+            "#fee2e2";
+
+          message.style.color =
+            "#991b1b";
+
+          message.textContent =
+            "❌ " +
+            error.message;
+
+        }
+        finally {
+
+          saveButton.disabled =
+            false;
+
+          saveButton.textContent =
+            "💾 Save Student";
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       PAGE CLOSE
+    ========================= */
+
+    window.addEventListener(
+      "beforeunload",
+      function() {
+
+        stopCamera();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>

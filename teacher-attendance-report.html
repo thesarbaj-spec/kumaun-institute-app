@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Attendance | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172554;
+}
+
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:white;
+  padding:3px;
+  object-fit:contain;
+}
+
+.brand h1{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.back-btn{
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.back-btn:hover{
+  opacity:.9;
+}
+
+.container{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 15px 40px;
+}
+
+.box{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+  margin-bottom:25px;
+}
+
+.title{
+  margin-bottom:25px;
+}
+
+.title h2{
+  font-size:24px;
+  margin-bottom:6px;
+}
+
+.title p{
+  color:#64748b;
+  font-size:14px;
+}
+
+/* TEACHER INFO */
+
+.teacher-info{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:22px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.teacher-photo{
+  width:58px;
+  height:58px;
+  min-width:58px;
+  border-radius:50%;
+  background:#2563eb;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:27px;
+  overflow:hidden;
+  border:3px solid white;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+.teacher-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.teacher-info h3{
+  font-size:17px;
+  margin-bottom:4px;
+}
+
+.teacher-info p{
+  color:#64748b;
+  font-size:13px;
+}
+
+/* FILTER */
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  align-items:end;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#334155;
+  margin-bottom:7px;
+}
+
+select,
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:14px;
+  background:white;
+}
+
+select:focus,
+input:focus{
+  border-color:#2563eb;
+}
+
+.filter-btn{
+  width:100%;
+  margin-top:15px;
+  border:none;
+  background:#2563eb;
+  color:white;
+  padding:13px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.filter-btn:hover{
+  background:#1d4ed8;
+}
+
+/* SUMMARY */
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.summary-card{
+  border-radius:12px;
+  padding:18px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+}
+
+.summary-card .icon{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+.summary-card h3{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:8px;
+}
+
+.summary-card .number{
+  font-size:25px;
+  font-weight:bold;
+}
+
+.working{
+  border-top:4px solid #2563eb;
+}
+
+.present-card{
+  border-top:4px solid #16a34a;
+}
+
+.absent-card{
+  border-top:4px solid #dc2626;
+}
+
+.leave-card{
+  border-top:4px solid #d97706;
+}
+
+.percentage-card{
+  border-top:4px solid #7c3aed;
+}
+
+/* PROGRESS */
+
+.progress-box{
+  margin-top:0;
+}
+
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+.progress-bg{
+  width:100%;
+  height:18px;
+  background:#e2e8f0;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#16a34a;
+  border-radius:20px;
+  transition:.4s;
+}
+
+/* TABLE */
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th{
+  background:#172554;
+  color:white;
+  padding:13px;
+  text-align:left;
+  font-size:13px;
+}
+
+td{
+  padding:13px;
+  border-bottom:1px solid #e2e8f0;
+  font-size:14px;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+.badge{
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.badge-present{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge-absent{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.badge-leave{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+}
+
+/* CALENDAR */
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.calendar-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  font-size:12px;
+  color:#475569;
+  margin-bottom:18px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.legend-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+
+.calendar-weekdays,
+.calendar-days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:7px;
+}
+
+.calendar-weekdays div{
+  text-align:center;
+  font-size:12px;
+  font-weight:bold;
+  color:#64748b;
+  padding-bottom:5px;
+}
+
+.calendar-day{
+  min-height:72px;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:8px;
+  background:white;
+  font-size:13px;
+  position:relative;
+}
+
+.calendar-day.empty-day{
+  background:#f8fafc;
+  border:none;
+}
+
+.calendar-day .day-number{
+  font-weight:bold;
+}
+
+.calendar-day .calendar-status{
+  margin-top:7px;
+  font-size:11px;
+  padding:4px 5px;
+  border-radius:5px;
+  text-align:center;
+}
+
+.calendar-present{
+  background:#dcfce7;
+  border-color:#86efac;
+}
+
+.calendar-present .calendar-status{
+  background:#16a34a;
+  color:white;
+}
+
+.calendar-absent{
+  background:#fee2e2;
+  border-color:#fca5a5;
+}
+
+.calendar-absent .calendar-status{
+  background:#dc2626;
+  color:white;
+}
+
+.calendar-leave{
+  background:#fef3c7;
+  border-color:#fcd34d;
+}
+
+.calendar-leave .calendar-status{
+  background:#d97706;
+  color:white;
+}
+
+.calendar-today{
+  outline:3px solid #2563eb;
+}
+
+.calendar-future{
+  background:#f8fafc;
+  color:#94a3b8;
+}
+
+/* LOADING */
+
+.loading{
+  text-align:center;
+  padding:40px 20px;
+  color:#64748b;
+  font-size:15px;
+}
+
+.error-box{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #fecaca;
+  border-radius:10px;
+  padding:15px;
+  margin-bottom:20px;
+  display:none;
+}
+
+/* MOBILE */
+
+@media(max-width:1000px){
+
+  .summary-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:700px){
+
+  .header{
+    padding:12px 15px;
+  }
+
+  .brand img{
+    width:42px;
+    height:42px;
+  }
+
+  .brand h1{
+    font-size:15px;
+  }
+
+  .brand p{
+    font-size:10px;
+  }
+
+  .header-buttons{
+    gap:6px;
+  }
+
+  .back-btn{
+    padding:8px 10px;
+    font-size:11px;
+  }
+
+  .box{
+    padding:18px;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .summary-card:last-child{
+    grid-column:1/-1;
+  }
+
+  .teacher-info{
+    padding:13px;
+  }
+
+  .teacher-photo{
+    width:52px;
+    height:52px;
+    min-width:52px;
+  }
+
+  .teacher-info h3{
+    font-size:15px;
+  }
+
+  .teacher-info p{
+    font-size:11px;
+  }
+
+  .calendar-days,
+  .calendar-weekdays{
+    gap:4px;
+  }
+
+  .calendar-day{
+    min-height:58px;
+    padding:5px;
+    font-size:11px;
+  }
+
+  .calendar-day .calendar-status{
+    font-size:8px;
+    padding:3px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+      <h1>Kumaun Institute of Computer Education</h1>
+      <p>My Teacher Attendance</p>
+    </div>
+
+  </div>
+
+  <div class="header-buttons">
+
+    <button
+      class="back-btn"
+      onclick="location.href='teachers-dashboard.html'"
+    >
+      ← Dashboard
+    </button>
+
+  </div>
+
+</header>
+
+<div class="container">
+
+  <!-- TEACHER INFO -->
+
+  <div class="box">
+
+    <div class="teacher-info">
+
+      <div
+        class="teacher-photo"
+        id="teacherPhoto"
+      >
+        👨‍🏫
+      </div>
+
+      <div>
+
+        <h3 id="teacherName">
+          Loading teacher...
+        </h3>
+
+        <p id="teacherDetails">
+          Please wait...
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="title">
+
+      <h2>📊 My Attendance Report</h2>
+
+      <p>
+        Yahan sirf aapki attendance report dikhai jayegi.
+      </p>
+
+    </div>
+
+    <div class="filter-grid">
+
+      <div class="form-group">
+
+        <label>📅 Select Month</label>
+
+        <select id="monthSelect"></select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📆 Select Year</label>
+
+        <select id="yearSelect"></select>
+
+      </div>
+
+    </div>
+
+    <button
+      class="filter-btn"
+      onclick="loadReport()"
+    >
+      🔍 View My Attendance
+    </button>
+
+  </div>
+
+  <!-- ERROR -->
+
+  <div
+    id="errorBox"
+    class="error-box"
+  ></div>
+
+  <!-- SUMMARY -->
+
+  <div class="summary-grid">
+
+    <div class="summary-card working">
+
+      <div class="icon">🗓️</div>
+
+      <h3>Total Working Days</h3>
+
+      <div
+        class="number"
+        id="workingDays"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card present-card">
+
+      <div class="icon">🟢</div>
+
+      <h3>Total Present</h3>
+
+      <div
+        class="number"
+        id="presentCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card absent-card">
+
+      <div class="icon">🔴</div>
+
+      <h3>Total Absent</h3>
+
+      <div
+        class="number"
+        id="absentCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card leave-card">
+
+      <div class="icon">🟡</div>
+
+      <h3>Leave</h3>
+
+      <div
+        class="number"
+        id="leaveCount"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="summary-card percentage-card">
+
+      <div class="icon">📈</div>
+
+      <h3>Attendance Percentage</h3>
+
+      <div
+        class="number"
+        id="attendancePercentage"
+      >
+        0%
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROGRESS -->
+
+  <div class="box progress-box">
+
+    <div class="progress-top">
+
+      <span>📊 Attendance Progress</span>
+
+      <span id="progressText">
+        Attendance: 0%
+      </span>
+
+    </div>
+
+    <div class="progress-bg">
+
+      <div
+        class="progress-fill"
+        id="progressFill"
+      ></div>
+
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+
+  <div class="box">
+
+    <div class="title">
+
+      <h2>📋 Daily Attendance History</h2>
+
+      <p>
+        Selected month ki aapki daily attendance details.
+      </p>
+
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Status</th>
+            <th>Check-in</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="attendanceHistory">
+
+          <tr>
+
+            <td
+              colspan="4"
+              class="empty"
+            >
+              Loading attendance...
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- CALENDAR -->
+
+  <div class="box">
+
+    <div class="calendar-header">
+
+      <div
+        class="title"
+        style="margin-bottom:0;"
+      >
+
+        <h2>🗓️ Calendar View</h2>
+
+        <p id="calendarTitle">
+          Monthly attendance calendar
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="calendar-legend">
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#16a34a;"
+        ></span>
+
+        Present
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#dc2626;"
+        ></span>
+
+        Absent
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#d97706;"
+        ></span>
+
+        Leave
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#e2e8f0;"
+        ></span>
+
+        No Record / Future
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-dot"
+          style="background:#2563eb;"
+        ></span>
+
+        Today
+
+      </div>
+
+    </div>
+
+    <div class="calendar-weekdays">
+
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+
+    </div>
+
+    <div
+      class="calendar-days"
+      id="calendarDays"
+    ></div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* SUPABASE */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* GLOBAL */
+
+let loggedInTeacher = null;
+
+
+/* LOAD MONTHS */
+
+function loadMonths(){
+
+  const monthSelect =
+    document.getElementById(
+      "monthSelect"
+    );
+
+  monthSelect.innerHTML = "";
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const currentMonth =
+    new Date().getMonth();
+
+  months.forEach(
+    function(month,index){
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        index + 1;
+
+      option.textContent =
+        month;
+
+      if(index === currentMonth){
+
+        option.selected = true;
+
+      }
+
+      monthSelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* LOAD YEARS */
+
+function loadYears(){
+
+  const yearSelect =
+    document.getElementById(
+      "yearSelect"
+    );
+
+  yearSelect.innerHTML = "";
+
+  const currentYear =
+    new Date().getFullYear();
+
+  for(
+    let year =
+      currentYear - 5;
+    year <=
+      currentYear + 2;
+    year++
+  ){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      year;
+
+    option.textContent =
+      year;
+
+    if(year === currentYear){
+
+      option.selected = true;
+
+    }
+
+    yearSelect.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+/* GET LOGGED-IN TEACHER EMAIL */
+
+async function getTeacherEmail(){
+
+  let teacherEmail = null;
+
+
+  /* LOCAL STORAGE */
+
+  teacherEmail =
+    localStorage.getItem(
+      "teacher_email"
+    );
+
+  if(!teacherEmail){
+
+    teacherEmail =
+      localStorage.getItem(
+        "teacherEmail"
+      );
+
+  }
+
+
+  /* SESSION STORAGE */
+
+  if(!teacherEmail){
+
+    teacherEmail =
+      sessionStorage.getItem(
+        "teacher_email"
+      );
+
+  }
+
+
+  /* SUPABASE AUTH */
+
+  if(!teacherEmail){
+
+    try{
+
+      const {
+        data
+      } =
+        await supabaseClient.auth.getSession();
+
+      if(
+        data &&
+        data.session &&
+        data.session.user
+      ){
+
+        teacherEmail =
+          data.session.user.email;
+
+      }
+
+    }
+    catch(error){
+
+      console.error(
+        "Auth session error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  if(
+    teacherEmail &&
+    typeof teacherEmail === "string"
+  ){
+
+    return teacherEmail.trim();
+
+  }
+
+  return null;
+
+}
+
+
+/* LOAD LOGGED-IN TEACHER */
+
+async function loadLoggedInTeacher(){
+
+  try{
+
+    const teacherEmail =
+      await getTeacherEmail();
+
+
+    if(!teacherEmail){
+
+      showError(
+        "❌ Teacher login information nahi mili. Please dobara teacher dashboard se login karein."
+      );
+
+      document.getElementById(
+        "teacherName"
+      ).textContent =
+        "Teacher login not found";
+
+      document.getElementById(
+        "teacherDetails"
+      ).textContent =
+        "Please login again.";
+
+      return false;
+
+    }
+
+
+    console.log(
+      "Logged-in teacher email:",
+      teacherEmail
+    );
+
+
+    /*
+      IMPORTANT:
+      photo_url bhi teachers table se fetch kiya ja raha hai.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teachers")
+        .select(
+          "id, name, email, subject, batch_timing, photo_url"
+        )
+        .ilike(
+          "email",
+          teacherEmail
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    if(!data){
+
+      showError(
+        "❌ Is email se teacher record nahi mila: " +
+        teacherEmail
+      );
+
+      return false;
+
+    }
+
+
+    loggedInTeacher =
+      data;
+
+
+    /* SHOW TEACHER NAME */
+
+    document.getElementById(
+      "teacherName"
+    ).textContent =
+      data.name || "Teacher";
+
+
+    /* SHOW TEACHER PHOTO */
+
+    const teacherPhoto =
+      document.getElementById(
+        "teacherPhoto"
+      );
+
+
+    if(
+      data.photo_url &&
+      String(data.photo_url).trim() !== ""
+    ){
+
+      const image =
+        document.createElement(
+          "img"
+        );
+
+      image.src =
+        String(
+          data.photo_url
+        ).trim();
+
+      image.alt =
+        data.name ||
+        "Teacher Photo";
+
+
+      image.onload =
+        function(){
+
+          teacherPhoto.innerHTML = "";
+
+          teacherPhoto.appendChild(
+            image
+          );
+
+        };
+
+
+      image.onerror =
+        function(){
+
+          teacherPhoto.innerHTML =
+            "👨‍🏫";
+
+          console.error(
+            "Teacher photo load failed:",
+            data.photo_url
+          );
+
+        };
+
+    }
+    else{
+
+      teacherPhoto.innerHTML =
+        "👨‍🏫";
+
+    }
+
+
+    let details = "";
+
+
+    if(data.subject){
+
+      details +=
+        data.subject;
+
+    }
+
+
+    if(
+      data.subject &&
+      data.batch_timing
+    ){
+
+      details +=
+        " • ";
+
+    }
+
+
+    if(data.batch_timing){
+
+      details +=
+        data.batch_timing;
+
+    }
+
+
+    if(!details){
+
+      details =
+        data.email ||
+        teacherEmail;
+
+    }
+
+
+    document.getElementById(
+      "teacherDetails"
+    ).textContent =
+      details;
+
+
+    console.log(
+      "Logged-in teacher ID:",
+      data.id
+    );
+
+    console.log(
+      "Teacher photo URL:",
+      data.photo_url
+    );
+
+
+    return true;
+
+  }
+  catch(error){
+
+    console.error(
+      "Teacher load error:",
+      error
+    );
+
+    showError(
+      "❌ Teacher details load nahi hui: " +
+      error.message
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ERROR */
+
+function showError(message){
+
+  const errorBox =
+    document.getElementById(
+      "errorBox"
+    );
+
+  errorBox.textContent =
+    message;
+
+  errorBox.style.display =
+    "block";
+
+}
+
+
+/* HIDE ERROR */
+
+function hideError(){
+
+  const errorBox =
+    document.getElementById(
+      "errorBox"
+    );
+
+  errorBox.style.display =
+    "none";
+
+}
+
+
+/* LOAD REPORT */
+
+async function loadReport(){
+
+  hideError();
+
+
+  if(!loggedInTeacher){
+
+    showError(
+      "❌ Teacher information available nahi hai."
+    );
+
+    return;
+
+  }
+
+
+  const teacherId =
+    loggedInTeacher.id;
+
+
+  const month =
+    Number(
+      document.getElementById(
+        "monthSelect"
+      ).value
+    );
+
+
+  const year =
+    Number(
+      document.getElementById(
+        "yearSelect"
+      ).value
+    );
+
+
+  if(!teacherId){
+
+    showError(
+      "❌ Teacher ID nahi mili."
+    );
+
+    return;
+
+  }
+
+
+  const monthStart =
+    year +
+    "-" +
+    String(month).padStart(2,"0") +
+    "-01";
+
+
+  const lastDay =
+    new Date(
+      year,
+      month,
+      0
+    ).getDate();
+
+
+  const monthEnd =
+    year +
+    "-" +
+    String(month).padStart(2,"0") +
+    "-" +
+    String(lastDay).padStart(2,"0");
+
+
+  try{
+
+    document.getElementById(
+      "attendanceHistory"
+    ).innerHTML =
+      '<tr><td colspan="4" class="empty">Loading attendance...</td></tr>';
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("teacher_attendance")
+        .select("*")
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .gte(
+          "date",
+          monthStart
+        )
+        .lte(
+          "date",
+          monthEnd
+        )
+        .order(
+          "date",
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    const records =
+      data || [];
+
+
+    updateSummary(
+      records
+    );
+
+
+    updateHistory(
+      records
+    );
+
+
+    createCalendar(
+      records,
+      year,
+      month
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Attendance report error:",
+      error
+    );
+
+    showError(
+      "❌ Attendance report load nahi hui: " +
+      error.message
+    );
+
+    document.getElementById(
+      "attendanceHistory"
+    ).innerHTML =
+      '<tr><td colspan="4" class="empty">Attendance load nahi hui.</td></tr>';
+
+  }
+
+}
+
+
+/* SUMMARY */
+
+function updateSummary(records){
+
+  const present =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "present"
+    ).length;
+
+
+  const absent =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "absent"
+    ).length;
+
+
+  const leave =
+    records.filter(
+      record =>
+        String(
+          record.status
+        ).toLowerCase() ===
+        "leave"
+    ).length;
+
+
+  const workingDays =
+    records.length;
+
+
+  let percentage = 0;
+
+
+  if(workingDays > 0){
+
+    percentage =
+      (
+        present /
+        workingDays
+      ) *
+      100;
+
+  }
+
+
+  document.getElementById(
+    "workingDays"
+  ).textContent =
+    workingDays;
+
+
+  document.getElementById(
+    "presentCount"
+  ).textContent =
+    present;
+
+
+  document.getElementById(
+    "absentCount"
+  ).textContent =
+    absent;
+
+
+  document.getElementById(
+    "leaveCount"
+  ).textContent =
+    leave;
+
+
+  document.getElementById(
+    "attendancePercentage"
+  ).textContent =
+    percentage.toFixed(1) +
+    "%";
+
+
+  document.getElementById(
+    "progressText"
+  ).textContent =
+    "Attendance: " +
+    percentage.toFixed(1) +
+    "%";
+
+
+  document.getElementById(
+    "progressFill"
+  ).style.width =
+    Math.min(
+      percentage,
+      100
+    ) +
+    "%";
+
+}
+
+
+/* HISTORY */
+
+function updateHistory(records){
+
+  const tbody =
+    document.getElementById(
+      "attendanceHistory"
+    );
+
+
+  tbody.innerHTML = "";
+
+
+  if(records.length === 0){
+
+    tbody.innerHTML =
+      '<tr>' +
+      '<td colspan="4" class="empty">' +
+      'Selected month me aapki attendance record nahi mila.' +
+      '</td>' +
+      '</tr>';
+
+    return;
+
+  }
+
+
+  records.forEach(
+    function(record){
+
+      const date =
+        new Date(
+          record.date +
+          "T00:00:00"
+        );
+
+
+      const dateText =
+        date.toLocaleDateString(
+          "en-IN",
+          {
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+          }
+        );
+
+
+      const dayText =
+        date.toLocaleDateString(
+          "en-IN",
+          {
+            weekday:"long"
+          }
+        );
+
+
+      let badgeClass =
+        "";
+
+
+      let badgeText =
+        record.status;
+
+
+      if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "present"
+      ){
+
+        badgeClass =
+          "badge-present";
+
+        badgeText =
+          "🟢 Present";
+
+      }
+
+      else if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "absent"
+      ){
+
+        badgeClass =
+          "badge-absent";
+
+        badgeText =
+          "🔴 Absent";
+
+      }
+
+      else if(
+        String(
+          record.status
+        ).toLowerCase() ===
+        "leave"
+      ){
+
+        badgeClass =
+          "badge-leave";
+
+        badgeText =
+          "🟡 Leave";
+
+      }
+
+
+      let checkInText =
+        "—";
+
+
+      if(record.check_in){
+
+        const timeParts =
+          String(
+            record.check_in
+          )
+          .substring(
+            0,
+            5
+          )
+          .split(":");
+
+
+        const hour =
+          Number(
+            timeParts[0]
+          );
+
+
+        const minute =
+          timeParts[1];
+
+
+        const ampm =
+          hour >= 12
+          ?
+          "PM"
+          :
+          "AM";
+
+
+        const displayHour =
+          hour % 12 ||
+          12;
+
+
+        checkInText =
+          displayHour +
+          ":" +
+          minute +
+          " " +
+          ampm;
+
+      }
+
+
+      tbody.innerHTML +=
+        "<tr>" +
+        "<td>" +
+        dateText +
+        "</td>" +
+        "<td>" +
+        dayText +
+        "</td>" +
+        '<td><span class="badge ' +
+        badgeClass +
+        '">' +
+        badgeText +
+        "</span></td>" +
+        "<td>" +
+        checkInText +
+        "</td>" +
+        "</tr>";
+
+    }
+  );
+
+}
+
+
+/* CALENDAR */
+
+function createCalendar(
+  records,
+  year,
+  month
+){
+
+  const calendar =
+    document.getElementById(
+      "calendarDays"
+    );
+
+
+  calendar.innerHTML = "";
+
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+
+  document.getElementById(
+    "calendarTitle"
+  ).textContent =
+    months[month - 1] +
+    " " +
+    year +
+    " Attendance Calendar";
+
+
+  const firstDay =
+    new Date(
+      year,
+      month - 1,
+      1
+    ).getDay();
+
+
+  const totalDays =
+    new Date(
+      year,
+      month,
+      0
+    ).getDate();
+
+
+  const recordMap = {};
+
+
+  records.forEach(
+    function(record){
+
+      recordMap[
+        record.date
+      ] =
+        record;
+
+    }
+  );
+
+
+  for(
+    let blank = 0;
+    blank < firstDay;
+    blank++
+  ){
+
+    const emptyDay =
+      document.createElement(
+        "div"
+      );
+
+
+    emptyDay.className =
+      "calendar-day empty-day";
+
+
+    calendar.appendChild(
+      emptyDay
+    );
+
+  }
+
+
+  const currentDate =
+    new Date();
+
+
+  const todayYear =
+    currentDate.getFullYear();
+
+
+  const todayMonth =
+    currentDate.getMonth() + 1;
+
+
+  const todayDay =
+    currentDate.getDate();
+
+
+  for(
+    let day = 1;
+    day <= totalDays;
+    day++
+  ){
+
+    const dateString =
+      year +
+      "-" +
+      String(month).padStart(2,"0") +
+      "-" +
+      String(day).padStart(2,"0");
+
+
+    const dayBox =
+      document.createElement(
+        "div"
+      );
+
+
+    dayBox.className =
+      "calendar-day";
+
+
+    const record =
+      recordMap[
+        dateString
+      ];
+
+
+    if(record){
+
+      const status =
+        String(
+          record.status
+        ).toLowerCase();
+
+
+      if(status === "present"){
+
+        dayBox.classList.add(
+          "calendar-present"
+        );
+
+      }
+
+      else if(status === "absent"){
+
+        dayBox.classList.add(
+          "calendar-absent"
+        );
+
+      }
+
+      else if(status === "leave"){
+
+        dayBox.classList.add(
+          "calendar-leave"
+        );
+
+      }
+
+    }
+
+    else{
+
+      const checkDate =
+        new Date(
+          year,
+          month - 1,
+          day
+        );
+
+
+      if(
+        checkDate >
+        new Date(
+          todayYear,
+          todayMonth - 1,
+          todayDay
+        )
+      ){
+
+        dayBox.classList.add(
+          "calendar-future"
+        );
+
+      }
+
+    }
+
+
+    if(
+      year === todayYear &&
+      month === todayMonth &&
+      day === todayDay
+    ){
+
+      dayBox.classList.add(
+        "calendar-today"
+      );
+
+    }
+
+
+    let statusText =
+      "";
+
+
+    if(record){
+
+      const status =
+        String(
+          record.status
+        ).toLowerCase();
+
+
+      if(status === "present"){
+
+        statusText =
+          "🟢 Present";
+
+      }
+
+      else if(status === "absent"){
+
+        statusText =
+          "🔴 Absent";
+
+      }
+
+      else if(status === "leave"){
+
+        statusText =
+          "🟡 Leave";
+
+      }
+
+    }
+
+
+    dayBox.innerHTML =
+      '<div class="day-number">' +
+      day +
+      "</div>" +
+      (
+        statusText
+        ?
+        '<div class="calendar-status">' +
+        statusText +
+        "</div>"
+        :
+        ""
+      );
+
+
+    calendar.appendChild(
+      dayBox
+    );
+
+  }
+
+}
+
+
+/* MONTH CHANGE */
+
+document
+  .getElementById(
+    "monthSelect"
+  )
+  .addEventListener(
+    "change",
+    loadReport
+  );
+
+
+/* YEAR CHANGE */
+
+document
+  .getElementById(
+    "yearSelect"
+  )
+  .addEventListener(
+    "change",
+    loadReport
+  );
+
+
+/* START */
+
+async function startPage(){
+
+  loadMonths();
+
+  loadYears();
+
+
+  const teacherLoaded =
+    await loadLoggedInTeacher();
+
+
+  if(teacherLoaded){
+
+    await loadReport();
+
+  }
+
+}
+
+
+startPage();
+
+</script>
+
+</body>
+</html>

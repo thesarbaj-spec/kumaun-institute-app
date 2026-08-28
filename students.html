@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Students | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#222;
+}
+
+/* HEADER */
+.header{
+  background:#172554;
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  background:white;
+  border-radius:50%;
+  padding:3px;
+}
+
+.brand h2{
+  font-size:20px;
+}
+
+.brand p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:3px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:10px;
+}
+
+.back-btn,
+.logout-btn,
+.add-btn{
+  border:none;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+.back-btn{
+  background:#2563eb;
+}
+
+.logout-btn{
+  background:#ef4444;
+}
+
+.add-btn{
+  background:#16a34a;
+}
+
+/* MAIN */
+.main{
+  max-width:1400px;
+  margin:auto;
+  padding:25px;
+}
+
+.page-title{
+  margin-bottom:22px;
+}
+
+.page-title h1{
+  font-size:28px;
+  margin-bottom:7px;
+}
+
+.page-title p{
+  color:#666;
+}
+
+/* TOOLBAR */
+.toolbar{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+  margin-bottom:20px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.search-box{
+  flex:1;
+  min-width:230px;
+}
+
+.search-box input,
+.filter-select{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.filter-select{
+  width:180px;
+}
+
+/* TABLE */
+.box{
+  background:white;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.table-container{
+  width:100%;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  min-width:1200px;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  padding:13px 10px;
+  text-align:left;
+  border-bottom:1px solid #eee;
+  white-space:nowrap;
+}
+
+th{
+  background:#f8fafc;
+  color:#666;
+  font-size:13px;
+}
+
+td{
+  font-size:14px;
+}
+
+/* PHOTO */
+.student-photo,
+.photo-placeholder{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+}
+
+.student-photo{
+  object-fit:cover;
+  border:2px solid #e5e7eb;
+}
+
+.photo-placeholder{
+  background:#e8efff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+/* STATUS */
+.active{
+  color:#15803d;
+  font-weight:bold;
+}
+
+.pending{
+  color:#d97706;
+  font-weight:bold;
+}
+
+.passout{
+  color:#dc2626;
+  font-weight:bold;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:6px;
+}
+
+.action-btn{
+  border:none;
+  padding:7px 10px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.view{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.edit{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.docs{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+/* LOADING */
+.loading,
+.no-data,
+.error{
+  text-align:center;
+  padding:35px;
+  color:#777;
+}
+
+.error{
+  color:#dc2626;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+  .header{
+    padding:12px 15px;
+  }
+
+  .brand img{
+    width:42px;
+    height:42px;
+  }
+
+  .brand h2{
+    font-size:16px;
+  }
+
+  .brand p{
+    font-size:10px;
+  }
+
+  .header-buttons{
+    gap:5px;
+  }
+
+  .back-btn,
+  .logout-btn,
+  .add-btn{
+    padding:8px 9px;
+    font-size:11px;
+  }
+
+  .main{
+    padding:15px;
+  }
+
+  .page-title h1{
+    font-size:23px;
+  }
+
+  .toolbar{
+    padding:14px;
+  }
+
+  .filter-select{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
+
+    <div>
+      <h2>Kumaun Institute of Computer Education</h2>
+      <p>Students Management System</p>
+    </div>
+
+  </div>
+
+  <div class="header-buttons">
+
+    <a href="index.html" class="back-btn">
+      🔙 Dashboard
+    </a>
+
+    <a href="add-student.html" class="add-btn">
+      ➕ Add Student
+    </a>
+
+    <button class="logout-btn" onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+
+<main class="main">
+
+  <div class="page-title">
+
+    <h1>👨‍🎓 Students</h1>
+
+    <p>
+      Students Management System
+    </p>
+
+  </div>
+
+
+  <!-- SEARCH / FILTER -->
+
+  <div class="toolbar">
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Name, Phone, Email ya Student ID search karein..."
+      >
+
+    </div>
+
+
+    <select
+      id="courseFilter"
+      class="filter-select"
+    >
+
+      <option value="">
+        All Courses
+      </option>
+
+    </select>
+
+
+    <select
+      id="statusFilter"
+      class="filter-select"
+    >
+
+      <option value="">
+        All Status
+      </option>
+
+      <option value="active">
+        Active
+      </option>
+
+      <option value="pending">
+        Pending
+      </option>
+
+      <option value="passout">
+        Passout
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- STUDENTS -->
+
+  <section class="box">
+
+    <div
+      id="tableContainer"
+      class="table-container"
+    >
+
+      <div class="loading">
+        ⏳ Students load ho rahe hain...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================
+   GLOBAL DATA
+========================================= */
+
+let allStudents = [];
+
+
+/* =========================================
+   PAGE START
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadStudents();
+
+    document
+      .getElementById("searchInput")
+      .addEventListener(
+        "input",
+        applyFilters
+      );
+
+    document
+      .getElementById("courseFilter")
+      .addEventListener(
+        "change",
+        applyFilters
+      );
+
+    document
+      .getElementById("statusFilter")
+      .addEventListener(
+        "change",
+        applyFilters
+      );
+
+  }
+);
+
+
+/* =========================================
+   LOAD STUDENTS
+========================================= */
+
+async function loadStudents(){
+
+  const container =
+    document.getElementById(
+      "tableContainer"
+    );
+
+  container.innerHTML =
+    `<div class="loading">
+      ⏳ Students load ho rahe hain...
+    </div>`;
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+
+        .from("Students")
+
+        .select(`
+          id,
+          name,
+          email,
+          phone,
+          course,
+          dob,
+          address,
+          admission_date,
+          total_fee,
+          paid_fee,
+          status,
+          photo_url,
+          created_at
+        `)
+
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(error){
+
+      console.error(
+        "STUDENT ERROR:",
+        error
+      );
+
+      container.innerHTML =
+        `<div class="error">
+          ❌ Students load nahi hue.
+          <br><br>
+          ${escapeHTML(error.message)}
+        </div>`;
+
+      return;
+    }
+
+
+    allStudents =
+      data || [];
+
+
+    populateCourses(
+      allStudents
+    );
+
+
+    renderStudents(
+      allStudents
+    );
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="error">
+        ❌ Students load nahi hue.
+      </div>`;
+
+  }
+
+}
+
+
+/* =========================================
+   COURSE FILTER
+========================================= */
+
+function populateCourses(
+  students
+){
+
+  const select =
+    document.getElementById(
+      "courseFilter"
+    );
+
+
+  const courses =
+    [
+      ...new Set(
+        students
+          .map(
+            student =>
+              student.course
+          )
+          .filter(Boolean)
+      )
+    ]
+    .sort();
+
+
+  select.innerHTML =
+    `<option value="">
+      All Courses
+    </option>`;
+
+
+  courses.forEach(
+    function(course){
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        course;
+
+      option.textContent =
+        course;
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   FILTER
+========================================= */
+
+function applyFilters(){
+
+  const search =
+    document
+      .getElementById(
+        "searchInput"
+      )
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  const course =
+    document
+      .getElementById(
+        "courseFilter"
+      )
+      .value;
+
+
+  const status =
+    document
+      .getElementById(
+        "statusFilter"
+      )
+      .value
+      .toLowerCase();
+
+
+  const filtered =
+    allStudents.filter(
+      function(student){
+
+        const id =
+          String(
+            student.id || ""
+          ).toLowerCase();
+
+        const name =
+          String(
+            student.name || ""
+          ).toLowerCase();
+
+        const email =
+          String(
+            student.email || ""
+          ).toLowerCase();
+
+        const phone =
+          String(
+            student.phone || ""
+          ).toLowerCase();
+
+        const studentCourse =
+          String(
+            student.course || ""
+          );
+
+
+        const studentStatus =
+          String(
+            student.status || ""
+          ).toLowerCase();
+
+
+        const matchesSearch =
+          !search ||
+          id.includes(search) ||
+          name.includes(search) ||
+          email.includes(search) ||
+          phone.includes(search);
+
+
+        const matchesCourse =
+          !course ||
+          studentCourse === course;
+
+
+        const matchesStatus =
+          !status ||
+          studentStatus === status;
+
+
+        return (
+          matchesSearch &&
+          matchesCourse &&
+          matchesStatus
+        );
+
+      }
+    );
+
+
+  renderStudents(
+    filtered
+  );
+
+}
+
+
+/* =========================================
+   RENDER STUDENTS
+========================================= */
+
+function renderStudents(
+  students
+){
+
+  const container =
+    document.getElementById(
+      "tableContainer"
+    );
+
+
+  if(
+    !students ||
+    students.length === 0
+  ){
+
+    container.innerHTML =
+      `<div class="no-data">
+        📭
+        <br><br>
+        Koi student nahi mila.
+      </div>`;
+
+    return;
+  }
+
+
+  let html = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Photo</th>
+
+          <th>ID</th>
+
+          <th>Name</th>
+
+          <th>Email</th>
+
+          <th>Phone</th>
+
+          <th>Course</th>
+
+          <th>Admission Date</th>
+
+          <th>Total Fee</th>
+
+          <th>Paid Fee</th>
+
+          <th>Remaining</th>
+
+          <th>Status</th>
+
+          <th>Actions</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+  `;
+
+
+  students.forEach(
+    function(student){
+
+      const totalFee =
+        Number(
+          student.total_fee
+        ) || 0;
+
+
+      const paidFee =
+        Number(
+          student.paid_fee
+        ) || 0;
+
+
+      const remaining =
+        Math.max(
+          0,
+          totalFee - paidFee
+        );
+
+
+      const status =
+        String(
+          student.status || "active"
+        );
+
+
+      const statusLower =
+        status.toLowerCase();
+
+
+      let statusClass =
+        "active";
+
+
+      if(
+        statusLower === "pending"
+      ){
+
+        statusClass =
+          "pending";
+
+      }
+      else if(
+        statusLower === "passout"
+      ){
+
+        statusClass =
+          "passout";
+
+      }
+
+
+      let photoHTML =
+        `<div class="photo-placeholder">
+          👤
+        </div>`;
+
+
+      if(student.photo_url){
+
+        photoHTML =
+          `<img
+            src="${escapeHTML(
+              student.photo_url
+            )}"
+            class="student-photo"
+            alt="Student"
+            onerror="
+              this.style.display='none';
+              this.nextElementSibling.style.display='flex';
+            "
+          >
+
+          <div
+            class="photo-placeholder"
+            style="display:none;"
+          >
+            👤
+          </div>`;
+
+      }
+
+
+      html += `
+
+        <tr>
+
+          <td>
+            ${photoHTML}
+          </td>
+
+          <td>
+            <strong>
+              ${escapeHTML(
+                student.id
+              )}
+            </strong>
+          </td>
+
+          <td>
+            <strong>
+              ${escapeHTML(
+                student.name || "-"
+              )}
+            </strong>
+          </td>
+
+          <td>
+            ${escapeHTML(
+              student.email || "-"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              student.phone || "-"
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              student.course || "-"
+            )}
+          </td>
+
+          <td>
+            ${formatDate(
+              student.admission_date
+            )}
+          </td>
+
+          <td>
+            ₹${totalFee.toLocaleString(
+              "en-IN"
+            )}
+          </td>
+
+          <td>
+            ₹${paidFee.toLocaleString(
+              "en-IN"
+            )}
+          </td>
+
+          <td>
+            <strong>
+              ₹${remaining.toLocaleString(
+                "en-IN"
+              )}
+            </strong>
+          </td>
+
+          <td class="${statusClass}">
+            ${escapeHTML(status)}
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                class="action-btn view"
+                onclick="viewStudent(${student.id})"
+              >
+                👁️ View
+              </button>
+
+              <button
+                class="action-btn edit"
+                onclick="editStudent(${student.id})"
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                class="action-btn docs"
+                onclick="viewDocuments(${student.id})"
+              >
+                📂 Docs
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+  );
+
+
+  html += `
+
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+/* =========================================
+   VIEW STUDENT
+========================================= */
+
+function viewStudent(
+  id
+){
+
+  window.location.href =
+    "student-profile.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================================
+   EDIT STUDENT
+========================================= */
+
+function editStudent(
+  id
+){
+
+  window.location.href =
+    "edit-student.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================================
+   DOCUMENTS
+========================================= */
+
+function viewDocuments(
+  id
+){
+
+  window.location.href =
+    "student-documents.html?id=" +
+    encodeURIComponent(id);
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatDate(
+  value
+){
+
+  if(!value){
+
+    return "-";
+
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    isNaN(
+      date.getTime()
+    )
+  ){
+
+    return value;
+
+  }
+
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+
+}
+
+
+/* =========================================
+   HTML SAFETY
+========================================= */
+
+function escapeHTML(
+  value
+){
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logout(){
+
+  window.location.href =
+    "login.html";
+
+}
+
+</script>
+
+</body>
+</html>
+

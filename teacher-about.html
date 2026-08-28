@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>About | Kumaun Institute</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#eef3f8;
+color:#10265f;
+}
+
+/* HEADER */
+
+.header{
+background:#172b68;
+color:white;
+padding:15px 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.brand-logo{
+width:52px;
+height:52px;
+border-radius:50%;
+background:white;
+padding:4px;
+object-fit:contain;
+box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+
+.brand-text h1{
+margin:0;
+font-size:18px;
+}
+
+.brand-text p{
+margin:4px 0 0;
+font-size:11px;
+color:#dbe6ff;
+}
+
+/* DASHBOARD BUTTON */
+
+.dashboard{
+border:0;
+border-radius:10px;
+background:#2563eb;
+color:white;
+padding:11px 15px;
+font-size:13px;
+font-weight:800;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.dashboard:hover{
+background:#1d4ed8;
+}
+
+/* CONTAINER */
+
+.container{
+width:94%;
+max-width:850px;
+margin:20px auto;
+}
+
+/* CARD */
+
+.card{
+background:white;
+border-radius:20px;
+padding:25px;
+margin-bottom:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.title{
+text-align:center;
+font-size:22px;
+font-weight:800;
+margin-bottom:20px;
+}
+
+/* DEVELOPER */
+
+.developer-photo{
+display:block;
+width:130px;
+height:130px;
+border-radius:50%;
+object-fit:cover;
+margin:0 auto 15px;
+border:4px solid #172b68;
+}
+
+.name{
+text-align:center;
+font-size:22px;
+font-weight:800;
+}
+
+.role{
+text-align:center;
+color:#64748b;
+margin-top:6px;
+}
+
+.details{
+text-align:center;
+color:#475569;
+line-height:1.7;
+margin-top:18px;
+}
+
+/* SOCIAL ICONS */
+
+.social-links{
+display:flex;
+justify-content:center;
+align-items:center;
+flex-wrap:wrap;
+gap:12px;
+margin-top:22px;
+}
+
+.social{
+width:48px;
+height:48px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#f8fafc;
+border:1px solid #e2e8f0;
+transition:.2s;
+text-decoration:none;
+}
+
+.social img{
+width:28px;
+height:28px;
+object-fit:contain;
+}
+
+.social:hover{
+transform:translateY(-3px);
+box-shadow:0 5px 15px rgba(0,0,0,.12);
+}
+
+/* INSTITUTE LOGO */
+
+.logo{
+display:block;
+width:125px;
+height:125px;
+object-fit:contain;
+margin:0 auto 20px;
+}
+
+/* INFO */
+
+.info{
+background:#f8fafc;
+border:1px solid #dce5f0;
+border-radius:12px;
+padding:15px;
+margin-top:12px;
+line-height:1.6;
+}
+
+.info strong{
+display:block;
+margin-bottom:5px;
+color:#172b68;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+font-size:12px;
+color:#64748b;
+padding:10px 0 30px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.header{
+padding:12px 14px;
+}
+
+.brand-logo{
+width:45px;
+height:45px;
+}
+
+.brand-text h1{
+font-size:14px;
+}
+
+.brand-text p{
+font-size:9px;
+}
+
+.dashboard{
+padding:9px 11px;
+font-size:11px;
+}
+
+.card{
+padding:20px 16px;
+}
+
+.title{
+font-size:20px;
+}
+
+.social{
+width:45px;
+height:45px;
+}
+
+.social img{
+width:26px;
+height:26px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<div class="brand">
+
+<img
+class="brand-logo"
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+alt="Kumaun Institute Logo">
+
+<div class="brand-text">
+
+<h1>
+Kumaun Institute of Computer Education
+</h1>
+
+<p>
+About 
+</p>
+
+</div>
+
+</div>
+
+<button
+class="dashboard"
+onclick="location.href='teachers-dashboard.html'">
+
+ Dashboard
+
+</button>
+
+</header>
+
+<main class="container">
+
+<!-- DEVELOPER CARD -->
+
+<section class="card">
+
+<div class="title">
+👨‍💻 App Developer
+</div>
+
+<img
+class="developer-photo"
+src="PASTE_YOUR_PHOTO_URL_HERE"
+alt="App Developer">
+
+<div class="name">
+YOUR NAME
+</div>
+
+<div class="role">
+App Developer & Web Developer
+</div>
+
+<div class="details">
+
+Student Portal और Institute Web App Developer.
+
+यहाँ अपनी पूरी details लिख सकते हो।
+
+</div>
+
+<!-- SOCIAL MEDIA ICONS -->
+
+<div class="social-links">
+
+<a
+class="social"
+href="PASTE_INSTAGRAM_LINK"
+target="_blank"
+title="Instagram">
+
+<img
+src="https://cdn.simpleicons.org/instagram/E4405F"
+alt="Instagram">
+
+</a>
+
+<a
+class="social"
+href="PASTE_FACEBOOK_LINK"
+target="_blank"
+title="Facebook">
+
+<img
+src="https://cdn.simpleicons.org/facebook/1877F2"
+alt="Facebook">
+
+</a>
+
+<a
+class="social"
+href="PASTE_WHATSAPP_LINK"
+target="_blank"
+title="WhatsApp">
+
+<img
+src="https://cdn.simpleicons.org/whatsapp/25D366"
+alt="WhatsApp">
+
+</a>
+
+<a
+class="social"
+href="PASTE_SNAPCHAT_LINK"
+target="_blank"
+title="Snapchat">
+
+<img
+src="https://cdn.simpleicons.org/snapchat/FFFC00"
+alt="Snapchat">
+
+</a>
+
+<a
+class="social"
+href="PASTE_TWITTER_X_LINK"
+target="_blank"
+title="X">
+
+<img
+src="https://cdn.simpleicons.org/x/000000"
+alt="X">
+
+</a>
+
+<a
+class="social"
+href="PASTE_LINKTREE_LINK"
+target="_blank"
+title="Linktree">
+
+<img
+src="https://cdn.simpleicons.org/linktree/43E660"
+alt="Linktree">
+
+</a>
+
+<a
+class="social"
+href="PASTE_WEBSITE_LINK"
+target="_blank"
+title="Website">
+
+<img
+src="https://cdn.simpleicons.org/googlechrome/4285F4"
+alt="Website">
+
+</a>
+
+</div>
+
+</section>
+
+<!-- INSTITUTE DETAILS -->
+
+<section class="card">
+
+<div class="title">
+🏫 Institute Details
+</div>
+
+<img
+class="logo"
+src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+alt="Kumaun Institute Logo">
+
+<div class="info">
+
+<strong>
+Institute Name
+</strong>
+
+Kumaun Institute of Computer Education
+
+</div>
+
+<div class="info">
+
+<strong>
+Address
+</strong>
+
+PASTE INSTITUTE ADDRESS
+
+</div>
+
+<div class="info">
+
+<strong>
+Owner Name
+</strong>
+
+PASTE OWNER NAME
+
+</div>
+
+<div class="info">
+
+<strong>
+Contact Number
+</strong>
+
+PASTE CONTACT NUMBER
+
+</div>
+
+<div class="info">
+
+<strong>
+Email
+</strong>
+
+PASTE INSTITUTE EMAIL
+
+</div>
+
+<!-- INSTITUTE SOCIAL MEDIA -->
+
+<div class="social-links">
+
+<a
+class="social"
+href="PASTE_INSTITUTE_INSTAGRAM_LINK"
+target="_blank"
+rel="noopener noreferrer"
+title="Institute Instagram">
+
+<img
+src="https://cdn.simpleicons.org/instagram/E4405F"
+alt="Instagram">
+
+</a>
+
+<a
+class="social"
+href="PASTE_INSTITUTE_WHATSAPP_LINK"
+target="_blank"
+rel="noopener noreferrer"
+title="Institute WhatsApp">
+
+<img
+src="https://cdn.simpleicons.org/whatsapp/25D366"
+alt="WhatsApp">
+
+</a>
+
+<a
+class="social"
+href="PASTE_INSTITUTE_FACEBOOK_LINK"
+target="_blank"
+rel="noopener noreferrer"
+title="Institute Facebook">
+
+<img
+src="https://cdn.simpleicons.org/facebook/1877F2"
+alt="Facebook">
+
+</a>
+
+<a
+class="social"
+href="PASTE_INSTITUTE_WEBSITE_LINK"
+target="_blank"
+rel="noopener noreferrer"
+title="Institute Website">
+
+<img
+src="https://cdn.simpleicons.org/googlechrome/4285F4"
+alt="Website">
+
+</a>
+
+</div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+
+© 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
+>
+
+<title>
+My Documents | Kumaun Institute
+</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#eef4fb;
+    color:#102a68;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    min-height:76px;
+    padding:12px 25px;
+    background:#12327f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:52px;
+    height:52px;
+    background:white;
+    border-radius:10px;
+    padding:4px;
+    object-fit:contain;
+}
+
+.brand h2{
+    font-size:20px;
+}
+
+.brand p{
+    margin-top:4px;
+    font-size:12px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    width:94%;
+    max-width:1100px;
+    margin:25px auto;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title h1{
+    font-size:28px;
+}
+
+.page-title p{
+    margin-top:7px;
+    color:#64748b;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:12px;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+}
+
+/* =========================
+   DOCUMENT GRID
+========================= */
+
+.documents-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.document-card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    box-shadow:0 6px 22px rgba(15,35,80,.07);
+    border:1px solid #dbe7f5;
+}
+
+.document-icon{
+    width:58px;
+    height:58px;
+    border-radius:14px;
+    background:#eaf2ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    flex-shrink:0;
+}
+
+.document-info{
+    flex:1;
+    min-width:0;
+}
+
+.document-info h3{
+    font-size:16px;
+    color:#102a68;
+    word-break:break-word;
+}
+
+.document-info p{
+    margin-top:6px;
+    font-size:12px;
+    color:#64748b;
+}
+
+.document-actions{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    flex-shrink:0;
+}
+
+.view-btn,
+.download-btn{
+    text-decoration:none;
+    border:0;
+    padding:9px 12px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:bold;
+    text-align:center;
+    cursor:pointer;
+}
+
+.view-btn{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.download-btn{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+/* =========================
+   LOADING / EMPTY
+========================= */
+
+.loading,
+.empty{
+    grid-column:1/-1;
+    background:white;
+    border-radius:18px;
+    padding:45px 20px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 6px 22px rgba(15,35,80,.06);
+}
+
+.empty-icon{
+    font-size:52px;
+    margin-bottom:12px;
+}
+
+.empty h3{
+    color:#334155;
+    margin-bottom:8px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .header{
+        padding:10px 14px;
+    }
+
+    .brand-logo{
+        width:44px;
+        height:44px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .main{
+        margin:18px auto;
+    }
+
+    .page-title h1{
+        font-size:23px;
+    }
+
+    .page-title p{
+        font-size:13px;
+    }
+
+    .documents-grid{
+        grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .document-card{
+        padding:15px;
+        gap:10px;
+    }
+
+    .document-icon{
+        width:50px;
+        height:50px;
+        font-size:24px;
+    }
+
+    .document-info h3{
+        font-size:14px;
+    }
+
+    .document-actions{
+        gap:5px;
+    }
+
+    .view-btn,
+    .download-btn{
+        padding:8px 9px;
+        font-size:11px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="brand">
+
+    <img
+        class="brand-logo"
+        src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+        alt="Institute Logo"
+    >
+
+    <div>
+
+        <h2>
+            Kumaun Institute of Computer Education
+        </h2>
+
+        <p>
+        Documents Dashboard
+        </p>
+
+    </div>
+
+</div>
+
+
+<button
+    class="back-btn"
+    onclick="goBack()"
+>
+    ← Dashboard
+</button>
+
+</header>
+
+<main class="main">
+
+<div class="page-title">
+
+    <h1>
+        📄 My Documents
+    </h1>
+
+    <p>
+         Diploma, Certificate & Other Documents Available.
+    </p>
+
+</div>
+
+
+<div
+    id="message"
+    class="message"
+>
+</div>
+
+
+<div
+    id="documentsContainer"
+    class="documents-grid"
+>
+
+    <div class="loading">
+
+        ⏳ Documents loading...
+
+    </div>
+
+</div>
+
+</main>
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =========================================
+   STORAGE BUCKET
+========================================= */
+
+const BUCKET_NAME =
+"student-documents";
+
+
+
+/* =========================================
+   GO BACK
+========================================= */
+
+function goBack(){
+
+    window.location.href =
+    "student-dashboard.html";
+
+}
+
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+    message.className =
+    "message";
+
+    if(
+        type === "error"
+    ){
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+
+    message.textContent =
+    text;
+
+    message.style.display =
+    "block";
+
+}
+
+
+
+/* =========================================
+   FIND LOGGED-IN STUDENT
+========================================= */
+
+async function getCurrentStudent(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    const session =
+    data.session;
+
+
+    if(
+        !session ||
+        !session.user
+    ){
+
+        window.location.href =
+        "student-login.html";
+
+        return null;
+
+    }
+
+
+    const authUserId =
+    session.user.id;
+
+
+    const {
+        data:student,
+        error:studentError
+    } =
+    await supabaseClient
+    .from("Students")
+    .select(
+        "id,name,auth_user_id"
+    )
+    .eq(
+        "auth_user_id",
+        authUserId
+    )
+    .maybeSingle();
+
+
+    if(studentError){
+
+        throw studentError;
+
+    }
+
+
+    return student;
+
+}
+
+
+
+/* =========================================
+   LOAD DOCUMENTS
+========================================= */
+
+async function loadMyDocuments(){
+
+    const container =
+    document.getElementById(
+        "documentsContainer"
+    );
+
+
+    container.innerHTML =
+    `
+        <div class="loading">
+            ⏳ Documents loading...
+        </div>
+    `;
+
+
+    try{
+
+        const student =
+        await getCurrentStudent();
+
+
+        if(!student){
+
+            return;
+
+        }
+
+
+        const studentId =
+        student.id;
+
+
+        const {
+            data:documents,
+            error:documentsError
+        } =
+        await supabaseClient
+        .from("student_documents")
+        .select(
+            `
+                id,
+                student_id,
+                document_type,
+                document_name,
+                file_url,
+                uploaded_at,
+                created_at
+            `
+        )
+        .eq(
+            "student_id",
+            studentId
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+        if(documentsError){
+
+            throw documentsError;
+
+        }
+
+
+        if(
+            !documents ||
+            documents.length === 0
+        ){
+
+            container.innerHTML =
+            `
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        📄
+                    </div>
+
+                    <h3>
+                        Documents not uploaded yet
+                    </h3>
+
+                    <p>
+                      Documents Not Uploaded. Please Contact the Institute Owner.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+        "";
+
+
+        for(
+            const doc
+            of documents
+        ){
+
+            let fileURL =
+            doc.file_url;
+
+
+            /* =====================================
+               CREATE SIGNED URL
+            ===================================== */
+
+            if(
+                fileURL &&
+                !fileURL.startsWith(
+                    "http://"
+                ) &&
+                !fileURL.startsWith(
+                    "https://"
+                )
+            ){
+
+                const {
+                    data:signedData,
+                    error:signedError
+                } =
+                await supabaseClient
+                .storage
+                .from(
+                    BUCKET_NAME
+                )
+                .createSignedUrl(
+                    fileURL,
+                    60 * 60
+                );
+
+
+                if(
+                    !signedError &&
+                    signedData
+                ){
+
+                    fileURL =
+                    signedData.signedUrl;
+
+                }
+
+            }
+
+
+            const type =
+            doc.document_type ||
+            "Document";
+
+
+            const name =
+            doc.document_name ||
+            type;
+
+
+            const uploadedDate =
+            formatDate(
+                doc.uploaded_at ||
+                doc.created_at
+            );
+
+
+            const card =
+            document.createElement(
+                "div"
+            );
+
+
+            card.className =
+            "document-card";
+
+
+            let actions =
+            `
+                <span
+                    style="
+                        color:#dc2626;
+                        font-size:12px;
+                        font-weight:bold;
+                    "
+                >
+                    File unavailable
+                </span>
+            `;
+
+
+            if(fileURL){
+
+                actions =
+                `
+                    <a
+                        class="view-btn"
+                        href="${escapeHTML(fileURL)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        👁 View
+                    </a>
+
+                    <a
+                        class="download-btn"
+                        href="${escapeHTML(fileURL)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                    >
+                        ⬇ Download
+                    </a>
+                `;
+
+            }
+
+
+            card.innerHTML =
+            `
+
+                <div class="document-icon">
+                    📄
+                </div>
+
+
+                <div class="document-info">
+
+                    <h3>
+                        ${escapeHTML(name)}
+                    </h3>
+
+
+                    <p>
+                        Type:
+                        ${escapeHTML(
+                            formatDocumentType(type)
+                        )}
+                    </p>
+
+
+                    <p>
+                        Uploaded:
+                        ${escapeHTML(uploadedDate)}
+                    </p>
+
+                </div>
+
+
+                <div class="document-actions">
+
+                    ${actions}
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        container.innerHTML =
+        `
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ❌
+                </div>
+
+                <h3>
+                    Documents load failed
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+
+            </div>
+        `;
+
+
+        showMessage(
+            "Documents load failed: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   DOCUMENT TYPE FORMAT
+========================================= */
+
+function formatDocumentType(type){
+
+    const value =
+    String(type || "")
+    .toLowerCase();
+
+
+    if(value === "diploma"){
+
+        return "Diploma";
+
+    }
+
+
+    if(value === "certificate"){
+
+        return "Certificate";
+
+    }
+
+
+    if(value === "marksheet"){
+
+        return "Marksheet";
+
+    }
+
+
+    if(value === "migration"){
+
+        return "Migration Certificate";
+
+    }
+
+
+    if(value === "other"){
+
+        return "Other";
+
+    }
+
+
+    return type;
+
+}
+
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+
+/* =========================================
+   START
+========================================= */
+
+loadMyDocuments();
+
+</script>
+
+</body>
+
+</html>

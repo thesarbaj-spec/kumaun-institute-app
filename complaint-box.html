@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Complaint Box | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#172554;
+}
+
+.header{
+    min-height:70px;
+    padding:10px 25px;
+    background:#172b68;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.header-logo{
+    width:48px;
+    height:48px;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:19px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:2px;
+    font-size:11px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:9px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.container{
+    width:94%;
+    max-width:850px;
+    margin:18px auto;
+}
+
+.loading{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.error-box{
+    display:none;
+    background:#fff1f2;
+    color:#991b1b;
+    border:1px solid #fecdd3;
+    padding:12px 15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.success-box{
+    display:none;
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+    padding:12px 15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.complaint-content{
+    display:none;
+}
+
+/* STUDENT DETAILS */
+
+.student-card{
+    background:white;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.student-card h2{
+    font-size:19px;
+    margin-bottom:5px;
+}
+
+.student-card p{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.4;
+}
+
+.student-info{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.info-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:10px 12px;
+    border-radius:10px;
+}
+
+.info-label{
+    font-size:10px;
+    color:#64748b;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.info-value{
+    font-size:13px;
+    font-weight:bold;
+    color:#172554;
+    word-break:break-word;
+}
+
+/* COMPLAINT BOX */
+
+.complaint-box{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.complaint-box h2{
+    font-size:20px;
+    margin-bottom:5px;
+}
+
+.complaint-box > p{
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:16px;
+    line-height:1.4;
+}
+
+.form-group{
+    margin-bottom:13px;
+}
+
+label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    color:#475569;
+    margin-bottom:6px;
+}
+
+input,
+textarea{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    padding:11px 12px;
+    font-size:14px;
+    outline:none;
+}
+
+textarea{
+    min-height:110px;
+    resize:vertical;
+    line-height:1.5;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#2563eb;
+}
+
+.submit-btn{
+    width:100%;
+    border:0;
+    background:#172b68;
+    color:white;
+    padding:12px;
+    border-radius:9px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.submit-btn:hover{
+    background:#1e3a8a;
+}
+
+.submit-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.note{
+    margin-top:12px;
+    padding:10px 12px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:9px;
+    font-size:11px;
+    line-height:1.45;
+}
+
+/* COMPLAINT HISTORY */
+
+.history-box{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.history-title{
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+.history-subtitle{
+    color:#64748b;
+    font-size:12px;
+    margin-bottom:14px;
+}
+
+.complaint-history-list{
+    display:grid;
+    gap:10px;
+}
+
+.history-card{
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:14px;
+    background:#fafcff;
+}
+
+.history-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:8px;
+}
+
+.history-subject{
+    font-size:15px;
+    font-weight:800;
+    color:#172554;
+    word-break:break-word;
+}
+
+.history-date{
+    font-size:10px;
+    color:#64748b;
+    margin-top:4px;
+}
+
+.history-complaint{
+    color:#334155;
+    font-size:13px;
+    line-height:1.45;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-progress{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-resolved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-closed{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.status-default{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.empty-history{
+    text-align:center;
+    padding:22px 15px;
+    color:#64748b;
+    border:1px dashed #cbd5e1;
+    border-radius:12px;
+}
+
+.footer{
+    text-align:center;
+    padding:16px;
+    color:#64748b;
+    font-size:12px;
+}
+
+@media(max-width:650px){
+
+    .header{
+        min-height:62px;
+        padding:9px 12px;
+    }
+
+    .header-logo{
+        width:42px;
+        height:42px;
+    }
+
+    .header-title{
+        font-size:14px;
+    }
+
+    .header-subtitle{
+        font-size:9px;
+    }
+
+    .back-btn{
+        padding:8px 10px;
+        font-size:11px;
+    }
+
+    .container{
+        width:94%;
+        margin:12px auto;
+    }
+
+    .student-info{
+        grid-template-columns:1fr;
+        gap:8px;
+    }
+
+    .student-card{
+        padding:14px;
+        margin-bottom:12px;
+    }
+
+    .complaint-box,
+    .history-box{
+        padding:15px;
+        margin-bottom:12px;
+    }
+
+    .student-card h2{
+        font-size:17px;
+    }
+
+    .complaint-box h2,
+    .history-title{
+        font-size:18px;
+    }
+
+    .info-box{
+        padding:9px 10px;
+    }
+
+    .form-group{
+        margin-bottom:11px;
+    }
+
+    input,
+    textarea{
+        padding:10px;
+        font-size:13px;
+    }
+
+    textarea{
+        min-height:90px;
+    }
+
+    .submit-btn{
+        padding:11px;
+        font-size:13px;
+    }
+
+    .note{
+        margin-top:10px;
+        padding:9px 10px;
+        font-size:10px;
+    }
+
+    .history-card{
+        padding:11px;
+    }
+
+    .history-top{
+        flex-direction:column;
+        gap:6px;
+        margin-bottom:7px;
+    }
+
+    .history-subject{
+        font-size:14px;
+    }
+
+    .history-complaint{
+        font-size:12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-left">
+
+        <div class="header-logo">
+
+            <img
+                src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+                alt="Kumaun Institute Logo"
+            >
+
+        </div>
+
+        <div>
+
+            <div class="header-title">
+                Kumaun Institute of Computer Education
+            </div>
+
+            <div class="header-subtitle">
+                Student Complaint Box
+            </div>
+
+        </div>
+
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='student-dashboard.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+<main class="container">
+
+    <div
+        id="errorBox"
+        class="error-box"
+    >
+    </div>
+
+    <div
+        id="successBox"
+        class="success-box"
+    >
+    </div>
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading student information...
+    </div>
+
+    <div
+        id="complaintContent"
+        class="complaint-content"
+    >
+
+        <section class="student-card">
+
+            <h2>
+                Your Details 👤
+            </h2>
+
+            <p>
+                Complaint Registered Details.
+            </p>
+
+            <div class="student-info">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        STUDENT NAME
+                    </div>
+
+                    <div
+                        id="studentName"
+                        class="info-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        STUDENT ID
+                    </div>
+
+                    <div
+                        id="studentId"
+                        class="info-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        MOBILE NUMBER
+                    </div>
+
+                    <div
+                        id="studentPhone"
+                        class="info-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        COURSE
+                    </div>
+
+                    <div
+                        id="studentCourse"
+                        class="info-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="complaint-box">
+
+            <h2>
+                📝 Submit Complaint
+            </h2>
+
+            <p>
+                Submit your complaint here.
+            </p>
+
+            <form id="complaintForm">
+
+                <div class="form-group">
+
+                    <label>
+                        Complaint Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subject"
+                        placeholder="Example: Fee related issue"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Write Your Complaint
+                    </label>
+
+                    <textarea
+                        id="complaint"
+                        placeholder="Write your complaint here..."
+                        required
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="submit"
+                    id="submitBtn"
+                    class="submit-btn"
+                >
+                    Submit Complaint
+                </button>
+
+            </form>
+
+            <div class="note">
+
+                ℹ️ Complaint status will be updated here. Once the institute reviews your complaint, the status will change to <strong>In Progress</strong>, <strong>Resolved</strong>, or <strong>Closed</strong>. Until then, the status will remain <strong>Pending</strong>.
+
+            </div>
+
+        </section>
+
+        <section class="history-box">
+
+            <h2 class="history-title">
+                📋 Complaint History
+            </h2>
+
+            <p class="history-subtitle">
+            </p>
+
+            <div
+                id="complaintHistory"
+                class="complaint-history-list"
+            >
+
+                <div class="empty-history">
+                    Loading complaint history...
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer class="footer">
+
+    © 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+<script>
+
+/* =========================================
+   SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentStudent = null;
+
+/* =========================================
+   SHOW ERROR
+========================================= */
+
+function showError(message){
+
+    const errorBox =
+        document.getElementById(
+            "errorBox"
+        );
+
+    errorBox.textContent =
+        message;
+
+    errorBox.style.display =
+        "block";
+
+}
+
+/* =========================================
+   SHOW SUCCESS
+========================================= */
+
+function showSuccess(message){
+
+    const successBox =
+        document.getElementById(
+            "successBox"
+        );
+
+    successBox.textContent =
+        message;
+
+    successBox.style.display =
+        "block";
+
+}
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value || ""
+    )
+
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDateTime(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+    const date =
+        new Date(value);
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+/* =========================================
+   GET STATUS CLASS
+========================================= */
+
+function getStatusClass(status){
+
+    const value =
+        String(
+            status || ""
+        ).toLowerCase();
+
+    if(value === "pending"){
+
+        return "status-pending";
+
+    }
+
+    if(
+        value === "in progress" ||
+        value === "in_progress"
+    ){
+
+        return "status-progress";
+
+    }
+
+    if(value === "resolved"){
+
+        return "status-resolved";
+
+    }
+
+    if(value === "closed"){
+
+        return "status-closed";
+
+    }
+
+    return "status-default";
+
+}
+
+/* =========================================
+   LOAD STUDENT
+========================================= */
+
+async function loadStudent(){
+
+    try{
+
+        const {
+            data:sessionData,
+            error:sessionError
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
+
+        if(sessionError){
+
+            throw sessionError;
+
+        }
+
+        const session =
+            sessionData.session;
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            window.location.href =
+                "student-login.html";
+
+            return;
+
+        }
+
+        const authUserId =
+            session.user.id;
+
+        const {
+            data:student,
+            error:studentError
+        } =
+        await supabaseClient
+        .from("Students")
+        .select("*")
+        .eq(
+            "auth_user_id",
+            authUserId
+        )
+        .maybeSingle();
+
+        if(studentError){
+
+            throw studentError;
+
+        }
+
+        if(!student){
+
+            throw new Error(
+                "Student profile not found."
+            );
+
+        }
+
+        currentStudent =
+            student;
+
+        document.getElementById(
+            "studentName"
+        ).textContent =
+            student.name || "-";
+
+        document.getElementById(
+            "studentId"
+        ).textContent =
+            student.student_id ||
+            student.id ||
+            "-";
+
+        document.getElementById(
+            "studentPhone"
+        ).textContent =
+            student.phone || "-";
+
+        document.getElementById(
+            "studentCourse"
+        ).textContent =
+            student.course || "-";
+
+        await loadComplaintHistory();
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "complaintContent"
+        ).style.display =
+            "block";
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+        showError(
+            "Student information loading failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+/* =========================================
+   LOAD COMPLAINT HISTORY
+========================================= */
+
+async function loadComplaintHistory(){
+
+    if(!currentStudent){
+
+        return;
+
+    }
+
+    const historyBox =
+        document.getElementById(
+            "complaintHistory"
+        );
+
+    historyBox.innerHTML =
+        `
+        <div class="empty-history">
+            Loading complaint history...
+        </div>
+        `;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("complaints")
+        .select("*")
+        .eq(
+            "student_id",
+            currentStudent.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+        if(error){
+
+            throw error;
+
+        }
+
+        const complaints =
+            data || [];
+
+        if(!complaints.length){
+
+            historyBox.innerHTML =
+                `
+                <div class="empty-history">
+                    📭 Complaints Not Found.
+                </div>
+                `;
+
+            return;
+
+        }
+
+        historyBox.innerHTML =
+            "";
+
+        complaints.forEach(
+            function(item){
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "history-card";
+
+                const status =
+                    item.status ||
+                    "Pending";
+
+                const statusClass =
+                    getStatusClass(
+                        status
+                    );
+
+                card.innerHTML =
+                    `
+
+                    <div class="history-top">
+
+                        <div>
+
+                            <div class="history-subject">
+
+                                ${escapeHTML(
+                                    item.subject ||
+                                    "No Subject"
+                                )}
+
+                            </div>
+
+                            <div class="history-date">
+
+                                📅 ${formatDateTime(
+                                    item.created_at
+                                )}
+
+                            </div>
+
+                        </div>
+
+                        <span class="
+                            status
+                            ${statusClass}
+                        ">
+
+                            ${escapeHTML(
+                                status
+                            )}
+
+                        </span>
+
+                    </div>
+
+                    <div class="history-complaint">
+
+                        ${escapeHTML(
+                            item.complaint ||
+                            "-"
+                        )}
+
+                    </div>
+
+                    `;
+
+                historyBox.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        historyBox.innerHTML =
+            `
+            <div class="empty-history">
+                ❌ Complaint history loading failed.
+            </div>
+            `;
+
+    }
+
+}
+
+/* =========================================
+   SUBMIT COMPLAINT
+========================================= */
+
+document.getElementById(
+    "complaintForm"
+).addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+        document.getElementById(
+            "errorBox"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "successBox"
+        ).style.display =
+            "none";
+
+        if(!currentStudent){
+
+            showError(
+                "Student information not found."
+            );
+
+            return;
+
+        }
+
+        const subject =
+            document.getElementById(
+                "subject"
+            ).value.trim();
+
+        const complaint =
+            document.getElementById(
+                "complaint"
+            ).value.trim();
+
+        if(!subject){
+
+            showError(
+                "Please enter complaint subject."
+            );
+
+            return;
+
+        }
+
+        if(!complaint){
+
+            showError(
+                "Please write your complaint."
+            );
+
+            return;
+
+        }
+
+        const submitBtn =
+            document.getElementById(
+                "submitBtn"
+            );
+
+        submitBtn.disabled =
+            true;
+
+        submitBtn.textContent =
+            "Submitting...";
+
+        try{
+
+            const {
+                error
+            } =
+            await supabaseClient
+            .from("complaints")
+            .insert([
+
+                {
+                    student_id:
+                        currentStudent.id,
+
+                    subject:
+                        subject,
+
+                    complaint:
+                        complaint,
+
+                    status:
+                        "Pending"
+
+                }
+
+            ]);
+
+            if(error){
+
+                throw error;
+
+            }
+
+            document.getElementById(
+                "complaintForm"
+            ).reset();
+
+            showSuccess(
+                "✅ Complaint successfully submitted."
+            );
+
+            await loadComplaintHistory();
+
+            document.querySelector(
+                ".history-box"
+            ).scrollIntoView(
+                {
+                    behavior:"smooth",
+                    block:"start"
+                }
+            );
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            showError(
+                "Complaint submission failed: " +
+                error.message
+            );
+
+        }
+        finally{
+
+            submitBtn.disabled =
+                false;
+
+            submitBtn.textContent =
+                "Submit Complaint";
+
+        }
+
+    }
+);
+
+/* =========================================
+   START PAGE
+========================================= */
+
+loadStudent();
+
+</script>
+
+</body>
+
+</html>

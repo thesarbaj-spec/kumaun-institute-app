@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Documents | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#222;
+}
+
+.header{
+    background:#172554;
+    color:white;
+    padding:15px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand img{
+    width:48px;
+    height:48px;
+    object-fit:contain;
+    background:white;
+    border-radius:50%;
+    padding:3px;
+}
+
+.brand h2{
+    font-size:20px;
+}
+
+.brand p{
+    font-size:12px;
+    opacity:.8;
+    margin-top:3px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.back-btn,
+.logout-btn{
+    border:none;
+    color:white;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.back-btn{
+    background:#2563eb;
+}
+
+.logout-btn{
+    background:#ef4444;
+}
+
+.main{
+    max-width:1100px;
+    margin:auto;
+    padding:25px;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title h1{
+    font-size:28px;
+    margin-bottom:7px;
+}
+
+.page-title p{
+    color:#666;
+}
+
+.box{
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.box h2{
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    display:block;
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+select,
+input[type="file"]{
+    width:100%;
+    padding:13px;
+    border:1px solid #d1d5db;
+    border-radius:9px;
+    background:white;
+    font-size:15px;
+}
+
+.upload-btn{
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:13px 20px;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.upload-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.message{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    display:none;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.documents-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+}
+
+.document-card{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:18px;
+    background:#fafafa;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.document-icon{
+    width:55px;
+    height:55px;
+    border-radius:12px;
+    background:#e8efff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    flex-shrink:0;
+}
+
+.document-info{
+    flex:1;
+    min-width:0;
+}
+
+.document-info h3{
+    font-size:16px;
+    margin-bottom:6px;
+    word-break:break-word;
+}
+
+.document-info p{
+    font-size:13px;
+    color:#777;
+    margin-top:3px;
+}
+
+.document-actions{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.document-actions button{
+    border:none;
+    padding:8px 11px;
+    border-radius:7px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    white-space:nowrap;
+}
+
+.view-document{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.download-document{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.no-documents{
+    text-align:center;
+    padding:40px 20px;
+    color:#777;
+    grid-column:1/-1;
+}
+
+.no-documents h3{
+    margin-top:10px;
+    color:#555;
+}
+
+.loading{
+    text-align:center;
+    padding:30px;
+    color:#777;
+    grid-column:1/-1;
+}
+
+.error-box{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:20px;
+    border-radius:10px;
+    grid-column:1/-1;
+}
+
+@media(max-width:700px){
+
+    .header{
+        padding:12px 15px;
+    }
+
+    .brand img{
+        width:42px;
+        height:42px;
+    }
+
+    .brand h2{
+        font-size:16px;
+    }
+
+    .brand p{
+        font-size:10px;
+    }
+
+    .header-buttons{
+        gap:5px;
+    }
+
+    .back-btn,
+    .logout-btn{
+        padding:8px 10px;
+        font-size:12px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .page-title h1{
+        font-size:23px;
+    }
+
+    .box{
+        padding:18px;
+    }
+
+    .documents-grid{
+        grid-template-columns:1fr;
+    }
+
+    .document-card{
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <img
+            src="kumaun institute logo.png"
+            alt="Kumaun Institute Logo"
+        >
+
+        <div>
+
+            <h2>Kumaun Institute</h2>
+
+            <p>Student Document Management</p>
+
+        </div>
+
+    </div>
+
+    <div class="header-buttons">
+
+        <a
+            href="index.html"
+            class="back-btn"
+        >
+            🔙 Dashboard
+        </a>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="main">
+
+    <div class="page-title">
+
+        <h1>📚 Student Documents</h1>
+
+        <p>
+            Student ke diploma, certificate aur other documents manage karein.
+        </p>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <section class="box">
+
+        <h2>📤 Upload Document</h2>
+
+        <div class="form-group">
+
+            <label>Select Student</label>
+
+            <select id="studentSelect">
+
+                <option value="">
+                    Loading students...
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Document Type</label>
+
+            <select id="documentType">
+
+                <option value="">
+                    Select Document
+                </option>
+
+                <option value="diploma">
+                    Diploma
+                </option>
+
+                <option value="certificate">
+                    Certificate
+                </option>
+
+                <option value="marksheet">
+                    Marksheet
+                </option>
+
+                <option value="other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Select File</label>
+
+            <input
+                type="file"
+                id="documentFile"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+            >
+
+        </div>
+
+
+        <button
+            class="upload-btn"
+            id="uploadBtn"
+            onclick="uploadDocument()"
+        >
+            📤 Upload Document
+        </button>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+    </section>
+
+
+    <!-- DOCUMENTS -->
+
+    <section class="box">
+
+        <h2>📂 Uploaded Documents</h2>
+
+        <div
+            id="documentsContainer"
+            class="documents-grid"
+        >
+
+            <div class="loading">
+                ⏳ Documents load ho rahe hain...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   BUCKET
+===================================================== */
+
+const BUCKET_NAME =
+    "student-documents";
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+let currentStudentId = null;
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadStudents();
+
+    }
+);
+
+
+/* =====================================================
+   URL STUDENT ID
+===================================================== */
+
+function getStudentIdFromURL(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const id =
+        params.get("id");
+
+    if(id){
+
+        return Number(id);
+
+    }
+
+    return null;
+
+}
+
+
+/* =====================================================
+   LOAD STUDENTS
+===================================================== */
+
+async function loadStudents(){
+
+    const select =
+        document.getElementById(
+            "studentSelect"
+        );
+
+    try{
+
+        console.log("Loading students...");
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from("Students")
+            .select("id,name")
+            .order("name",{
+                ascending:true
+            });
+
+
+        console.log("STUDENTS:",data);
+
+        console.log(
+            "STUDENT ERROR:",
+            error
+        );
+
+
+        if(error){
+
+            select.innerHTML = `
+                <option value="">
+                    Students load nahi hue
+                </option>
+            `;
+
+            showMessage(
+                error.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!data || data.length === 0){
+
+            select.innerHTML = `
+                <option value="">
+                    Koi student nahi mila
+                </option>
+            `;
+
+            return;
+
+        }
+
+
+        select.innerHTML = `
+            <option value="">
+                Select Student
+            </option>
+        `;
+
+
+        data.forEach(
+            function(student){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    student.id;
+
+                option.textContent =
+                    student.name +
+                    " (ID: " +
+                    student.id +
+                    ")";
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        const urlId =
+            getStudentIdFromURL();
+
+
+        let selectedId = null;
+
+
+        if(
+            urlId &&
+            data.some(
+                s =>
+                    Number(s.id) ===
+                    Number(urlId)
+            )
+        ){
+
+            selectedId =
+                Number(urlId);
+
+        }
+        else{
+
+            selectedId =
+                Number(data[0].id);
+
+        }
+
+
+        select.value =
+            String(selectedId);
+
+        currentStudentId =
+            selectedId;
+
+
+        await loadDocuments(
+            selectedId
+        );
+
+
+        select.addEventListener(
+            "change",
+            async function(){
+
+                const id =
+                    Number(this.value);
+
+
+                if(!id){
+
+                    currentStudentId =
+                        null;
+
+                    document.getElementById(
+                        "documentsContainer"
+                    ).innerHTML = `
+                        <div class="no-documents">
+                            👨‍🎓
+                            <h3>
+                                Student select karein
+                            </h3>
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                currentStudentId =
+                    id;
+
+
+                window.history.replaceState(
+                    {},
+                    "",
+                    window.location.pathname +
+                    "?id=" +
+                    id
+                );
+
+
+                await loadDocuments(id);
+
+            }
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "loadStudents error:",
+            error
+        );
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD DOCUMENTS
+===================================================== */
+
+async function loadDocuments(studentId){
+
+    const container =
+        document.getElementById(
+            "documentsContainer"
+        );
+
+
+    container.innerHTML = `
+        <div class="loading">
+            ⏳ Documents load ho rahe hain...
+        </div>
+    `;
+
+
+    const id =
+        Number(studentId);
+
+
+    if(!id || isNaN(id)){
+
+        container.innerHTML = `
+            <div class="error-box">
+                ❌ Invalid Student ID
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    try{
+
+        console.log(
+            "================================="
+        );
+
+        console.log(
+            "Searching documents for Student ID:",
+            id
+        );
+
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from("student_documents")
+            .select(`
+                id,
+                student_id,
+                document_type,
+                document_name,
+                file_url,
+                uploaded_at,
+                created_at
+            `)
+            .eq(
+                "student_id",
+                id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+        console.log(
+            "ALL DOCUMENT ROWS:",
+            data
+        );
+
+        console.log(
+            "DOCUMENT ERROR:",
+            error
+        );
+
+
+        if(error){
+
+            container.innerHTML = `
+                <div class="error-box">
+
+                    ❌ Documents load nahi hue.
+
+                    <br><br>
+
+                    ${escapeHTML(
+                        error.message
+                    )}
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        if(!data || data.length === 0){
+
+            container.innerHTML = `
+                <div class="no-documents">
+
+                    <div style="font-size:50px;">
+                        📄
+                    </div>
+
+                    <h3>
+                        Is student ka koi document upload nahi hai.
+                    </h3>
+
+                    <p>
+                        Student ID: ${id}
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        for(
+            const doc of data
+        ){
+
+            const filePath =
+                doc.file_url;
+
+
+            console.log(
+                "DOCUMENT:",
+                doc.document_name
+            );
+
+            console.log(
+                "FILE PATH:",
+                filePath
+            );
+
+
+            let fileURL =
+                null;
+
+
+            /*
+                CREATE SIGNED URL
+            */
+
+            if(filePath){
+
+                const {
+                    data:signedData,
+                    error:signedError
+                } =
+                await supabaseClient
+                    .storage
+                    .from(
+                        BUCKET_NAME
+                    )
+                    .createSignedUrl(
+                        filePath,
+                        3600
+                    );
+
+
+                console.log(
+                    "SIGNED DATA:",
+                    signedData
+                );
+
+                console.log(
+                    "SIGNED ERROR:",
+                    signedError
+                );
+
+
+                if(
+                    !signedError &&
+                    signedData &&
+                    signedData.signedUrl
+                ){
+
+                    fileURL =
+                        signedData.signedUrl;
+
+                }
+
+            }
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "document-card";
+
+
+            const type =
+                doc.document_type ||
+                "Document";
+
+
+            const name =
+                doc.document_name ||
+                type;
+
+
+            card.innerHTML = `
+
+                <div class="document-icon">
+                    📄
+                </div>
+
+
+                <div class="document-info">
+
+                    <h3>
+                        ${escapeHTML(name)}
+                    </h3>
+
+                    <p>
+                        Type:
+                        ${escapeHTML(type)}
+                    </p>
+
+                    <p>
+                        Uploaded:
+                        ${formatDate(
+                            doc.uploaded_at ||
+                            doc.created_at
+                        )}
+                    </p>
+
+                </div>
+
+
+                <div class="document-actions">
+
+                    ${
+                        fileURL
+
+                        ?
+
+                        `
+
+                        <button
+                            class="view-document"
+                            onclick="viewDocument(
+                                '${escapeJS(fileURL)}'
+                            )"
+                        >
+                            👁️ View
+                        </button>
+
+
+                        <button
+                            class="download-document"
+                            onclick="downloadDocument(
+                                '${escapeJS(fileURL)}',
+                                '${escapeJS(name)}'
+                            )"
+                        >
+                            ⬇️ Download
+                        </button>
+
+                        `
+
+                        :
+
+                        `
+
+                        <span
+                            style="
+                                color:#dc2626;
+                                font-size:12px;
+                            "
+                        >
+                            File unavailable
+                        </span>
+
+                        `
+
+                    }
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "loadDocuments error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="error-box">
+
+                ❌ Documents load nahi hue.
+
+                <br><br>
+
+                ${escapeHTML(
+                    error.message
+                )}
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   VIEW DOCUMENT
+===================================================== */
+
+function viewDocument(url){
+
+    if(!url){
+
+        alert(
+            "File URL available nahi hai."
+        );
+
+        return;
+
+    }
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+}
+
+
+/* =====================================================
+   DOWNLOAD DOCUMENT
+===================================================== */
+
+async function downloadDocument(
+    url,
+    fileName
+){
+
+    if(!url){
+
+        alert(
+            "File URL available nahi hai."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(url);
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "File fetch nahi hui."
+            );
+
+        }
+
+
+        const blob =
+            await response.blob();
+
+
+        const blobURL =
+            window.URL.createObjectURL(
+                blob
+            );
+
+
+        const a =
+            document.createElement(
+                "a"
+            );
+
+
+        a.href =
+            blobURL;
+
+        a.download =
+            fileName || "document";
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+
+        window.URL.revokeObjectURL(
+            blobURL
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Download error:",
+            error
+        );
+
+
+        /*
+            Agar browser direct download
+            block kare to new tab mein open.
+        */
+
+        window.open(
+            url,
+            "_blank"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   UPLOAD DOCUMENT
+===================================================== */
+
+async function uploadDocument(){
+
+    const studentSelect =
+        document.getElementById(
+            "studentSelect"
+        );
+
+    const typeSelect =
+        document.getElementById(
+            "documentType"
+        );
+
+    const fileInput =
+        document.getElementById(
+            "documentFile"
+        );
+
+    const uploadBtn =
+        document.getElementById(
+            "uploadBtn"
+        );
+
+
+    const studentId =
+        Number(
+            studentSelect.value
+        );
+
+
+    const documentType =
+        typeSelect.value;
+
+
+    const file =
+        fileInput.files[0];
+
+
+    if(!studentId){
+
+        showMessage(
+            "Pehle student select karo.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!documentType){
+
+        showMessage(
+            "Document type select karo.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!file){
+
+        showMessage(
+            "File select karo.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        file.size >
+        50 * 1024 * 1024
+    ){
+
+        showMessage(
+            "File 50 MB se chhoti honi chahiye.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        uploadBtn.disabled =
+            true;
+
+        uploadBtn.textContent =
+            "⏳ Uploading...";
+
+
+        const extension =
+            file.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+        const timestamp =
+            Date.now();
+
+
+        const filePath =
+            studentId +
+            "/" +
+            documentType +
+            "_" +
+            timestamp +
+            "." +
+            extension;
+
+
+        console.log(
+            "Uploading file:",
+            filePath
+        );
+
+
+        /*
+            STORAGE UPLOAD
+        */
+
+        const {
+            data:uploadData,
+            error:uploadError
+        } =
+        await supabaseClient
+            .storage
+            .from(
+                BUCKET_NAME
+            )
+            .upload(
+                filePath,
+                file,
+                {
+                    cacheControl:"3600",
+                    upsert:false,
+                    contentType:file.type
+                }
+            );
+
+
+        if(uploadError){
+
+            throw uploadError;
+
+        }
+
+
+        console.log(
+            "UPLOAD SUCCESS:",
+            uploadData
+        );
+
+
+        /*
+            DATABASE
+        */
+
+        const {
+            data:insertedData,
+            error:insertError
+        } =
+        await supabaseClient
+            .from(
+                "student_documents"
+            )
+            .insert({
+
+                student_id:
+                    studentId,
+
+                document_type:
+                    documentType,
+
+                document_name:
+                    file.name,
+
+                file_url:
+                    filePath,
+
+                uploaded_at:
+                    new Date().toISOString()
+
+            })
+            .select();
+
+
+        if(insertError){
+
+            await supabaseClient
+                .storage
+                .from(
+                    BUCKET_NAME
+                )
+                .remove([
+                    filePath
+                ]);
+
+            throw insertError;
+
+        }
+
+
+        console.log(
+            "DATABASE INSERT:",
+            insertedData
+        );
+
+
+        showMessage(
+            "✅ Document successfully upload ho gaya!",
+            "success"
+        );
+
+
+        fileInput.value =
+            "";
+
+        typeSelect.value =
+            "";
+
+
+        await loadDocuments(
+            studentId
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "UPLOAD ERROR:",
+            error
+        );
+
+        showMessage(
+            "❌ Upload nahi hua: " +
+            error.message,
+            "error"
+        );
+
+    }
+    finally{
+
+        uploadBtn.disabled =
+            false;
+
+        uploadBtn.textContent =
+            "📤 Upload Document";
+
+    }
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.className =
+        "message " +
+        type;
+
+
+    setTimeout(
+        function(){
+
+            message.className =
+                "message";
+
+        },
+        5000
+    );
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   HTML SAFETY
+===================================================== */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   JS STRING SAFETY
+===================================================== */
+
+function escapeJS(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /\r?\n/g,
+        "\\n"
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    window.location.href =
+        "login.html";
+
+}
+
+</script>
+
+</body>
+</html>

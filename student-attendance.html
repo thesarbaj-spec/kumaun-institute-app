@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Attendance | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#172554;
+}
+
+.header{
+    min-height:75px;
+    padding:12px 25px;
+    background:#172b68;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.header-logo{
+    width:50px;
+    height:50px;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.header-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-subtitle{
+    margin-top:3px;
+    font-size:12px;
+    color:#dbeafe;
+}
+
+.back-btn{
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    padding:10px 17px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.container{
+    width:94%;
+    max-width:1100px;
+    margin:25px auto;
+}
+
+.loading{
+    background:white;
+    padding:30px;
+    border-radius:16px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.error-box{
+    display:none;
+    background:#fff1f2;
+    color:#991b1b;
+    border:1px solid #fecdd3;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+.welcome-box{
+    background:white;
+    padding:22px;
+    border-radius:17px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.welcome-box h2{
+    font-size:24px;
+}
+
+.welcome-box p{
+    margin-top:7px;
+    color:#64748b;
+}
+
+#attendanceContent{
+    display:none;
+}
+
+.month-box{
+    background:white;
+    padding:20px;
+    border-radius:17px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.month-box label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    color:#64748b;
+    margin-bottom:8px;
+}
+
+.month-box input{
+    width:100%;
+    max-width:350px;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    font-size:15px;
+    outline:none;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:white;
+    padding:20px;
+    border-radius:17px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.summary-icon{
+    font-size:27px;
+}
+
+.summary-title{
+    margin-top:10px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.summary-value{
+    margin-top:7px;
+    font-size:25px;
+    font-weight:800;
+    color:#172b68;
+}
+
+.present-value{
+    color:#16a34a;
+}
+
+.absent-value{
+    color:#dc2626;
+}
+
+.percent-value{
+    color:#2563eb;
+}
+
+.section{
+    background:white;
+    padding:22px;
+    border-radius:17px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.progress-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:20px;
+}
+
+.progress-info{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.progress-bg{
+    width:100%;
+    height:14px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:#16a34a;
+    border-radius:20px;
+    transition:.3s;
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:650px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:14px 12px;
+    border-bottom:1px solid #e2e8f0;
+    text-align:left;
+}
+
+th{
+    background:#f8fafc;
+    color:#64748b;
+    font-size:13px;
+}
+
+td{
+    font-size:14px;
+}
+
+.status{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.status-present{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-absent{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+.footer{
+    text-align:center;
+    padding:20px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media(max-width:900px){
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-logo{
+        width:43px;
+        height:43px;
+    }
+
+    .header-title{
+        font-size:15px;
+    }
+
+    .header-subtitle{
+        font-size:10px;
+    }
+
+    .back-btn{
+        padding:8px 11px;
+        font-size:12px;
+    }
+
+    .container{
+        width:96%;
+        margin:15px auto;
+    }
+
+    .welcome-box h2{
+        font-size:20px;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:15px;
+    }
+
+    .summary-icon{
+        font-size:22px;
+    }
+
+    .summary-title{
+        font-size:11px;
+    }
+
+    .summary-value{
+        font-size:20px;
+    }
+
+    .section{
+        padding:15px;
+    }
+
+    .section-title{
+        font-size:17px;
+    }
+
+    .month-box{
+        padding:15px;
+    }
+
+    .month-box input{
+        max-width:none;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-left">
+
+        <div class="header-logo">
+            <img
+                src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+                alt="Institute Logo">
+        </div>
+
+        <div>
+            <div class="header-title">
+                Kumaun Institute of Computer Education
+            </div>
+
+            <div class="header-subtitle">
+                Student Attendance Management System
+            </div>
+        </div>
+
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="window.location.href='student-dashboard.html'">
+
+        ← Dashboard
+
+    </button>
+
+</header>
+
+
+<main class="container">
+
+    <div
+        id="errorBox"
+        class="error-box">
+    </div>
+
+
+    <div class="welcome-box">
+
+        <h2 id="welcomeName">
+            My Attendance 📊
+        </h2>
+
+        <p id="studentInfo">
+            Loading student information...
+        </p>
+
+    </div>
+
+
+    <div
+        id="loading"
+        class="loading">
+
+        Loading attendance...
+
+    </div>
+
+
+    <div id="attendanceContent">
+
+
+        <section class="month-box">
+
+            <label for="monthSelect">
+                📅 Select Month
+            </label>
+
+            <input
+                type="month"
+                id="monthSelect">
+
+        </section>
+
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📅
+                </div>
+
+                <div class="summary-title">
+                    Total Attendance Days
+                </div>
+
+                <div
+                    id="totalDays"
+                    class="summary-value">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    ✅
+                </div>
+
+                <div class="summary-title">
+                    Present
+                </div>
+
+                <div
+                    id="totalPresent"
+                    class="summary-value present-value">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    ❌
+                </div>
+
+                <div class="summary-title">
+                    Absent
+                </div>
+
+                <div
+                    id="totalAbsent"
+                    class="summary-value absent-value">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📊
+                </div>
+
+                <div class="summary-title">
+                    Attendance Percentage
+                </div>
+
+                <div
+                    id="attendancePercent"
+                    class="summary-value percent-value">
+
+                    0%
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <section class="section">
+
+            <div class="section-title">
+                📈 Attendance Progress
+            </div>
+
+            <div class="progress-box">
+
+                <div class="progress-info">
+
+                    <span>
+                        Attendance Progress
+                    </span>
+
+                    <span id="progressText">
+                        0%
+                    </span>
+
+                </div>
+
+                <div class="progress-bg">
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="section">
+
+            <div class="section-title">
+                📋 Attendance History
+            </div>
+
+            <div class="table-scroll">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Day
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="attendanceBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    © 2026 Kumaun Institute of Computer Education
+
+</footer>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentStudent = null;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loading =
+    document.getElementById("loading");
+
+const attendanceContent =
+    document.getElementById("attendanceContent");
+
+const errorBox =
+    document.getElementById("errorBox");
+
+const monthSelect =
+    document.getElementById("monthSelect");
+
+const attendanceBody =
+    document.getElementById("attendanceBody");
+
+
+/* =========================================
+   SHOW ERROR
+========================================= */
+
+function showError(message){
+
+    errorBox.textContent =
+        message;
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const date =
+        new Date(
+            value + "T00:00:00"
+        );
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+        return value;
+    }
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+/* =========================================
+   GET DAY
+========================================= */
+
+function getDay(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const date =
+        new Date(
+            value + "T00:00:00"
+        );
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+        return "-";
+    }
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            weekday:"long"
+        }
+    );
+
+}
+
+
+/* =========================================
+   SET CURRENT MONTH
+========================================= */
+
+function setCurrentMonth(){
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    monthSelect.value =
+        year + "-" + month;
+
+}
+
+
+/* =========================================
+   FIND LOGGED-IN STUDENT
+========================================= */
+
+async function findStudent(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    const session =
+        data.session;
+
+
+    if(
+        !session ||
+        !session.user
+    ){
+
+        window.location.href =
+            "student-login.html";
+
+        return null;
+
+    }
+
+
+    const authUserId =
+        session.user.id;
+
+
+    const {
+        data:student,
+        error:studentError
+    } =
+    await supabaseClient
+
+    .from("Students")
+
+    .select("*")
+
+    .eq(
+        "auth_user_id",
+        authUserId
+    )
+
+    .maybeSingle();
+
+
+    if(studentError){
+
+        throw studentError;
+
+    }
+
+
+    return student;
+
+}
+
+
+/* =========================================
+   SHOW STUDENT
+========================================= */
+
+function showStudent(student){
+
+    currentStudent =
+        student;
+
+
+    document.getElementById(
+        "welcomeName"
+    ).textContent =
+        "My Attendance 📊";
+
+
+    const studentName =
+        student.name || "Student";
+
+
+    const studentId =
+        student.id || "-";
+
+
+    document.getElementById(
+        "studentInfo"
+    ).textContent =
+        studentName +
+        " • Student ID: " +
+        studentId;
+
+}
+
+
+/* =========================================
+   LOAD ATTENDANCE
+========================================= */
+
+async function loadAttendance(){
+
+    if(!currentStudent){
+
+        return;
+
+    }
+
+
+    const selectedMonth =
+        monthSelect.value;
+
+
+    if(!selectedMonth){
+
+        return;
+
+    }
+
+
+    const startDate =
+        selectedMonth + "-01";
+
+
+    const parts =
+        selectedMonth.split("-");
+
+
+    const year =
+        Number(parts[0]);
+
+    const month =
+        Number(parts[1]);
+
+
+    const nextMonth =
+        new Date(
+            year,
+            month,
+            1
+        );
+
+
+    const nextYear =
+        nextMonth.getFullYear();
+
+
+    const nextMonthNumber =
+        String(
+            nextMonth.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const endDate =
+        nextYear +
+        "-" +
+        nextMonthNumber +
+        "-01";
+
+
+    attendanceBody.innerHTML =
+        `
+        <tr>
+            <td
+                colspan="3"
+                class="empty">
+                Loading attendance...
+            </td>
+        </tr>
+        `;
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+
+    .from("attendance")
+
+    .select(
+        "attendance_date,status"
+    )
+
+    .eq(
+        "student_id",
+        currentStudent.id
+    )
+
+    .gte(
+        "attendance_date",
+        startDate
+    )
+
+    .lt(
+        "attendance_date",
+        endDate
+    )
+
+    .order(
+        "attendance_date",
+        {
+            ascending:false
+        }
+    );
+
+
+    if(error){
+
+        throw error;
+
+    }
+
+
+    const records =
+        data || [];
+
+
+    let present =
+        0;
+
+    let absent =
+        0;
+
+
+    records.forEach(
+        function(record){
+
+            if(
+                record.status ===
+                "Present"
+            ){
+
+                present++;
+
+            }
+
+
+            if(
+                record.status ===
+                "Absent"
+            ){
+
+                absent++;
+
+            }
+
+        }
+    );
+
+
+    const total =
+        present +
+        absent;
+
+
+    let percent =
+        0;
+
+
+    if(total > 0){
+
+        percent =
+            (
+                present /
+                total
+            ) * 100;
+
+    }
+
+
+    percent =
+        Math.round(
+            percent * 10
+        ) / 10;
+
+
+    document.getElementById(
+        "totalDays"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "totalPresent"
+    ).textContent =
+        present;
+
+
+    document.getElementById(
+        "totalAbsent"
+    ).textContent =
+        absent;
+
+
+    document.getElementById(
+        "attendancePercent"
+    ).textContent =
+        percent + "%";
+
+
+    document.getElementById(
+        "progressText"
+    ).textContent =
+        percent + "%";
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        percent + "%";
+
+
+    attendanceBody.innerHTML =
+        "";
+
+
+    if(!records.length){
+
+        attendanceBody.innerHTML =
+            `
+            <tr>
+                <td
+                    colspan="3"
+                    class="empty">
+                    Attendance not available for this period.
+                </td>
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    records.forEach(
+        function(record){
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const isPresent =
+                record.status ===
+                "Present";
+
+
+            row.innerHTML =
+                `
+                <td>
+                    ${formatDate(record.attendance_date)}
+                </td>
+
+                <td>
+                    ${getDay(record.attendance_date)}
+                </td>
+
+                <td>
+
+                    <span class="
+                        status
+                        ${isPresent
+                            ? "status-present"
+                            : "status-absent"
+                        }
+                    ">
+
+                        ${isPresent
+                            ? "✓ Present"
+                            : "✗ Absent"
+                        }
+
+                    </span>
+
+                </td>
+                `;
+
+
+            attendanceBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   MONTH CHANGE
+========================================= */
+
+monthSelect.addEventListener(
+    "change",
+    async function(){
+
+        try{
+
+            await loadAttendance();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            showError(
+                "Attendance load nahi ho paayi: " +
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   START PAGE
+========================================= */
+
+async function startPage(){
+
+    try{
+
+        setCurrentMonth();
+
+
+        const student =
+            await findStudent();
+
+
+        if(!student){
+
+            loading.style.display =
+                "none";
+
+            showError(
+                "Login account ke saath Students table ka record nahi mila."
+            );
+
+            return;
+
+        }
+
+
+        showStudent(
+            student
+        );
+
+
+        await loadAttendance();
+
+
+        loading.style.display =
+            "none";
+
+
+        attendanceContent.style.display =
+            "block";
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        loading.style.display =
+            "none";
+
+
+        showError(
+            "Attendance page load nahi ho paaya: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+startPage();
+
+</script>
+
+</body>
+</html>

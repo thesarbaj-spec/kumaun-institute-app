@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fee Payments | Kumaun Institute</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#1f2937;
+}
+
+.header{
+    background:#172554;
+    color:white;
+    padding:12px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+    background:white;
+    border-radius:10px;
+    padding:4px;
+    object-fit:contain;
+}
+
+.brand h2{
+    font-size:21px;
+}
+
+.brand p{
+    margin-top:4px;
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.back-btn{
+    background:white;
+    color:#172554;
+    border:0;
+    padding:10px 16px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.main{
+    max-width:1450px;
+    margin:auto;
+    padding:25px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.top h1{
+    font-size:27px;
+}
+
+.refresh-btn{
+    background:#172554;
+    color:white;
+    border:0;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.message{
+    display:none;
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.success-message{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+
+/* =========================================
+   SEARCH BOX
+========================================= */
+
+.search-box{
+    background:white;
+    padding:16px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.search-label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    color:#475569;
+    margin-bottom:8px;
+}
+
+.search-wrapper{
+    position:relative;
+    width:100%;
+}
+
+.search-icon{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:19px;
+    pointer-events:none;
+}
+
+#paymentSearch{
+    width:100%;
+    padding:13px 45px 13px 43px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    background:white;
+    transition:.2s;
+}
+
+#paymentSearch:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.clear-search{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:30px;
+    height:30px;
+    border:0;
+    border-radius:50%;
+    background:#e5e7eb;
+    color:#374151;
+    cursor:pointer;
+    font-size:18px;
+    display:none;
+}
+
+.search-result-info{
+    margin-top:9px;
+    font-size:13px;
+    color:#64748b;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.summary-card h3{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:8px;
+}
+
+.summary-card strong{
+    font-size:27px;
+    color:#172554;
+}
+
+.pending-number{
+    color:#d97706 !important;
+}
+
+.approved-number{
+    color:#16a34a !important;
+}
+
+.rejected-number{
+    color:#dc2626 !important;
+}
+
+
+/* =========================================
+   TABLE BOX
+========================================= */
+
+.box{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.table-scroll{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1400px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:14px 12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    vertical-align:middle;
+}
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    font-size:14px;
+}
+
+.student-name{
+    font-weight:700;
+    color:#172554;
+}
+
+.payment-date{
+    font-weight:700;
+    color:#334155;
+}
+
+.payment-time{
+    margin-top:4px;
+    font-size:12px;
+    color:#2563eb;
+    white-space:nowrap;
+}
+
+.status{
+    display:inline-block;
+    padding:7px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-approved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-rejected{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.screenshot-btn{
+    background:#e0e7ff;
+    color:#3730a3;
+    border:0;
+    padding:8px 11px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.approve-btn{
+    background:#16a34a;
+    color:white;
+    border:0;
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-right:5px;
+}
+
+.reject-btn{
+    background:#dc2626;
+    color:white;
+    border:0;
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.disabled-btn{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.loading,
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:9999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.75);
+    padding:20px;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    position:relative;
+    max-width:850px;
+    width:100%;
+    max-height:90vh;
+    background:white;
+    padding:15px;
+    border-radius:15px;
+}
+
+.modal-content img{
+    width:100%;
+    max-height:80vh;
+    object-fit:contain;
+    display:block;
+}
+
+.close-modal{
+    position:absolute;
+    right:-10px;
+    top:-10px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:0;
+    background:#dc2626;
+    color:white;
+    font-size:21px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:900px){
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-left{
+        gap:8px;
+    }
+
+    .logo{
+        width:40px;
+        height:40px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .brand p{
+        font-size:9px;
+    }
+
+    .back-btn{
+        padding:8px 10px;
+        font-size:11px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .top h1{
+        font-size:23px;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:15px;
+    }
+
+    .summary-card strong{
+        font-size:22px;
+    }
+
+    .box{
+        padding:12px;
+    }
+
+    .search-box{
+        padding:14px;
+    }
+
+    #paymentSearch{
+        font-size:14px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-left">
+
+        <img
+            class="logo"
+            src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+            alt="Kumaun Institute Logo"
+        >
+
+        <div class="brand">
+
+            <h2>
+                Kumaun Institute of Computer Education
+            </h2>
+
+            <p>
+                Fee Payment Management
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="back-btn"
+        onclick="location.href='index.html'"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+<main class="main">
+
+
+<div class="top">
+
+    <h1>
+        💰 Fee Payments
+    </h1>
+
+    <button
+        class="refresh-btn"
+        onclick="loadPayments()"
+    >
+        ↻ Refresh
+    </button>
+
+</div>
+
+
+<div
+    id="message"
+    class="message"
+></div>
+
+
+<!-- =========================================
+     SEARCH
+========================================= -->
+
+<div class="search-box">
+
+    <label
+        class="search-label"
+        for="paymentSearch"
+    >
+        Search Student
+    </label>
+
+    <div class="search-wrapper">
+
+        <span class="search-icon">
+            🔍
+        </span>
+
+        <input
+            type="text"
+            id="paymentSearch"
+            placeholder="Student Name, Student ID, Phone, Transaction ID..."
+            autocomplete="off"
+        >
+
+        <button
+            id="clearSearch"
+            class="clear-search"
+            onclick="clearPaymentSearch()"
+            title="Clear Search"
+        >
+            ×
+        </button>
+
+    </div>
+
+    <div
+        id="searchResultInfo"
+        class="search-result-info"
+    >
+        All Payment records.
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     SUMMARY
+========================================= -->
+
+<div class="summary-grid">
+
+
+    <div class="summary-card">
+
+        <h3>
+            Total Requests
+        </h3>
+
+        <strong id="totalPayments">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Pending
+        </h3>
+
+        <strong
+            id="pendingPayments"
+            class="pending-number"
+        >
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Approved
+        </h3>
+
+        <strong
+            id="approvedPayments"
+            class="approved-number"
+        >
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Rejected
+        </h3>
+
+        <strong
+            id="rejectedPayments"
+            class="rejected-number"
+        >
+            0
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================
+     PAYMENT TABLE
+========================================= -->
+
+<div class="box">
+
+    <div class="table-scroll">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Student
+                    </th>
+
+                    <th>
+                        Student ID
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Transaction ID
+                    </th>
+
+                    <th>
+                        Payment Date
+                    </th>
+
+                    <th>
+                        Payment Time
+                    </th>
+
+                    <th>
+                        Screenshot
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="paymentsBody">
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="loading"
+                    >
+                        Payment records loading...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</main>
+
+
+<!-- =========================================
+     SCREENSHOT MODAL
+========================================= -->
+
+<div
+    id="imageModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <button
+            class="close-modal"
+            onclick="closeScreenshot()"
+        >
+            ×
+        </button>
+
+        <img
+            id="paymentScreenshot"
+            src=""
+            alt="Payment Screenshot"
+        >
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================
+   GLOBAL DATA
+========================================= */
+
+let payments = [];
+
+let studentsMap = {};
+
+
+/* =========================================
+   SEARCH ELEMENTS
+========================================= */
+
+const paymentSearch =
+document.getElementById(
+    "paymentSearch"
+);
+
+const clearSearchButton =
+document.getElementById(
+    "clearSearch"
+);
+
+const searchResultInfo =
+document.getElementById(
+    "searchResultInfo"
+);
+
+
+/* =========================================
+   SEARCH EVENT
+========================================= */
+
+paymentSearch.addEventListener(
+    "input",
+    function(){
+
+        displayPayments();
+
+    }
+);
+
+
+/* =========================================
+   CLEAR SEARCH
+========================================= */
+
+function clearPaymentSearch(){
+
+    paymentSearch.value = "";
+
+    displayPayments();
+
+    paymentSearch.focus();
+
+}
+
+
+/* =========================================
+   LOAD PAYMENTS
+========================================= */
+
+async function loadPayments(){
+
+    const body =
+    document.getElementById(
+        "paymentsBody"
+    );
+
+
+    body.innerHTML = `
+        <tr>
+            <td
+                colspan="9"
+                class="loading"
+            >
+                Loading payment records...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+
+        /* ===============================
+           LOAD PAYMENTS
+        =============================== */
+
+        const {
+            data:paymentData,
+            error:paymentError
+        } =
+        await supabaseClient
+        .from("fee_payments")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+        if(paymentError){
+
+            throw paymentError;
+
+        }
+
+
+        payments =
+        paymentData || [];
+
+
+        /* ===============================
+           LOAD STUDENTS
+        =============================== */
+
+        const {
+            data:studentData,
+            error:studentError
+        } =
+        await supabaseClient
+        .from("Students")
+        .select(
+            "id,name,phone,paid_fee"
+        );
+
+
+        if(studentError){
+
+            throw studentError;
+
+        }
+
+
+        studentsMap = {};
+
+
+        (studentData || []).forEach(
+        function(student){
+
+            studentsMap[
+                String(student.id)
+            ] =
+            student;
+
+        });
+
+
+        updateSummary();
+
+        displayPayments();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="9"
+                    class="empty"
+                >
+                    ❌ ${escapeHTML(error.message)}
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            "Payment records load nahi hue: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   DISPLAY PAYMENTS
+========================================= */
+
+function displayPayments(){
+
+    const body =
+    document.getElementById(
+        "paymentsBody"
+    );
+
+
+    body.innerHTML = "";
+
+
+    /* ===============================
+       SEARCH VALUE
+    =============================== */
+
+    const searchText =
+    paymentSearch.value
+    .toLowerCase()
+    .trim();
+
+
+    /* ===============================
+       FILTER PAYMENTS
+    =============================== */
+
+    const filteredPayments =
+    payments.filter(
+    function(payment){
+
+        if(!searchText){
+
+            return true;
+
+        }
+
+
+        const student =
+        studentsMap[
+            String(payment.student_id)
+        ];
+
+
+        const studentName =
+        student && student.name
+        ? String(student.name)
+        : "";
+
+
+        const studentId =
+        student
+        ? String(student.id)
+        : String(payment.student_id || "");
+
+
+        const phone =
+        student && student.phone
+        ? String(student.phone)
+        : "";
+
+
+        const transactionId =
+        payment.transaction_id
+        ? String(payment.transaction_id)
+        : "";
+
+
+        const amount =
+        payment.amount
+        ? String(payment.amount)
+        : "";
+
+
+        const searchData =
+        (
+            studentName +
+            " " +
+            studentId +
+            " " +
+            phone +
+            " " +
+            transactionId +
+            " " +
+            amount
+        )
+        .toLowerCase();
+
+
+        return searchData.includes(
+            searchText
+        );
+
+    });
+
+
+    /* ===============================
+       SEARCH INFO
+    =============================== */
+
+    if(searchText){
+
+        clearSearchButton.style.display =
+        "block";
+
+
+        searchResultInfo.textContent =
+        `${filteredPayments.length} payment record found for "${paymentSearch.value}"`;
+
+    }
+    else{
+
+        clearSearchButton.style.display =
+        "none";
+
+
+        searchResultInfo.textContent =
+        `${payments.length} Payment Records.`;
+
+    }
+
+
+    /* ===============================
+       NO RESULT
+    =============================== */
+
+    if(!filteredPayments.length){
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="9"
+                    class="empty"
+                >
+                    🔍 "${escapeHTML(paymentSearch.value)}" Payment records not found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    /* ===============================
+       DISPLAY FILTERED PAYMENTS
+    =============================== */
+
+    filteredPayments.forEach(
+    function(payment){
+
+
+        const student =
+        studentsMap[
+            String(payment.student_id)
+        ];
+
+
+        const studentName =
+        student && student.name
+        ? student.name
+        : "Unknown Student";
+
+
+        const studentDisplayId =
+        student
+        ? student.id
+        : payment.student_id || "-";
+
+
+        const status =
+        String(
+            payment.status || "Pending"
+        );
+
+
+        const normalizedStatus =
+        status.toLowerCase();
+
+
+        /* ===============================
+           STATUS CLASS
+        =============================== */
+
+        let statusClass =
+        "status-pending";
+
+
+        if(
+            normalizedStatus ===
+            "approved"
+        ){
+
+            statusClass =
+            "status-approved";
+
+        }
+
+
+        if(
+            normalizedStatus ===
+            "rejected"
+        ){
+
+            statusClass =
+            "status-rejected";
+
+        }
+
+
+        /* ===============================
+           SCREENSHOT
+        =============================== */
+
+        let screenshotButton =
+        `<span style="color:#64748b;">
+            No Screenshot
+        </span>`;
+
+
+        if(payment.screenshot_url){
+
+            screenshotButton = `
+                <button
+                    class="screenshot-btn"
+                    onclick='openScreenshot(${JSON.stringify(payment.screenshot_url)})'
+                >
+                    👁 View
+                </button>
+            `;
+
+        }
+
+
+        /* ===============================
+           ACTION BUTTONS
+        =============================== */
+
+        let actionButtons =
+        `
+            <button
+                class="approve-btn"
+                onclick='approvePayment(${JSON.stringify(payment.id)})'
+            >
+                ✓ Approve
+            </button>
+
+            <button
+                class="reject-btn"
+                onclick='rejectPayment(${JSON.stringify(payment.id)})'
+            >
+                ✕ Reject
+            </button>
+        `;
+
+
+        if(
+            normalizedStatus ===
+            "approved"
+        ){
+
+            actionButtons = `
+                <button
+                    class="approve-btn disabled-btn"
+                    disabled
+                >
+                    ✓ Approved
+                </button>
+            `;
+
+        }
+
+
+        if(
+            normalizedStatus ===
+            "rejected"
+        ){
+
+            actionButtons = `
+                <button
+                    class="reject-btn disabled-btn"
+                    disabled
+                >
+                    ✕ Rejected
+                </button>
+            `;
+
+        }
+
+
+        /* ===============================
+           DATE + TIME
+        =============================== */
+
+        const paymentDate =
+        formatDate(
+            payment.payment_date ||
+            payment.created_at
+        );
+
+
+        const paymentTime =
+        formatTime(
+            payment.created_at
+        );
+
+
+        /* ===============================
+           CREATE ROW
+        =============================== */
+
+        const row =
+        document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <div class="student-name">
+
+                    ${escapeHTML(studentName)}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+
+                    ${escapeHTML(studentDisplayId)}
+
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+
+                    ${formatMoney(payment.amount)}
+
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                ${escapeHTML(
+                    payment.transaction_id || "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                <div class="payment-date">
+
+                    ${paymentDate}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="payment-time">
+
+                    🕐 ${paymentTime}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                ${screenshotButton}
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="status ${statusClass}"
+                >
+
+                    ${escapeHTML(status)}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                ${actionButtons}
+
+            </td>
+
+        `;
+
+
+        body.appendChild(row);
+
+
+    });
+
+}
+
+
+/* =========================================
+   APPROVE PAYMENT
+========================================= */
+
+async function approvePayment(paymentId){
+
+    const payment =
+    payments.find(
+    function(item){
+
+        return String(item.id) ===
+        String(paymentId);
+
+    });
+
+
+    if(!payment){
+
+        showMessage(
+            "Payment record nahi mila.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        String(payment.status || "")
+        .toLowerCase() ===
+        "approved"
+    ){
+
+        showMessage(
+            "Ye payment pehle hi approve ho chuki hai.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmApprove =
+    confirm(
+        `₹${payment.amount} Payment Approved?`
+    );
+
+
+    if(!confirmApprove){
+
+        return;
+
+    }
+
+
+    try{
+
+
+        const student =
+        studentsMap[
+            String(payment.student_id)
+        ];
+
+
+        if(!student){
+
+            throw new Error(
+                "Is payment ka student record nahi mila."
+            );
+
+        }
+
+
+        const oldPaidFee =
+        Number(
+            student.paid_fee || 0
+        );
+
+
+        const paymentAmount =
+        Number(
+            payment.amount || 0
+        );
+
+
+        const newPaidFee =
+        oldPaidFee +
+        paymentAmount;
+
+
+        /* ===============================
+           PAYMENT STATUS UPDATE
+        =============================== */
+
+        const {
+            data:updatedPayment,
+            error:paymentUpdateError
+        } =
+        await supabaseClient
+        .from("fee_payments")
+        .update({
+
+            status:"Approved"
+
+        })
+        .eq(
+            "id",
+            payment.id
+        )
+        .select()
+        .maybeSingle();
+
+
+        if(paymentUpdateError){
+
+            throw paymentUpdateError;
+
+        }
+
+
+        if(!updatedPayment){
+
+            throw new Error(
+                "Payment status update nahi hua. Supabase RLS UPDATE policy check karein."
+            );
+
+        }
+
+
+        if(
+            String(updatedPayment.status)
+            .toLowerCase() !==
+            "approved"
+        ){
+
+            throw new Error(
+                "Payment status Approved save nahi hua."
+            );
+
+        }
+
+
+        /* ===============================
+           STUDENT PAID FEE UPDATE
+        =============================== */
+
+        const {
+            data:updatedStudent,
+            error:studentUpdateError
+        } =
+        await supabaseClient
+        .from("Students")
+        .update({
+
+            paid_fee:newPaidFee
+
+        })
+        .eq(
+            "id",
+            payment.student_id
+        )
+        .select()
+        .maybeSingle();
+
+
+        if(studentUpdateError){
+
+            throw studentUpdateError;
+
+        }
+
+
+        if(!updatedStudent){
+
+            throw new Error(
+                "Student paid fee update nahi hui. Students table ki RLS UPDATE policy check karein."
+            );
+
+        }
+
+
+        showMessage(
+            "✅ Payment Successfully Approved.",
+            "success"
+        );
+
+
+        await loadPayments();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "❌ Payment approve nahi hui: " +
+            error.message,
+            "error"
+        );
+
+
+        await loadPayments();
+
+    }
+
+}
+
+
+/* =========================================
+   REJECT PAYMENT
+========================================= */
+
+async function rejectPayment(paymentId){
+
+    const payment =
+    payments.find(
+    function(item){
+
+        return String(item.id) ===
+        String(paymentId);
+
+    });
+
+
+    if(!payment){
+
+        showMessage(
+            "Payment record nahi mila.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        String(payment.status || "")
+        .toLowerCase() ===
+        "rejected"
+    ){
+
+        showMessage(
+            "Ye payment pehle hi reject ho chuki hai.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const confirmReject =
+    confirm(
+        "Reject Payment?"
+    );
+
+
+    if(!confirmReject){
+
+        return;
+
+    }
+
+
+    try{
+
+
+        const {
+            data:updatedPayment,
+            error
+        } =
+        await supabaseClient
+        .from("fee_payments")
+        .update({
+
+            status:"Rejected"
+
+        })
+        .eq(
+            "id",
+            payment.id
+        )
+        .select()
+        .maybeSingle();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(!updatedPayment){
+
+            throw new Error(
+                "Payment reject status update nahi hua. RLS UPDATE policy check karein."
+            );
+
+        }
+
+
+        if(
+            String(updatedPayment.status)
+            .toLowerCase() !==
+            "rejected"
+        ){
+
+            throw new Error(
+                "Rejected status not save."
+            );
+
+        }
+
+
+        showMessage(
+            "✅ Payment rejected.",
+            "success"
+        );
+
+
+        await loadPayments();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        showMessage(
+            "❌ Payment reject nahi hui: " +
+            error.message,
+            "error"
+        );
+
+
+        await loadPayments();
+
+    }
+
+}
+
+
+/* =========================================
+   UPDATE SUMMARY
+========================================= */
+
+function updateSummary(){
+
+    const total =
+    payments.length;
+
+
+    const pending =
+    payments.filter(
+    function(payment){
+
+        return String(
+            payment.status || "Pending"
+        )
+        .toLowerCase() ===
+        "pending";
+
+    }).length;
+
+
+    const approved =
+    payments.filter(
+    function(payment){
+
+        return String(
+            payment.status || ""
+        )
+        .toLowerCase() ===
+        "approved";
+
+    }).length;
+
+
+    const rejected =
+    payments.filter(
+    function(payment){
+
+        return String(
+            payment.status || ""
+        )
+        .toLowerCase() ===
+        "rejected";
+
+    }).length;
+
+
+    document.getElementById(
+        "totalPayments"
+    ).textContent =
+    total;
+
+
+    document.getElementById(
+        "pendingPayments"
+    ).textContent =
+    pending;
+
+
+    document.getElementById(
+        "approvedPayments"
+    ).textContent =
+    approved;
+
+
+    document.getElementById(
+        "rejectedPayments"
+    ).textContent =
+    rejected;
+
+}
+
+
+/* =========================================
+   SCREENSHOT MODAL
+========================================= */
+
+function openScreenshot(url){
+
+    document.getElementById(
+        "paymentScreenshot"
+    ).src =
+    url;
+
+
+    document.getElementById(
+        "imageModal"
+    ).style.display =
+    "flex";
+
+}
+
+
+function closeScreenshot(){
+
+    document.getElementById(
+        "imageModal"
+    ).style.display =
+    "none";
+
+
+    document.getElementById(
+        "paymentScreenshot"
+    ).src =
+    "";
+
+}
+
+
+/* =========================================
+   CLOSE MODAL OUTSIDE
+========================================= */
+
+document.getElementById(
+    "imageModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === this
+        ){
+
+            closeScreenshot();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   FORMAT MONEY
+========================================= */
+
+function formatMoney(value){
+
+    const amount =
+    Number(value || 0);
+
+
+    return "₹" +
+    amount.toLocaleString(
+        "en-IN"
+    );
+
+}
+
+
+/* =========================================
+   FORMAT DATE
+========================================= */
+
+function formatDate(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   FORMAT TIME
+   CREATED_AT SE AUTOMATIC TIME
+========================================= */
+
+function formatTime(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return "-";
+
+    }
+
+
+    return date.toLocaleTimeString(
+        "en-IN",
+        {
+
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:true
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+    document.getElementById(
+        "message"
+    );
+
+
+    message.className =
+    "message";
+
+
+    if(
+        type === "success"
+    ){
+
+        message.classList.add(
+            "success-message"
+        );
+
+    }
+    else{
+
+        message.classList.add(
+            "error-message"
+        );
+
+    }
+
+
+    message.textContent =
+    text;
+
+
+    message.style.display =
+    "block";
+
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+
+    setTimeout(
+    function(){
+
+        message.style.display =
+        "none";
+
+    },
+    6000
+    );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+loadPayments();
+
+</script>
+
+</body>
+
+</html>
