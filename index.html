@@ -585,9 +585,7 @@ const supabaseClient =
 
 
 /* =========================================
-   TEMPORARY PAGE PLACEHOLDERS
-
-   BAAD ME ACTUAL FILE NAME DALENGE
+   PAGE NAMES
 ========================================= */
 
 const OWNER_LOGIN_PAGE =
@@ -795,28 +793,33 @@ function clearStudentLocalData(){
 
 /* =========================================
    CLEAR ALL PORTAL DATA
-   USE ONLY ON LOGOUT
+   ONLY AFTER REAL LOGOUT
 ========================================= */
 
 function clearAllPortalData(){
 
     clearStudentLocalData();
 
+
     localStorage.removeItem(
         "loggedInPortal"
     );
+
 
     localStorage.removeItem(
         "ownerLoggedIn"
     );
 
+
     localStorage.removeItem(
         "teacherLoggedIn"
     );
 
+
     localStorage.removeItem(
         "ownerAuthUserId"
     );
+
 
     localStorage.removeItem(
         "teacherAuthUserId"
@@ -839,28 +842,30 @@ function saveStudentLoginData(
         String(studentId)
     );
 
+
     localStorage.setItem(
         "student_id",
         String(studentId)
     );
+
 
     localStorage.setItem(
         "loggedInStudentId",
         String(studentId)
     );
 
+
     localStorage.setItem(
         "studentAuthUserId",
         String(authUserId)
     );
+
 
     localStorage.setItem(
         "studentLoggedIn",
         "true"
     );
 
-
-    /* ACTIVE PORTAL */
 
     localStorage.setItem(
         "loggedInPortal",
@@ -871,7 +876,7 @@ function saveStudentLoginData(
 
 
 /* =========================================
-   GET SAVED PORTAL
+   GET ACTIVE PORTAL
 ========================================= */
 
 function getSavedPortal(){
@@ -884,7 +889,7 @@ function getSavedPortal(){
 
 
 /* =========================================
-   REDIRECT LOGGED IN USER
+   REDIRECT TO DASHBOARD
 ========================================= */
 
 function redirectToPortal(portal){
@@ -988,71 +993,19 @@ async function checkExistingLogin(){
         "Checking login..."
     );
 
+
     try{
 
         const savedPortal =
             getSavedPortal();
 
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .auth
-            .getSession();
-
-
-        if(error){
-
-            console.error(
-                "Session check error:",
-                error
-            );
-
-            clearAllPortalData();
-
-            hideLoading();
-
-            return;
-
-        }
-
-
-        const session =
-            data ?
-            data.session :
-            null;
-
-
         /*
-           AGAR SESSION NAHI HAI
-           TO KISI BHI DASHBOARD PAR
-           REDIRECT NAHI HOGA
-        */
+           SABSE PEHLE LOCAL PORTAL CHECK
 
-        if(
-            !session ||
-            !session.user
-        ){
-
-            clearAllPortalData();
-
-            hideLoading();
-
-            return;
-
-        }
-
-
-        /*
-           OWNER / TEACHER
-
-           Inka role respective login page
-           se loggedInPortal me save hoga.
-
-           Agar login session active hai,
-           to sidha dashboard.
+           Owner ya Teacher ka active login
+           saved hai to Student Login Page
+           dikhane se pehle direct dashboard.
         */
 
         if(
@@ -1082,7 +1035,74 @@ async function checkExistingLogin(){
 
 
         /*
-           STUDENT CHECK
+           STUDENT KE LIYE SUPABASE SESSION CHECK
+        */
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+        if(error){
+
+            console.error(
+                "Session check error:",
+                error
+            );
+
+            clearStudentLocalData();
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        const session =
+            data ?
+            data.session :
+            null;
+
+
+        /*
+           SESSION NAHI HAI
+           TO NORMAL LOGIN PAGE DIKHEGA
+        */
+
+        if(
+            !session ||
+            !session.user
+        ){
+
+            if(
+                savedPortal === "student"
+            ){
+
+                clearStudentLocalData();
+
+                localStorage.removeItem(
+                    "loggedInPortal"
+                );
+
+            }
+
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        /*
+           AGAR STUDENT PORTAL SAVED HAI
+           YA STUDENT PROFILE MILTA HAI
+           TO STUDENT DASHBOARD
         */
 
         const authUserId =
@@ -1095,7 +1115,9 @@ async function checkExistingLogin(){
         } =
         await supabaseClient
             .from("Students")
-            .select("id, auth_user_id")
+            .select(
+                "id, auth_user_id"
+            )
             .eq(
                 "auth_user_id",
                 authUserId
@@ -1109,12 +1131,6 @@ async function checkExistingLogin(){
                 "Student profile check error:",
                 studentError
             );
-
-            /*
-               Session ko yahan signout nahi
-               karenge because owner/teacher
-               login page se role setup ho sakta hai.
-            */
 
             hideLoading();
 
@@ -1141,10 +1157,12 @@ async function checkExistingLogin(){
 
 
         /*
-           Student nahi mila aur owner/teacher
-           portal bhi saved nahi hai.
+           SESSION ACTIVE HAI LEKIN
+           STUDENT PROFILE NAHI MILA
 
-           Login page hi dikhega.
+           LOGIN PAGE DIKHEGA.
+           OWNER/TEACHER CASE PEHLE HI
+           localStorage se redirect ho chuka hai.
         */
 
         hideLoading();
@@ -1176,8 +1194,10 @@ forgotBtn.addEventListener(
             loginMessage
         );
 
+
         loginSection.style.display =
             "none";
+
 
         resetSection.style.display =
             "block";
@@ -1198,8 +1218,10 @@ backBtn.addEventListener(
             resetMessage
         );
 
+
         resetSection.style.display =
             "none";
+
 
         loginSection.style.display =
             "block";
@@ -1217,6 +1239,7 @@ loginForm.addEventListener(
     async function(event){
 
         event.preventDefault();
+
 
         hideMessage(
             loginMessage
@@ -1271,6 +1294,33 @@ loginForm.addEventListener(
 
         try{
 
+            /*
+               AGAR KOI OWNER/TEACHER
+               LOCAL SESSION PURANA HAI
+               TO STUDENT LOGIN SE PEHLE
+               USKO REPLACE KARNA HAI
+            */
+
+            localStorage.removeItem(
+                "ownerLoggedIn"
+            );
+
+
+            localStorage.removeItem(
+                "teacherLoggedIn"
+            );
+
+
+            localStorage.removeItem(
+                "ownerAuthUserId"
+            );
+
+
+            localStorage.removeItem(
+                "teacherAuthUserId"
+            );
+
+
             const authEmail =
                 mobile +
                 "@students.kumauninstitute.local";
@@ -1296,14 +1346,17 @@ loginForm.addEventListener(
                     authError
                 );
 
+
                 showMessage(
                     loginMessage,
                     "Mobile number ya password galat hai.",
                     "error"
                 );
 
+
                 loginBtn.disabled =
                     false;
+
 
                 loginBtn.textContent =
                     "Student Login";
@@ -1324,8 +1377,10 @@ loginForm.addEventListener(
                     "error"
                 );
 
+
                 loginBtn.disabled =
                     false;
+
 
                 loginBtn.textContent =
                     "Student Login";
@@ -1359,6 +1414,7 @@ loginForm.addEventListener(
                     studentError
                 );
 
+
                 await supabaseClient
                     .auth
                     .signOut();
@@ -1373,8 +1429,10 @@ loginForm.addEventListener(
                     "error"
                 );
 
+
                 loginBtn.disabled =
                     false;
+
 
                 loginBtn.textContent =
                     "Student Login";
@@ -1400,8 +1458,10 @@ loginForm.addEventListener(
                     "error"
                 );
 
+
                 loginBtn.disabled =
                     false;
+
 
                 loginBtn.textContent =
                     "Student Login";
@@ -1410,10 +1470,6 @@ loginForm.addEventListener(
 
             }
 
-
-            /*
-               SAVE STUDENT LOGIN
-            */
 
             saveStudentLoginData(
                 studentData.id,
@@ -1446,14 +1502,17 @@ loginForm.addEventListener(
                 error
             );
 
+
             showMessage(
                 loginMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
+
             loginBtn.disabled =
                 false;
+
 
             loginBtn.textContent =
                 "Student Login";
@@ -1473,6 +1532,7 @@ resetForm.addEventListener(
     async function(event){
 
         event.preventDefault();
+
 
         hideMessage(
             resetMessage
@@ -1659,8 +1719,10 @@ resetForm.addEventListener(
                     "error"
                 );
 
+
                 resetBtn.disabled =
                     false;
+
 
                 resetBtn.textContent =
                     "Reset Password";
@@ -1686,15 +1748,19 @@ resetForm.addEventListener(
                     resetSection.style.display =
                         "none";
 
+
                     loginSection.style.display =
                         "block";
+
 
                     hideMessage(
                         resetMessage
                     );
 
+
                     resetBtn.disabled =
                         false;
+
 
                     resetBtn.textContent =
                         "Reset Password";
@@ -1710,14 +1776,17 @@ resetForm.addEventListener(
                 error
             );
 
+
             showMessage(
                 resetMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
+
             resetBtn.disabled =
                 false;
+
 
             resetBtn.textContent =
                 "Reset Password";
@@ -1730,6 +1799,8 @@ resetForm.addEventListener(
 
 /* =========================================
    AUTH STATE LISTENER
+
+   SIGNED_OUT PAR HI SAB PORTAL DATA CLEAR
 ========================================= */
 
 supabaseClient

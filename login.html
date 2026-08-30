@@ -1,438 +1,1101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Owner Login - Institute Management</title>
+<meta charset="UTF-8">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+<title>Owner Login - Institute Management</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#071b35,#1268ed);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.login-box{
+    width:100%;
+    max-width:430px;
+    background:white;
+    border-radius:18px;
+    padding:35px 30px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.logo{
+    width:80px;
+    height:80px;
+    margin:0 auto 14px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#eaf2ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+h1{
+    text-align:center;
+    color:#071b35;
+    font-size:18px;
+    margin-bottom:3px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#667085;
+    font-size:14px;
+    margin-bottom:30px;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    color:#344054;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    height:50px;
+    border:1px solid #d0d5dd;
+    border-radius:9px;
+    padding:0 14px;
+    font-size:15px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#1268ed;
+    box-shadow:0 0 0 3px #1268ed18;
+}
+
+.password-box{
+    position:relative;
+}
+
+.password-box input{
+    padding-right:50px;
+}
+
+.show-password{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    font-size:19px;
+}
+
+.login-btn{
+    width:100%;
+    height:52px;
+    border:0;
+    border-radius:9px;
+    background:#1268ed;
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:8px;
+}
+
+.login-btn:hover{
+    background:#0958d1;
+}
+
+.login-btn:disabled{
+    opacity:.7;
+    cursor:wait;
+}
+
+.message{
+    display:none;
+    margin-top:15px;
+    padding:11px;
+    border-radius:7px;
+    text-align:center;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.security{
+    text-align:center;
+    color:#667085;
+    font-size:12px;
+    margin-top:22px;
+}
+
+.loading-screen{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:linear-gradient(135deg,#071b35,#1268ed);
+    color:white;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:14px;
+}
+
+.loading-screen.show{
+    display:flex;
+}
+
+.loader{
+    width:42px;
+    height:42px;
+    border:4px solid rgba(255,255,255,.35);
+    border-top-color:white;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
     }
 
-    body {
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #071b35, #1268ed);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+}
 
-    .login-box {
-      width: 100%;
-      max-width: 430px;
-      background: white;
-      border-radius: 18px;
-      padding: 35px 30px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-    }
+</style>
 
-    .logo {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 14px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #eaf2ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    h1 {
-      text-align: center;
-      color: #071b35;
-      font-size: 18px;
-      margin-bottom: 3px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #667085;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-
-    .input-group {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #344054;
-      margin-bottom: 8px;
-    }
-
-    input {
-      width: 100%;
-      height: 50px;
-      border: 1px solid #d0d5dd;
-      border-radius: 9px;
-      padding: 0 14px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #1268ed;
-      box-shadow: 0 0 0 3px #1268ed18;
-    }
-
-    .password-box {
-      position: relative;
-    }
-
-    .password-box input {
-      padding-right: 50px;
-    }
-
-    .show-password {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 0;
-      background: transparent;
-      cursor: pointer;
-      font-size: 19px;
-    }
-
-    .login-btn {
-      width: 100%;
-      height: 52px;
-      border: 0;
-      border-radius: 9px;
-      background: #1268ed;
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-
-    .login-btn:disabled {
-      opacity: .7;
-      cursor: wait;
-    }
-
-    .message {
-      display: none;
-      margin-top: 15px;
-      padding: 11px;
-      border-radius: 7px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .security {
-      text-align: center;
-      color: #667085;
-      font-size: 12px;
-      margin-top: 22px;
-    }
-  </style>
 </head>
 
 <body>
 
-  <div class="login-box">
+
+<div
+id="loadingScreen"
+class="loading-screen"
+>
+
+    <div class="loader"></div>
+
+    <strong id="loadingText">
+        Checking login...
+    </strong>
+
+</div>
+
+
+<div class="login-box">
+
 
     <div class="logo">
-      <img src="kumaun institute logo.png" alt="Institute Logo">
+
+        <img
+        src="kumaun institute logo.png"
+        alt="Institute Logo"
+        >
+
     </div>
 
-    <h1>Kumaun Institute of Computer Education</h1>
+
+    <h1>
+        Kumaun Institute of Computer Education
+    </h1>
+
 
     <p class="subtitle">
-      Institute Management System
+        Owner Login
     </p>
+
 
     <form id="loginForm">
 
-      <div class="input-group">
 
-        <label for="email">Email</label>
+        <div class="input-group">
 
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter email"
-          required
-        >
+            <label for="email">
+                Email
+            </label>
 
-      </div>
-
-      <div class="input-group">
-
-        <label for="password">Password</label>
-
-        <div class="password-box">
-
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter password"
+            <input
+            type="email"
+            id="email"
+            placeholder="Enter email"
+            autocomplete="email"
             required
-          >
-
-          <button
-            type="button"
-            class="show-password"
-            id="showPassword"
-          >👁</button>
+            >
 
         </div>
 
-      </div>
 
-      <button type="submit" class="login-btn" id="loginBtn">
-        Login to Dashboard
-      </button>
+        <div class="input-group">
 
-      <div class="message" id="message"></div>
+            <label for="password">
+                Password
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required
+                >
+
+
+                <button
+                type="button"
+                class="show-password"
+                id="showPassword"
+                >
+                    👁
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+        type="submit"
+        class="login-btn"
+        id="loginBtn"
+        >
+            Login to Dashboard
+        </button>
+
+
+        <div
+        class="message"
+        id="message"
+        ></div>
+
 
     </form>
 
+
     <p class="security">
-      🔒 Secure Owner Access
+        🔒 Secure Owner Access
     </p>
 
-  </div>
+
+</div>
 
 
-  <script>
+<script>
 
-    /* =================================
-       SUPABASE CONFIGURATION
-    ================================= */
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
 
-    const SUPABASE_URL =
-      "https://sfgnwdljakmtuyoxmltr.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+const SUPABASE_URL =
+    "https://sfgnwdljakmtuyoxmltr.supabase.co";
 
 
-    const { createClient } = supabase;
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
 
 
-    const supabaseClient = createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
+const supabaseClient =
+    window.supabase.createClient(
+
+        SUPABASE_URL,
+
+        SUPABASE_PUBLISHABLE_KEY,
+
+        {
+            auth:{
+
+                persistSession:true,
+
+                autoRefreshToken:true,
+
+                detectSessionInUrl:true
+
+            }
+        }
+
     );
 
 
-    /* =================================
-       ALREADY LOGGED-IN CHECK
-    ================================= */
+/* =========================================
+   PAGE SETTINGS
+========================================= */
 
-    document.addEventListener("DOMContentLoaded", function () {
-
-      const isLoggedIn =
-        localStorage.getItem("isLoggedIn");
-
-      const userRole =
-        localStorage.getItem("userRole");
+const OWNER_DASHBOARD_PAGE =
+    "owner-dashboard.html";
 
 
-      if (
-        isLoggedIn === "true" &&
-        userRole === "owner"
-      ) {
-
-        window.location.replace(
-          "owner-dashboard.html"
-        );
-
-      }
-
-    });
+const STUDENT_LOGIN_PAGE =
+    "student-login.html";
 
 
-    /* =================================
-       SHOW / HIDE PASSWORD
-    ================================= */
+/* =========================================
+   ELEMENTS
+========================================= */
 
-    const passwordInput =
-      document.getElementById("password");
-
-
-    const showPassword =
-      document.getElementById("showPassword");
+const loadingScreen =
+    document.getElementById(
+        "loadingScreen"
+    );
 
 
-    showPassword.addEventListener("click", function () {
-
-      if (passwordInput.type === "password") {
-
-        passwordInput.type = "text";
-        showPassword.textContent = "🙈";
-
-      } else {
-
-        passwordInput.type = "password";
-        showPassword.textContent = "👁";
-
-      }
-
-    });
+const loadingText =
+    document.getElementById(
+        "loadingText"
+    );
 
 
-    /* =================================
-       LOGIN
-    ================================= */
-
-    const loginForm =
-      document.getElementById("loginForm");
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
 
 
-    const loginBtn =
-      document.getElementById("loginBtn");
+const loginBtn =
+    document.getElementById(
+        "loginBtn"
+    );
 
 
-    const message =
-      document.getElementById("message");
+const emailInput =
+    document.getElementById(
+        "email"
+    );
 
 
-    loginForm.addEventListener(
-      "submit",
-      async function (e) {
-
-        e.preventDefault();
-
-
-        const email =
-          document
-            .getElementById("email")
-            .value
-            .trim();
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
 
 
-        const password =
-          document
-            .getElementById("password")
-            .value;
+const showPassword =
+    document.getElementById(
+        "showPassword"
+    );
 
 
-        loginBtn.disabled = true;
-
-        loginBtn.textContent =
-          "Checking...";
-
-
-        message.style.display =
-          "none";
+const message =
+    document.getElementById(
+        "message"
+    );
 
 
-        const { data, error } =
-          await supabaseClient.auth.signInWithPassword({
+/* =========================================
+   SHOW LOADING
+========================================= */
 
-            email: email,
-            password: password
+function showLoading(text){
 
-          });
+    if(text){
+
+        loadingText.textContent =
+            text;
+
+    }
 
 
-        /* =============================
-           LOGIN ERROR
-        ============================= */
+    loadingScreen.classList.add(
+        "show"
+    );
 
-        if (error) {
+}
 
-          message.style.display =
-            "block";
 
-          message.style.background =
+/* =========================================
+   HIDE LOADING
+========================================= */
+
+function hideLoading(){
+
+    loadingScreen.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================
+   SHOW MESSAGE
+========================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    message.textContent =
+        text;
+
+
+    message.style.display =
+        "block";
+
+
+    if(type === "success"){
+
+        message.style.background =
+            "#ecfdf3";
+
+
+        message.style.color =
+            "#087443";
+
+    }
+    else if(type === "error"){
+
+        message.style.background =
             "#fff0f0";
 
-          message.style.color =
+
+        message.style.color =
             "#c62828";
 
+    }
+    else{
 
-          message.textContent =
-            "❌ Invalid email or password.";
-
-
-          loginBtn.disabled =
-            false;
+        message.style.background =
+            "#eff6ff";
 
 
-          loginBtn.textContent =
-            "Login to Dashboard";
+        message.style.color =
+            "#1d4ed8";
+
+    }
+
+}
 
 
-          return;
+/* =========================================
+   HIDE MESSAGE
+========================================= */
+
+function hideMessage(){
+
+    message.style.display =
+        "none";
+
+}
+
+
+/* =========================================
+   SAVE OWNER LOGIN DATA
+========================================= */
+
+function saveOwnerLoginData(
+    authUserId,
+    email
+){
+
+    /*
+       MAIN PORTAL SESSION
+
+       Student Login page isi value ko
+       check karega.
+    */
+
+    localStorage.setItem(
+        "loggedInPortal",
+        "owner"
+    );
+
+
+    /*
+       OWNER LOGIN STATUS
+    */
+
+    localStorage.setItem(
+        "ownerLoggedIn",
+        "true"
+    );
+
+
+    localStorage.setItem(
+        "ownerAuthUserId",
+        String(authUserId)
+    );
+
+
+    localStorage.setItem(
+        "ownerEmail",
+        email
+    );
+
+
+    /*
+       OLD SYSTEM COMPATIBILITY
+    */
+
+    localStorage.setItem(
+        "isLoggedIn",
+        "true"
+    );
+
+
+    localStorage.setItem(
+        "userRole",
+        "owner"
+    );
+
+}
+
+
+/* =========================================
+   CLEAR OWNER LOCAL DATA
+========================================= */
+
+function clearOwnerLocalData(){
+
+    localStorage.removeItem(
+        "ownerLoggedIn"
+    );
+
+
+    localStorage.removeItem(
+        "ownerAuthUserId"
+    );
+
+
+    localStorage.removeItem(
+        "ownerEmail"
+    );
+
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+
+    /*
+       Sirf owner portal ho tabhi remove karo
+    */
+
+    if(
+
+        localStorage.getItem(
+            "loggedInPortal"
+        ) === "owner"
+
+    ){
+
+        localStorage.removeItem(
+            "loggedInPortal"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   REDIRECT TO OWNER DASHBOARD
+========================================= */
+
+function openOwnerDashboard(){
+
+    window.location.replace(
+        OWNER_DASHBOARD_PAGE
+    );
+
+}
+
+
+/* =========================================
+   AUTO OWNER LOGIN CHECK
+========================================= */
+
+async function checkExistingOwnerLogin(){
+
+    showLoading(
+        "Checking owner login..."
+    );
+
+
+    try{
+
+        const {
+
+            data,
+
+            error
+
+        } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+        if(error){
+
+            console.error(
+                "Owner session check error:",
+                error
+            );
+
+
+            clearOwnerLocalData();
+
+
+            hideLoading();
+
+            return;
 
         }
 
 
-        /* =============================
-           SUCCESSFUL OWNER LOGIN
-        ============================= */
+        const session =
+            data ?
+            data.session :
+            null;
 
 
-        localStorage.setItem(
-          "isLoggedIn",
-          "true"
+        /*
+           AGAR SUPABASE SESSION ACTIVE NAHI HAI
+           TO LOGIN PAGE DIKHEGA
+        */
+
+        if(
+
+            !session ||
+
+            !session.user
+
+        ){
+
+            clearOwnerLocalData();
+
+
+            hideLoading();
+
+            return;
+
+        }
+
+
+        const savedPortal =
+            localStorage.getItem(
+                "loggedInPortal"
+            );
+
+
+        const ownerLoggedIn =
+            localStorage.getItem(
+                "ownerLoggedIn"
+            );
+
+
+        const ownerAuthUserId =
+            localStorage.getItem(
+                "ownerAuthUserId"
+            );
+
+
+        /*
+           OWNER SESSION VALID HAI
+
+           Same Supabase user + owner portal
+           hone par direct dashboard.
+        */
+
+        if(
+
+            savedPortal === "owner" &&
+
+            ownerLoggedIn === "true" &&
+
+            ownerAuthUserId ===
+            session.user.id
+
+        ){
+
+            openOwnerDashboard();
+
+            return;
+
+        }
+
+
+        /*
+           PURANE LOGIN SYSTEM KI
+           COMPATIBILITY
+        */
+
+        const oldLoggedIn =
+            localStorage.getItem(
+                "isLoggedIn"
+            );
+
+
+        const oldUserRole =
+            localStorage.getItem(
+                "userRole"
+            );
+
+
+        if(
+
+            oldLoggedIn === "true" &&
+
+            oldUserRole === "owner"
+
+        ){
+
+            saveOwnerLoginData(
+
+                session.user.id,
+
+                session.user.email || ""
+
+            );
+
+
+            openOwnerDashboard();
+
+            return;
+
+        }
+
+
+        /*
+           Session active hai lekin
+           owner portal session nahi hai.
+
+           Isliye is user ko owner
+           dashboard par redirect nahi karenge.
+        */
+
+        hideLoading();
+
+    }
+    catch(error){
+
+        console.error(
+            "Auto owner login error:",
+            error
         );
 
 
-        localStorage.setItem(
-          "userRole",
-          "owner"
-        );
+        hideLoading();
+
+    }
+
+}
 
 
-        localStorage.setItem(
-          "ownerEmail",
-          email
-        );
+/* =========================================
+   SHOW / HIDE PASSWORD
+========================================= */
+
+showPassword.addEventListener(
+    "click",
+    function(){
+
+        if(
+
+            passwordInput.type ===
+            "password"
+
+        ){
+
+            passwordInput.type =
+                "text";
 
 
-        message.style.display =
-          "block";
+            showPassword.textContent =
+                "🙈";
+
+        }
+        else{
+
+            passwordInput.type =
+                "password";
 
 
-        message.style.background =
-          "#ecfdf3";
+            showPassword.textContent =
+                "👁";
+
+        }
+
+    }
+);
 
 
-        message.style.color =
-          "#087443";
+/* =========================================
+   OWNER LOGIN
+========================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
 
 
-        message.textContent =
-          "✅ Login successful. Opening dashboard...";
+        hideMessage();
 
 
-        setTimeout(function () {
+        const email =
+            emailInput.value.trim();
 
-          window.location.replace(
-            "owner-dashboard.html"
-          );
 
-        }, 700);
+        const password =
+            passwordInput.value;
 
-      }
 
-    );
+        if(!email){
 
-  </script>
+            showMessage(
+                "Please enter your email.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!password){
+
+            showMessage(
+                "Please enter your password.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        loginBtn.disabled =
+            true;
+
+
+        loginBtn.textContent =
+            "Checking...";
+
+
+        try{
+
+            /*
+               IMPORTANT:
+
+               Pehle koi purana Supabase
+               session ho to remove karenge,
+               taki Student/Teacher session
+               Owner login me conflict na kare.
+            */
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+
+            const {
+
+                data,
+
+                error
+
+            } =
+            await supabaseClient
+                .auth
+                .signInWithPassword({
+
+                    email:email,
+
+                    password:password
+
+                });
+
+
+            /* =============================
+               LOGIN ERROR
+            ============================= */
+
+            if(error){
+
+                console.error(
+                    error
+                );
+
+
+                showMessage(
+                    "❌ Invalid email or password.",
+                    "error"
+                );
+
+
+                loginBtn.disabled =
+                    false;
+
+
+                loginBtn.textContent =
+                    "Login to Dashboard";
+
+
+                return;
+
+            }
+
+
+            if(
+
+                !data ||
+
+                !data.user
+
+            ){
+
+                showMessage(
+                    "❌ Login nahi ho paya. Please try again.",
+                    "error"
+                );
+
+
+                loginBtn.disabled =
+                    false;
+
+
+                loginBtn.textContent =
+                    "Login to Dashboard";
+
+
+                return;
+
+            }
+
+
+            /* =============================
+               SUCCESSFUL OWNER LOGIN
+            ============================= */
+
+            saveOwnerLoginData(
+
+                data.user.id,
+
+                data.user.email || email
+
+            );
+
+
+            showMessage(
+                "✅ Login successful. Opening dashboard...",
+                "success"
+            );
+
+
+            setTimeout(
+                function(){
+
+                    openOwnerDashboard();
+
+                },
+                700
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            showMessage(
+                "❌ Server error. Please try again.",
+                "error"
+            );
+
+
+            loginBtn.disabled =
+                false;
+
+
+            loginBtn.textContent =
+                "Login to Dashboard";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   AUTH STATE LISTENER
+========================================= */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+    function(
+        event,
+        session
+    ){
+
+        /*
+           Jab Owner Logout karega
+           aur Supabase SIGNED_OUT event aayega
+           tab Owner ka portal data clear hoga.
+        */
+
+        if(
+
+            event === "SIGNED_OUT"
+
+        ){
+
+            clearOwnerLocalData();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   START AUTO LOGIN CHECK
+========================================= */
+
+checkExistingOwnerLogin();
+
+</script>
 
 </body>
 </html>
