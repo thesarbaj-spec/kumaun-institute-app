@@ -1105,86 +1105,109 @@ body{
     font-size:18px;
 }
 
-.student-id-card{
-    width:100%;
-    aspect-ratio:1.58/1;
-    border-radius:13px;
-    border-width:2px;
-}
+    .student-id-card{
+        width:100%;
+        aspect-ratio:auto !important;
+        height:auto !important;
+        min-height:0 !important;
+        border-radius:13px;
+        border-width:2px;
+        display:flex;
+        flex-direction:column;
+    }
 
-.id-card-header{
-    min-height:64px;
-    padding:7px 10px;
-    gap:8px;
-}
+    .id-card-header{
+        min-height:64px;
+        height:auto;
+        padding:7px 10px;
+        gap:8px;
+        flex-shrink:0;
+    }
 
-.id-logo{
-    width:47px;
-    height:47px;
-}
+    .id-logo{
+        width:47px;
+        height:47px;
+    }
 
-.id-institute-name{
-    font-size:13px;
-}
+    .id-institute-name{
+        font-size:13px;
+    }
 
-.id-institute-subtitle{
-    font-size:7px;
-    letter-spacing:1.2px;
-    margin-top:3px;
-}
+    .id-institute-subtitle{
+        font-size:7px;
+        letter-spacing:1.2px;
+        margin-top:3px;
+    }
 
-.id-card-body{
-    grid-template-columns:82px 1fr;
-    gap:10px;
-    padding:10px 11px;
-}
+    .id-card-body{
+        flex:none !important;
+        min-height:118px !important;
+        height:auto !important;
+        grid-template-columns:82px 1fr;
+        gap:10px;
+        padding:10px 11px;
+    }
 
-.id-photo-area{
-    width:76px;
-    height:96px;
-    border-radius:8px;
-    border-width:2px;
-}
+    .id-photo-area{
+        width:76px;
+        height:96px;
+        border-radius:8px;
+        border-width:2px;
+        align-self:center;
+    }
 
-.photo-fallback{
-    font-size:28px;
-}
+    .photo-fallback{
+        font-size:28px;
+    }
 
-.id-details{
-    grid-template-columns:repeat(2,1fr);
-    column-gap:10px;
-    row-gap:6px;
-}
+    .id-details{
+        grid-template-columns:repeat(2,1fr);
+        column-gap:10px;
+        row-gap:6px;
+        align-content:center;
+    }
 
-.id-label{
-    font-size:6.5px;
-    margin-bottom:2px;
-}
+    .id-label{
+        font-size:6.5px;
+        margin-bottom:2px;
+    }
 
-.id-value{
-    font-size:9.5px;
-    line-height:1.15;
-}
+    .id-value{
+        font-size:9.5px;
+        line-height:1.15;
+    }
 
-.id-card-footer{
-    min-height:48px;
-    padding:4px 8px;
-}
+    .address-row{
+        grid-column:1/-1;
+    }
 
-.signature-box{
-    width:100px;
-    font-size:7px;
-}
+    .id-card-footer{
+        position:relative !important;
+        flex:none !important;
+        min-height:52px !important;
+        height:52px !important;
+        margin:0 !important;
+        padding:4px 8px;
+        border-top:2px solid #8b949d;
+        display:flex;
+        align-items:flex-end;
+        justify-content:space-between;
+    }
 
-.signature-image{
-    max-width:90px;
-    height:27px;
-}
+    .signature-box{
+        width:110px;
+        font-size:7px;
+    }
 
-.download-id-btn{
-    padding:10px 16px;
-    font-size:12px;
-}
+    .signature-image{
+        max-width:90px;
+        height:27px;
+    }
+
+      .download-id-btn{
+        padding:10px 16px;
+        font-size:12px;
+    }
 
 .cards{
     grid-template-columns:repeat(2,1fr);
@@ -1287,22 +1310,28 @@ body{
 
 @media(max-width:380px){
 
-.id-institute-name{
-    font-size:11px;
-}
+    .id-institute-name{
+        font-size:11px;
+    }
 
-.id-value{
-    font-size:8.5px;
-}
+    .id-value{
+        font-size:8.5px;
+    }
 
-.id-photo-area{
-    width:70px;
-    height:88px;
-}
+    .id-photo-area{
+        width:70px;
+        height:88px;
+    }
 
-.id-card-body{
-    grid-template-columns:75px 1fr;
-}
+    .id-card-body{
+        grid-template-columns:75px 1fr;
+        min-height:108px !important;
+    }
+
+    .id-card-footer{
+        min-height:48px !important;
+        height:48px !important;
+    }
 
 .option-card{
     min-height:112px;
