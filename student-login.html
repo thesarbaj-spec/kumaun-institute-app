@@ -178,6 +178,54 @@ input:focus{
     margin-top:10px;
 }
 
+.portal-divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:24px 0 15px;
+    color:#94a3b8;
+    font-size:12px;
+}
+
+.portal-divider::before,
+.portal-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#e2e8f0;
+}
+
+.portal-title{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    margin-bottom:12px;
+}
+
+.portal-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.portal-btn{
+    border:1px solid #dbe1ea;
+    background:#f8fafc;
+    color:#334155;
+    padding:12px 8px;
+    border-radius:9px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.portal-btn:hover{
+    background:#eef2ff;
+    border-color:#94a3b8;
+    transform:translateY(-1px);
+}
+
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -233,9 +281,6 @@ input:focus{
 
 <body>
 
-
-<!-- AUTO LOGIN LOADING SCREEN -->
-
 <div
 id="loadingScreen"
 class="loading-screen"
@@ -243,20 +288,14 @@ class="loading-screen"
 
     <div class="loader"></div>
 
-    <strong>
+    <strong id="loadingText">
         Checking login...
     </strong>
 
 </div>
 
 
-
-<!-- LOGIN BOX -->
-
 <div class="login-box">
-
-
-    <!-- LOGO -->
 
     <div class="logo">
 
@@ -268,8 +307,6 @@ class="loading-screen"
     </div>
 
 
-    <!-- TITLE -->
-
     <h1>
         Kumaun Institute of Computer Education
     </h1>
@@ -280,13 +317,7 @@ class="loading-screen"
     </p>
 
 
-
-    <!-- =========================
-         LOGIN SECTION
-    ========================== -->
-
     <div id="loginSection">
-
 
         <div
         id="loginMessage"
@@ -294,11 +325,8 @@ class="loading-screen"
         ></div>
 
 
-
         <form id="loginForm">
 
-
-            <!-- MOBILE -->
 
             <div class="form-group">
 
@@ -319,9 +347,6 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- PASSWORD -->
-
             <div class="form-group">
 
                 <label>
@@ -339,56 +364,69 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- LOGIN BUTTON -->
-
             <button
             type="submit"
             id="loginBtn"
             class="login-btn"
             >
-
-                Login
-
+                Student Login
             </button>
-
 
         </form>
 
-
-
-        <!-- FORGOT PASSWORD -->
 
         <button
         type="button"
         id="forgotBtn"
         class="forgot-btn"
         >
-
             Forgot Password?
-
         </button>
 
 
+        <div class="portal-divider">
+            OR
+        </div>
+
+
+        <p class="portal-title">
+            Login to another portal
+        </p>
+
+
+        <div class="portal-buttons">
+
+            <button
+            type="button"
+            id="ownerLoginBtn"
+            class="portal-btn"
+            >
+                👨‍💼 Owner Login
+            </button>
+
+
+            <button
+            type="button"
+            id="teacherLoginBtn"
+            class="portal-btn"
+            >
+                👨‍🏫 Teacher Login
+            </button>
+
+        </div>
+
     </div>
 
-
-
-    <!-- =========================
-         PASSWORD RESET SECTION
-    ========================== -->
 
     <div
     id="resetSection"
     class="reset-box"
     >
 
-
         <div
         id="resetMessage"
         class="message"
         ></div>
-
 
 
         <p class="small-note">
@@ -401,11 +439,8 @@ class="loading-screen"
         </p>
 
 
-
         <form id="resetForm">
 
-
-            <!-- MOBILE -->
 
             <div class="form-group">
 
@@ -425,9 +460,6 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- DOB -->
-
             <div class="form-group">
 
                 <label>
@@ -443,9 +475,6 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- JOINING DATE -->
-
             <div class="form-group">
 
                 <label>
@@ -460,9 +489,6 @@ class="loading-screen"
 
             </div>
 
-
-
-            <!-- NEW PASSWORD -->
 
             <div class="form-group">
 
@@ -481,9 +507,6 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- CONFIRM PASSWORD -->
-
             <div class="form-group">
 
                 <label>
@@ -501,42 +524,27 @@ class="loading-screen"
             </div>
 
 
-
-            <!-- RESET BUTTON -->
-
             <button
             type="submit"
             id="resetBtn"
             class="login-btn"
             >
-
                 Reset Password
-
             </button>
-
 
         </form>
 
-
-
-        <!-- BACK -->
 
         <button
         type="button"
         id="backBtn"
         class="back-btn"
         >
-
             ← Back to Login
-
         </button>
-
 
     </div>
 
-
-
-    <!-- FOOTER -->
 
     <div class="footer">
 
@@ -545,13 +553,10 @@ class="loading-screen"
 
     </div>
 
-
 </div>
 
 
-
 <script>
-
 
 /* =========================================
    SUPABASE CONFIGURATION
@@ -579,118 +584,118 @@ const supabaseClient =
     );
 
 
+/* =========================================
+   TEMPORARY PAGE PLACEHOLDERS
+
+   BAAD ME ACTUAL FILE NAME DALENGE
+========================================= */
+
+const OWNER_LOGIN_PAGE =
+    "login.html";
+
+
+const TEACHER_LOGIN_PAGE =
+    "teacher-login.html";
+
+
+const OWNER_DASHBOARD_PAGE =
+    "owner-dashboard.html";
+
+
+const TEACHER_DASHBOARD_PAGE =
+    "teachers-dashboard.html";
+
+
+const STUDENT_DASHBOARD_PAGE =
+    "student-dashboard.html";
+
 
 /* =========================================
    ELEMENTS
 ========================================= */
 
 const loadingScreen =
-    document.getElementById(
-        "loadingScreen"
-    );
+    document.getElementById("loadingScreen");
+
+
+const loadingText =
+    document.getElementById("loadingText");
 
 
 const loginSection =
-    document.getElementById(
-        "loginSection"
-    );
+    document.getElementById("loginSection");
 
 
 const resetSection =
-    document.getElementById(
-        "resetSection"
-    );
+    document.getElementById("resetSection");
 
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 
 const mobileInput =
-    document.getElementById(
-        "mobile"
-    );
+    document.getElementById("mobile");
 
 
 const passwordInput =
-    document.getElementById(
-        "password"
-    );
+    document.getElementById("password");
 
 
 const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
+    document.getElementById("loginBtn");
 
 
 const forgotBtn =
-    document.getElementById(
-        "forgotBtn"
-    );
+    document.getElementById("forgotBtn");
 
 
 const loginMessage =
-    document.getElementById(
-        "loginMessage"
-    );
+    document.getElementById("loginMessage");
 
 
 const resetForm =
-    document.getElementById(
-        "resetForm"
-    );
+    document.getElementById("resetForm");
 
 
 const resetMobile =
-    document.getElementById(
-        "resetMobile"
-    );
+    document.getElementById("resetMobile");
 
 
 const dob =
-    document.getElementById(
-        "dob"
-    );
+    document.getElementById("dob");
 
 
 const joiningDate =
-    document.getElementById(
-        "joiningDate"
-    );
+    document.getElementById("joiningDate");
 
 
 const newPassword =
-    document.getElementById(
-        "newPassword"
-    );
+    document.getElementById("newPassword");
 
 
 const confirmPassword =
-    document.getElementById(
-        "confirmPassword"
-    );
+    document.getElementById("confirmPassword");
 
 
 const resetBtn =
-    document.getElementById(
-        "resetBtn"
-    );
+    document.getElementById("resetBtn");
 
 
 const resetMessage =
-    document.getElementById(
-        "resetMessage"
-    );
+    document.getElementById("resetMessage");
 
 
 const backBtn =
-    document.getElementById(
-        "backBtn"
-    );
+    document.getElementById("backBtn");
 
+
+const ownerLoginBtn =
+    document.getElementById("ownerLoginBtn");
+
+
+const teacherLoginBtn =
+    document.getElementById("teacherLoginBtn");
 
 
 /* =========================================
@@ -703,8 +708,7 @@ function showMessage(
     type
 ){
 
-    element.textContent =
-        text;
+    element.textContent = text;
 
     element.className =
         "message " + type;
@@ -715,14 +719,11 @@ function showMessage(
 }
 
 
-
 /* =========================================
    HIDE MESSAGE
 ========================================= */
 
-function hideMessage(
-    element
-){
+function hideMessage(element){
 
     element.style.display =
         "none";
@@ -730,19 +731,24 @@ function hideMessage(
 }
 
 
-
 /* =========================================
    SHOW LOADING
 ========================================= */
 
-function showLoading(){
+function showLoading(text){
+
+    if(text){
+
+        loadingText.textContent =
+            text;
+
+    }
 
     loadingScreen.classList.add(
         "show"
     );
 
 }
-
 
 
 /* =========================================
@@ -756,7 +762,6 @@ function hideLoading(){
     );
 
 }
-
 
 
 /* =========================================
@@ -787,6 +792,37 @@ function clearStudentLocalData(){
 
 }
 
+
+/* =========================================
+   CLEAR ALL PORTAL DATA
+   USE ONLY ON LOGOUT
+========================================= */
+
+function clearAllPortalData(){
+
+    clearStudentLocalData();
+
+    localStorage.removeItem(
+        "loggedInPortal"
+    );
+
+    localStorage.removeItem(
+        "ownerLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "teacherLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "ownerAuthUserId"
+    );
+
+    localStorage.removeItem(
+        "teacherAuthUserId"
+    );
+
+}
 
 
 /* =========================================
@@ -823,8 +859,123 @@ function saveStudentLoginData(
         "true"
     );
 
+
+    /* ACTIVE PORTAL */
+
+    localStorage.setItem(
+        "loggedInPortal",
+        "student"
+    );
+
 }
 
+
+/* =========================================
+   GET SAVED PORTAL
+========================================= */
+
+function getSavedPortal(){
+
+    return localStorage.getItem(
+        "loggedInPortal"
+    );
+
+}
+
+
+/* =========================================
+   REDIRECT LOGGED IN USER
+========================================= */
+
+function redirectToPortal(portal){
+
+    if(portal === "student"){
+
+        window.location.replace(
+            STUDENT_DASHBOARD_PAGE
+        );
+
+        return;
+
+    }
+
+
+    if(portal === "owner"){
+
+        window.location.replace(
+            OWNER_DASHBOARD_PAGE
+        );
+
+        return;
+
+    }
+
+
+    if(portal === "teacher"){
+
+        window.location.replace(
+            TEACHER_DASHBOARD_PAGE
+        );
+
+        return;
+
+    }
+
+}
+
+
+/* =========================================
+   OWNER LOGIN BUTTON
+========================================= */
+
+ownerLoginBtn.addEventListener(
+    "click",
+    function(){
+
+        showLoading(
+            "Opening Owner Login..."
+        );
+
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    OWNER_LOGIN_PAGE;
+
+            },
+            250
+        );
+
+    }
+);
+
+
+/* =========================================
+   TEACHER LOGIN BUTTON
+========================================= */
+
+teacherLoginBtn.addEventListener(
+    "click",
+    function(){
+
+        showLoading(
+            "Opening Teacher Login..."
+        );
+
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    TEACHER_LOGIN_PAGE;
+
+            },
+            250
+        );
+
+    }
+);
 
 
 /* =========================================
@@ -833,15 +984,21 @@ function saveStudentLoginData(
 
 async function checkExistingLogin(){
 
-    showLoading();
+    showLoading(
+        "Checking login..."
+    );
 
     try{
+
+        const savedPortal =
+            getSavedPortal();
+
 
         const {
             data,
             error
         } =
-            await supabaseClient
+        await supabaseClient
             .auth
             .getSession();
 
@@ -853,7 +1010,7 @@ async function checkExistingLogin(){
                 error
             );
 
-            clearStudentLocalData();
+            clearAllPortalData();
 
             hideLoading();
 
@@ -868,12 +1025,18 @@ async function checkExistingLogin(){
             null;
 
 
+        /*
+           AGAR SESSION NAHI HAI
+           TO KISI BHI DASHBOARD PAR
+           REDIRECT NAHI HOGA
+        */
+
         if(
             !session ||
             !session.user
         ){
 
-            clearStudentLocalData();
+            clearAllPortalData();
 
             hideLoading();
 
@@ -881,6 +1044,46 @@ async function checkExistingLogin(){
 
         }
 
+
+        /*
+           OWNER / TEACHER
+
+           Inka role respective login page
+           se loggedInPortal me save hoga.
+
+           Agar login session active hai,
+           to sidha dashboard.
+        */
+
+        if(
+            savedPortal === "owner"
+        ){
+
+            redirectToPortal(
+                "owner"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            savedPortal === "teacher"
+        ){
+
+            redirectToPortal(
+                "teacher"
+            );
+
+            return;
+
+        }
+
+
+        /*
+           STUDENT CHECK
+        */
 
         const authUserId =
             session.user.id;
@@ -890,7 +1093,7 @@ async function checkExistingLogin(){
             data:studentData,
             error:studentError
         } =
-            await supabaseClient
+        await supabaseClient
             .from("Students")
             .select("id, auth_user_id")
             .eq(
@@ -907,20 +1110,11 @@ async function checkExistingLogin(){
                 studentError
             );
 
-            hideLoading();
-
-            return;
-
-        }
-
-
-        if(!studentData){
-
-            await supabaseClient
-                .auth
-                .signOut();
-
-            clearStudentLocalData();
+            /*
+               Session ko yahan signout nahi
+               karenge because owner/teacher
+               login page se role setup ho sakta hai.
+            */
 
             hideLoading();
 
@@ -929,18 +1123,33 @@ async function checkExistingLogin(){
         }
 
 
-        saveStudentLoginData(
-            studentData.id,
-            authUserId
-        );
+        if(studentData){
+
+            saveStudentLoginData(
+                studentData.id,
+                authUserId
+            );
 
 
-        window.location.replace(
-            "student-dashboard.html"
-        );
+            redirectToPortal(
+                "student"
+            );
+
+            return;
+
+        }
+
+
+        /*
+           Student nahi mila aur owner/teacher
+           portal bhi saved nahi hai.
+
+           Login page hi dikhega.
+        */
+
+        hideLoading();
 
     }
-
     catch(error){
 
         console.error(
@@ -953,7 +1162,6 @@ async function checkExistingLogin(){
     }
 
 }
-
 
 
 /* =========================================
@@ -978,7 +1186,6 @@ forgotBtn.addEventListener(
 );
 
 
-
 /* =========================================
    BACK TO LOGIN
 ========================================= */
@@ -1001,7 +1208,6 @@ backBtn.addEventListener(
 );
 
 
-
 /* =========================================
    STUDENT LOGIN
 ========================================= */
@@ -1011,7 +1217,6 @@ loginForm.addEventListener(
     async function(event){
 
         event.preventDefault();
-
 
         hideMessage(
             loginMessage
@@ -1066,29 +1271,21 @@ loginForm.addEventListener(
 
         try{
 
-
-            /* CREATE AUTH EMAIL */
-
             const authEmail =
                 mobile +
                 "@students.kumauninstitute.local";
 
 
-            /* SUPABASE LOGIN */
-
             const {
                 data:authData,
                 error:authError
             } =
-                await supabaseClient
+            await supabaseClient
                 .auth
                 .signInWithPassword({
 
-                    email:
-                        authEmail,
-
-                    password:
-                        password
+                    email:authEmail,
+                    password:password
 
                 });
 
@@ -1099,21 +1296,17 @@ loginForm.addEventListener(
                     authError
                 );
 
-
                 showMessage(
                     loginMessage,
                     "Mobile number ya password galat hai.",
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
-                    "Login";
-
+                    "Student Login";
 
                 return;
 
@@ -1131,14 +1324,11 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
-                    "Login";
-
+                    "Student Login";
 
                 return;
 
@@ -1149,13 +1339,11 @@ loginForm.addEventListener(
                 authData.user.id;
 
 
-            /* CHECK STUDENT PROFILE */
-
             const {
                 data:studentData,
                 error:studentError
             } =
-                await supabaseClient
+            await supabaseClient
                 .from("Students")
                 .select("*")
                 .eq(
@@ -1171,13 +1359,12 @@ loginForm.addEventListener(
                     studentError
                 );
 
-
                 await supabaseClient
                     .auth
                     .signOut();
 
 
-                clearStudentLocalData();
+                clearAllPortalData();
 
 
                 showMessage(
@@ -1186,14 +1373,11 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
-                    "Login";
-
+                    "Student Login";
 
                 return;
 
@@ -1207,7 +1391,7 @@ loginForm.addEventListener(
                     .signOut();
 
 
-                clearStudentLocalData();
+                clearAllPortalData();
 
 
                 showMessage(
@@ -1216,21 +1400,20 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
-                    "Login";
-
+                    "Student Login";
 
                 return;
 
             }
 
 
-            /* SAVE LOGIN DATA */
+            /*
+               SAVE STUDENT LOGIN
+            */
 
             saveStudentLoginData(
                 studentData.id,
@@ -1248,14 +1431,13 @@ loginForm.addEventListener(
             setTimeout(
                 function(){
 
-                    window.location.replace(
-                        "student-dashboard.html"
+                    redirectToPortal(
+                        "student"
                     );
 
                 },
                 700
             );
-
 
         }
         catch(error){
@@ -1264,26 +1446,22 @@ loginForm.addEventListener(
                 error
             );
 
-
             showMessage(
                 loginMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
-
             loginBtn.disabled =
                 false;
 
-
             loginBtn.textContent =
-                "Login";
+                "Student Login";
 
         }
 
     }
 );
-
 
 
 /* =========================================
@@ -1295,7 +1473,6 @@ resetForm.addEventListener(
     async function(event){
 
         event.preventDefault();
-
 
         hideMessage(
             resetMessage
@@ -1322,9 +1499,6 @@ resetForm.addEventListener(
             confirmPassword.value;
 
 
-
-        /* MOBILE VALIDATION */
-
         if(
             !/^[0-9]{10}$/.test(
                 mobile
@@ -1342,9 +1516,6 @@ resetForm.addEventListener(
         }
 
 
-
-        /* DOB VALIDATION */
-
         if(!dateOfBirth){
 
             showMessage(
@@ -1358,9 +1529,6 @@ resetForm.addEventListener(
         }
 
 
-
-        /* JOINING DATE VALIDATION */
-
         if(!admissionDate){
 
             showMessage(
@@ -1373,9 +1541,6 @@ resetForm.addEventListener(
 
         }
 
-
-
-        /* PASSWORD VALIDATION */
 
         if(
             password.length < 6
@@ -1391,9 +1556,6 @@ resetForm.addEventListener(
 
         }
 
-
-
-        /* CONFIRM PASSWORD */
 
         if(
             password !== confirm
@@ -1420,9 +1582,6 @@ resetForm.addEventListener(
 
         try{
 
-
-            /* CALL EDGE FUNCTION */
-
             const response =
                 await fetch(
 
@@ -1431,8 +1590,7 @@ resetForm.addEventListener(
 
                     {
 
-                        method:
-                            "POST",
+                        method:"POST",
 
                         headers:{
 
@@ -1451,14 +1609,11 @@ resetForm.addEventListener(
                         body:
                             JSON.stringify({
 
-                                action:
-                                    "reset",
+                                action:"reset",
 
-                                mobile:
-                                    mobile,
+                                mobile:mobile,
 
-                                dob:
-                                    dateOfBirth,
+                                dob:dateOfBirth,
 
                                 admission_date:
                                     admissionDate,
@@ -1504,14 +1659,11 @@ resetForm.addEventListener(
                     "error"
                 );
 
-
                 resetBtn.disabled =
                     false;
 
-
                 resetBtn.textContent =
                     "Reset Password";
-
 
                 return;
 
@@ -1534,19 +1686,15 @@ resetForm.addEventListener(
                     resetSection.style.display =
                         "none";
 
-
                     loginSection.style.display =
                         "block";
-
 
                     hideMessage(
                         resetMessage
                     );
 
-
                     resetBtn.disabled =
                         false;
-
 
                     resetBtn.textContent =
                         "Reset Password";
@@ -1555,7 +1703,6 @@ resetForm.addEventListener(
                 2000
             );
 
-
         }
         catch(error){
 
@@ -1563,17 +1710,14 @@ resetForm.addEventListener(
                 error
             );
 
-
             showMessage(
                 resetMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
-
             resetBtn.disabled =
                 false;
-
 
             resetBtn.textContent =
                 "Reset Password";
@@ -1584,7 +1728,6 @@ resetForm.addEventListener(
 );
 
 
-
 /* =========================================
    AUTH STATE LISTENER
 ========================================= */
@@ -1592,16 +1735,13 @@ resetForm.addEventListener(
 supabaseClient
 .auth
 .onAuthStateChange(
-    function(
-        event,
-        session
-    ){
+    function(event,session){
 
         if(
             event === "SIGNED_OUT"
         ){
 
-            clearStudentLocalData();
+            clearAllPortalData();
 
         }
 
@@ -1609,13 +1749,11 @@ supabaseClient
 );
 
 
-
 /* =========================================
    START AUTO LOGIN CHECK
 ========================================= */
 
 checkExistingLogin();
-
 
 </script>
 
