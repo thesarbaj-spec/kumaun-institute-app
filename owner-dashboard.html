@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -1033,26 +1034,143 @@ const SUPABASE_KEY =
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
+      }
+    }
   );
 
 
-/* ================================
-   OWNER LOGIN CHECK
-================================ */
+function clearOwnerLoginData(){
+
+  localStorage.removeItem(
+    "loggedInPortal"
+  );
+
+  localStorage.removeItem(
+    "ownerLoggedIn"
+  );
+
+  localStorage.removeItem(
+    "ownerAuthUserId"
+  );
+
+  localStorage.removeItem(
+    "isLoggedIn"
+  );
+
+  localStorage.removeItem(
+    "userRole"
+  );
+
+  localStorage.removeItem(
+    "ownerEmail"
+  );
+
+  localStorage.removeItem(
+    "kumaun_owner_login"
+  );
+
+}
+
 
 async function checkOwnerLogin(){
 
-  const {
-    data,
-    error
-  } =
-  await supabaseClient.auth.getSession();
+  try{
 
-  if(
-    error ||
-    !data.session
-  ){
+    const savedPortal =
+      localStorage.getItem(
+        "loggedInPortal"
+      );
+
+    const ownerLoggedIn =
+      localStorage.getItem(
+        "ownerLoggedIn"
+      );
+
+    const ownerAuthUserId =
+      localStorage.getItem(
+        "ownerAuthUserId"
+      );
+
+
+    if(
+      savedPortal !== "owner" ||
+      ownerLoggedIn !== "true" ||
+      !ownerAuthUserId
+    ){
+
+      window.location.replace(
+        "index.html"
+      );
+
+      return false;
+
+    }
+
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+    if(
+      error ||
+      !data ||
+      !data.session ||
+      !data.session.user
+    ){
+
+      clearOwnerLoginData();
+
+      window.location.replace(
+        "index.html"
+      );
+
+      return false;
+
+    }
+
+
+    if(
+      data.session.user.id !==
+      ownerAuthUserId
+    ){
+
+      clearOwnerLoginData();
+
+      await supabaseClient
+        .auth
+        .signOut();
+
+      window.location.replace(
+        "index.html"
+      );
+
+      return false;
+
+    }
+
+
+    return true;
+
+  }
+  catch(error){
+
+    console.error(
+      "Owner login check error:",
+      error
+    );
+
+    clearOwnerLoginData();
 
     window.location.replace(
       "index.html"
@@ -1062,19 +1180,36 @@ async function checkOwnerLogin(){
 
   }
 
-  return true;
-
 }
 
 
-/* ================================
-   NOTIFICATION SYSTEM
-================================ */
+supabaseClient
+.auth
+.onAuthStateChange(
+  function(event,session){
+
+    if(
+      event === "SIGNED_OUT"
+    ){
+
+      clearOwnerLoginData();
+
+      window.location.replace(
+        "index.html"
+      );
+
+    }
+
+  }
+);
+
 
 let allStudents = [];
 
+
 const SEEN_STORAGE_KEY =
   "kumaun_owner_seen_notifications";
+
 
 let seenNotifications =
   JSON.parse(
@@ -1082,6 +1217,7 @@ let seenNotifications =
       SEEN_STORAGE_KEY
     ) || "[]"
   );
+
 
 function saveSeenNotifications(){
 
@@ -1093,6 +1229,7 @@ function saveSeenNotifications(){
   );
 
 }
+
 
 function getNotificationId(
   type,
@@ -1109,6 +1246,7 @@ function getNotificationId(
 
 }
 
+
 function isNotificationSeen(
   notificationId
 ){
@@ -1118,6 +1256,7 @@ function isNotificationSeen(
   );
 
 }
+
 
 function markNotificationSeen(
   notificationId
@@ -1139,6 +1278,7 @@ function markNotificationSeen(
 
 }
 
+
 function markAllNotificationsSeen(
   event
 ){
@@ -1149,10 +1289,12 @@ function markAllNotificationsSeen(
 
   }
 
+
   const notificationList =
     document.querySelectorAll(
       ".notification-item"
     );
+
 
   notificationList.forEach(
     function(item){
@@ -1169,11 +1311,13 @@ function markAllNotificationsSeen(
     }
   );
 
+
   renderNotificationSeenState();
 
   updateNotificationBadge();
 
 }
+
 
 function renderNotificationSeenState(){
 
@@ -1218,6 +1362,7 @@ function renderNotificationSeenState(){
 
 }
 
+
 function updateNotificationBadge(){
 
   const badge =
@@ -1225,12 +1370,15 @@ function updateNotificationBadge(){
       "notificationBadge"
     );
 
+
   const items =
     document.querySelectorAll(
       ".notification-item"
     );
 
+
   let unseenCount = 0;
+
 
   items.forEach(
     function(item){
@@ -1249,6 +1397,7 @@ function updateNotificationBadge(){
 
     }
   );
+
 
   if(unseenCount > 0){
 
@@ -1271,16 +1420,13 @@ function updateNotificationBadge(){
 }
 
 
-/* ================================
-   LOAD STUDENTS
-================================ */
-
 async function loadStudents(){
 
   const tableBody =
     document.getElementById(
       "studentTableBody"
     );
+
 
   try{
 
@@ -1312,6 +1458,7 @@ async function loadStudents(){
         }
       );
 
+
     if(error){
 
       console.error(error);
@@ -1333,22 +1480,28 @@ async function loadStudents(){
 
     }
 
+
     allStudents =
       data || [];
+
 
     document.getElementById(
       "totalStudents"
     ).textContent =
       allStudents.length;
 
+
     const now =
       new Date();
+
 
     const currentYear =
       now.getFullYear();
 
+
     const currentMonth =
       now.getMonth();
+
 
     const monthlyStudents =
       allStudents.filter(
@@ -1375,13 +1528,16 @@ async function loadStudents(){
         }
       );
 
+
     document.getElementById(
       "monthlyNewStudents"
     ).textContent =
       monthlyStudents.length;
 
+
     let totalPaid = 0;
     let totalPending = 0;
+
 
     allStudents.forEach(
       function(student){
@@ -1391,13 +1547,16 @@ async function loadStudents(){
             student.total_fee
           ) || 0;
 
+
         const paidFee =
           Number(
             student.paid_fee
           ) || 0;
 
+
         totalPaid +=
           paidFee;
+
 
         totalPending +=
           Math.max(
@@ -1408,6 +1567,7 @@ async function loadStudents(){
       }
     );
 
+
     document.getElementById(
       "feesCollected"
     ).textContent =
@@ -1416,6 +1576,7 @@ async function loadStudents(){
         "en-IN"
       );
 
+
     document.getElementById(
       "pendingFees"
     ).textContent =
@@ -1423,6 +1584,7 @@ async function loadStudents(){
       totalPending.toLocaleString(
         "en-IN"
       );
+
 
     renderStudents(
       allStudents
@@ -1449,16 +1611,13 @@ async function loadStudents(){
 }
 
 
-/* ================================
-   FEE REQUESTS
-================================ */
-
 async function loadFeeRequests(){
 
   const countElement =
     document.getElementById(
       "feeRequests"
     );
+
 
   try{
 
@@ -1478,6 +1637,7 @@ async function loadFeeRequests(){
         }
       );
 
+
     if(error){
 
       console.error(
@@ -1492,6 +1652,7 @@ async function loadFeeRequests(){
 
     }
 
+
     const requests =
       (data || []).filter(
         function(item){
@@ -1503,6 +1664,7 @@ async function loadFeeRequests(){
             .toLowerCase()
             .trim();
 
+
           return (
             status === "pending" ||
             status === "requested" ||
@@ -1513,8 +1675,10 @@ async function loadFeeRequests(){
         }
       );
 
+
     countElement.textContent =
       requests.length;
+
 
     return requests;
 
@@ -1533,16 +1697,13 @@ async function loadFeeRequests(){
 }
 
 
-/* ================================
-   COMPLAINTS
-================================ */
-
 async function loadComplaints(){
 
   const countElement =
     document.getElementById(
       "complaintCount"
     );
+
 
   try{
 
@@ -1562,6 +1723,7 @@ async function loadComplaints(){
         }
       );
 
+
     if(error){
 
       console.error(
@@ -1576,6 +1738,7 @@ async function loadComplaints(){
 
     }
 
+
     const complaints =
       (data || []).filter(
         function(item){
@@ -1587,6 +1750,7 @@ async function loadComplaints(){
             .toLowerCase()
             .trim();
 
+
           return (
             status !== "resolved" &&
             status !== "closed"
@@ -1595,8 +1759,10 @@ async function loadComplaints(){
         }
       );
 
+
     countElement.textContent =
       complaints.length;
+
 
     return complaints;
 
@@ -1615,16 +1781,13 @@ async function loadComplaints(){
 }
 
 
-/* ================================
-   NOTIFICATIONS LOAD
-================================ */
-
 async function loadNotifications(){
 
   const notificationList =
     document.getElementById(
       "notificationList"
     );
+
 
   try{
 
@@ -1637,7 +1800,9 @@ async function loadNotifications(){
       loadComplaints()
     ]);
 
+
     const notifications = [];
+
 
     feeRequests
       .slice(0,10)
@@ -1667,6 +1832,7 @@ async function loadNotifications(){
 
         }
       );
+
 
     complaints
       .slice(0,10)
@@ -1702,6 +1868,7 @@ async function loadNotifications(){
         }
       );
 
+
     notifications.sort(
       function(a,b){
 
@@ -1717,41 +1884,6 @@ async function loadNotifications(){
       }
     );
 
-    const unseenNotifications =
-      notifications.filter(
-        function(notification){
-
-          return !isNotificationSeen(
-            notification.id
-          );
-
-        }
-      );
-
-    const badge =
-      document.getElementById(
-        "notificationBadge"
-      );
-
-    if(
-      unseenNotifications.length > 0
-    ){
-
-      badge.style.display =
-        "flex";
-
-      badge.textContent =
-        unseenNotifications.length > 99
-        ? "99+"
-        : unseenNotifications.length;
-
-    }
-    else{
-
-      badge.style.display =
-        "none";
-
-    }
 
     if(!notifications.length){
 
@@ -1761,12 +1893,19 @@ async function loadNotifications(){
         </div>
       `;
 
+      document.getElementById(
+        "notificationBadge"
+      ).style.display =
+        "none";
+
       return;
 
     }
 
+
     notificationList.innerHTML =
       "";
+
 
     notifications
       .slice(0,20)
@@ -1778,10 +1917,12 @@ async function loadNotifications(){
               notification.id
             );
 
+
           const item =
             document.createElement(
               "div"
             );
+
 
           item.className =
             "notification-item " +
@@ -1791,8 +1932,10 @@ async function loadNotifications(){
               : "unseen"
             );
 
+
           item.dataset.notificationId =
             notification.id;
+
 
           item.innerHTML = `
 
@@ -1826,6 +1969,7 @@ async function loadNotifications(){
 
           `;
 
+
           item.onclick =
             function(){
 
@@ -1841,10 +1985,12 @@ async function loadNotifications(){
                 "seen"
               );
 
+
               const dot =
                 item.querySelector(
                   ".unseen-dot"
                 );
+
 
               if(dot){
 
@@ -1853,7 +1999,9 @@ async function loadNotifications(){
 
               }
 
+
               updateNotificationBadge();
+
 
               if(
                 notification.type ===
@@ -1873,12 +2021,17 @@ async function loadNotifications(){
 
             };
 
+
           notificationList.appendChild(
             item
           );
 
         }
       );
+
+
+    updateNotificationBadge();
+
 
     document.getElementById(
       "notificationTime"
@@ -1903,6 +2056,7 @@ async function loadNotifications(){
 
 }
 
+
 function toggleNotifications(){
 
   const panel =
@@ -1910,22 +2064,12 @@ function toggleNotifications(){
       "notificationPanel"
     );
 
-  const wasClosed =
-    !panel.classList.contains(
-      "show"
-    );
-
   panel.classList.toggle(
     "show"
   );
 
-  if(wasClosed){
-
-    markAllNotificationsSeen();
-
-  }
-
 }
+
 
 document.addEventListener(
   "click",
@@ -1936,10 +2080,12 @@ document.addEventListener(
         ".notification-wrap"
       );
 
+
     const panel =
       document.getElementById(
         "notificationPanel"
       );
+
 
     if(
       wrap &&
@@ -1958,16 +2104,13 @@ document.addEventListener(
 );
 
 
-/* ================================
-   STUDENTS TABLE
-================================ */
-
 function renderStudents(students){
 
   const tableBody =
     document.getElementById(
       "studentTableBody"
     );
+
 
   if(!students.length){
 
@@ -1986,8 +2129,10 @@ function renderStudents(students){
 
   }
 
+
   tableBody.innerHTML =
     "";
+
 
   students.forEach(
     function(student){
@@ -1997,10 +2142,12 @@ function renderStudents(students){
           student.total_fee
         ) || 0;
 
+
       const paidFee =
         Number(
           student.paid_fee
         ) || 0;
+
 
       const remaining =
         Math.max(
@@ -2008,11 +2155,13 @@ function renderStudents(students){
           0
         );
 
+
       let photoHTML = `
         <div class="photo-placeholder">
           👤
         </div>
       `;
+
 
       if(student.photo_url){
 
@@ -2036,13 +2185,16 @@ function renderStudents(students){
 
       }
 
+
       const status =
         String(
           student.status || ""
         ).toLowerCase();
 
+
       let statusClass =
         "active-status";
+
 
       if(
         status === "passout"
@@ -2061,10 +2213,12 @@ function renderStudents(students){
 
       }
 
+
       const row =
         document.createElement(
           "tr"
         );
+
 
       row.innerHTML = `
 
@@ -2152,6 +2306,7 @@ function renderStudents(students){
 
       `;
 
+
       tableBody.appendChild(
         row
       );
@@ -2161,10 +2316,6 @@ function renderStudents(students){
 
 }
 
-
-/* ================================
-   STUDENT SEARCH
-================================ */
 
 document
   .getElementById(
@@ -2178,6 +2329,7 @@ document
         this.value
           .trim()
           .toLowerCase();
+
 
       const filteredStudents =
         allStudents.filter(
@@ -2218,12 +2370,14 @@ document
               )
               .toLowerCase();
 
+
             return searchableText.includes(
               searchText
             );
 
           }
         );
+
 
       renderStudents(
         filteredStudents
@@ -2233,10 +2387,6 @@ document
   );
 
 
-/* ================================
-   DATE FORMAT
-================================ */
-
 function formatDate(value){
 
   if(!value){
@@ -2245,8 +2395,12 @@ function formatDate(value){
 
   }
 
+
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
+
 
   if(
     isNaN(
@@ -2257,6 +2411,7 @@ function formatDate(value){
     return value;
 
   }
+
 
   return date.toLocaleDateString(
     "en-IN",
@@ -2269,6 +2424,7 @@ function formatDate(value){
 
 }
 
+
 function formatDateTime(value){
 
   if(!value){
@@ -2277,8 +2433,12 @@ function formatDateTime(value){
 
   }
 
+
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
+
 
   if(
     isNaN(
@@ -2289,6 +2449,7 @@ function formatDateTime(value){
     return "";
 
   }
+
 
   return date.toLocaleString(
     "en-IN",
@@ -2303,10 +2464,6 @@ function formatDateTime(value){
 
 }
 
-
-/* ================================
-   SECURITY
-================================ */
 
 function escapeHTML(value){
 
@@ -2342,10 +2499,6 @@ function escapeHTML(value){
 }
 
 
-/* ================================
-   LOGOUT - FIXED
-================================ */
-
 async function logout(){
 
   const confirmLogout =
@@ -2353,29 +2506,37 @@ async function logout(){
       "Are you sure you want to logout?"
     );
 
+
   if(!confirmLogout){
 
     return;
 
   }
 
+
+  /*
+    PEHLE LOCAL OWNER DATA CLEAR
+  */
+
+  clearOwnerLoginData();
+
+
+  /*
+    CURRENT PAGE SESSION CLEAR
+  */
+
+  sessionStorage.clear();
+
+
+  /*
+    SUPABASE LOGOUT
+  */
+
   try{
 
-    const {
-      error
-    } =
     await supabaseClient
       .auth
       .signOut();
-
-    if(error){
-
-      console.error(
-        "Supabase logout error:",
-        error
-      );
-
-    }
 
   }
   catch(error){
@@ -2388,28 +2549,9 @@ async function logout(){
   }
 
 
-  /* Local login data remove */
-
-  localStorage.removeItem(
-    "isLoggedIn"
-  );
-
-  localStorage.removeItem(
-    "userRole"
-  );
-
-  localStorage.removeItem(
-    "kumaun_owner_login"
-  );
-
-  localStorage.removeItem(
-    "supabase.auth.token"
-  );
-
-  sessionStorage.clear();
-
-
-  /* Index page */
+  /*
+    OWNER LOGIN PAGE PAR REDIRECT
+  */
 
   window.location.replace(
     "index.html"
@@ -2417,10 +2559,6 @@ async function logout(){
 
 }
 
-
-/* ================================
-   LOAD DASHBOARD
-================================ */
 
 async function loadDashboardData(){
 
@@ -2431,14 +2569,11 @@ async function loadDashboardData(){
 }
 
 
-/* ================================
-   START DASHBOARD
-================================ */
-
 async function startDashboard(){
 
   const isLoggedIn =
     await checkOwnerLogin();
+
 
   if(!isLoggedIn){
 
@@ -2446,17 +2581,49 @@ async function startDashboard(){
 
   }
 
+
   await loadDashboardData();
 
 }
+
 
 startDashboard();
 
 
 setInterval(
-  function(){
+  async function(){
 
-    loadDashboardData();
+    const savedPortal =
+      localStorage.getItem(
+        "loggedInPortal"
+      );
+
+
+    if(
+      savedPortal !== "owner"
+    ){
+
+      return;
+
+    }
+
+
+    const {
+      data
+    } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+    if(
+      data &&
+      data.session
+    ){
+
+      loadDashboardData();
+
+    }
 
   },
   30000
