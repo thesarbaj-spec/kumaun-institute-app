@@ -401,18 +401,83 @@ body{
 
 </div>
 
+
 <script>
+
+/* =========================================
+   LOGIN SESSION CHECK
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const userRole = localStorage.getItem("userRole");
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+
+  if (isLoggedIn === "true") {
+
+    /* OWNER */
+
+    if (userRole === "owner") {
+
+      window.location.replace("owner-dashboard.html");
+
+    }
+
+
+    /* TEACHER */
+
+    else if (userRole === "teacher") {
+
+      window.location.replace("teacher-dashboard.html");
+
+    }
+
+
+    /* STUDENT */
+
+    else if (userRole === "student") {
+
+      window.location.replace("student-dashboard.html");
+
+    }
+
+  }
+
+});
+
+
+/* =========================================
+   SERVICE WORKER
+========================================= */
+
 if ("serviceWorker" in navigator) {
+
   window.addEventListener("load", function () {
+
     navigator.serviceWorker.register("service-worker.js")
+
       .then(function () {
-        console.log("Service Worker registered successfully");
+
+        console.log(
+          "Service Worker registered successfully"
+        );
+
       })
+
       .catch(function (error) {
-        console.log("Service Worker registration failed:", error);
+
+        console.log(
+          "Service Worker registration failed:",
+          error
+        );
+
       });
+
   });
+
 }
+
 </script>
 
 </body>

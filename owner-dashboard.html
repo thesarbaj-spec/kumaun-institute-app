@@ -147,10 +147,6 @@ body{
   cursor:pointer;
 }
 
-.mark-seen-btn:hover{
-  background:#dbeafe;
-}
-
 .notification-list{
   max-height:350px;
   overflow-y:auto;
@@ -499,142 +495,141 @@ td{
   background:#eef4ff;
 }
 
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#64748b;
+  padding:10px 0 30px;
+}
+
 @media(max-width:1100px){
 
-.cards{
-  grid-template-columns:repeat(3,1fr);
-}
+  .cards{
+    grid-template-columns:repeat(3,1fr);
+  }
 
 }
 
 @media(max-width:900px){
 
-.cards{
-  grid-template-columns:repeat(2,1fr);
-}
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
 
-.content-grid{
-  grid-template-columns:1fr;
-}
+  .content-grid{
+    grid-template-columns:1fr;
+  }
 
-.sidebar{
-  width:200px;
-}
+  .sidebar{
+    width:200px;
+  }
 
 }
 
 @media(max-width:650px){
 
-.header{
-  padding:12px 15px;
-}
+  .header{
+    padding:12px 15px;
+  }
 
-.brand h2{
-  font-size:16px;
-}
+  .brand h2{
+    font-size:16px;
+  }
 
-.brand p{
-  font-size:10px;
-}
+  .brand p{
+    font-size:10px;
+  }
 
-.brand img{
-  width:43px;
-  height:43px;
-}
+  .brand img{
+    width:43px;
+    height:43px;
+  }
 
-.header-right{
-  gap:6px;
-}
+  .header-right{
+    gap:6px;
+  }
 
-.notification-btn{
-  width:37px;
-  height:37px;
-  font-size:18px;
-}
+  .notification-btn{
+    width:37px;
+    height:37px;
+    font-size:18px;
+  }
 
-.logout-btn{
-  padding:8px 10px;
-  font-size:12px;
-}
+  .logout-btn{
+    padding:8px 10px;
+    font-size:12px;
+  }
 
-.notification-panel{
-  position:fixed;
-  top:70px;
-  right:10px;
-  left:10px;
-  width:auto;
-}
+  .notification-panel{
+    position:fixed;
+    top:70px;
+    right:10px;
+    left:10px;
+    width:auto;
+  }
 
-.container{
-  display:block;
-}
+  .container{
+    display:block;
+  }
 
-.sidebar{
-  width:100%;
-  display:flex;
-  overflow-x:auto;
-  padding:10px;
-  border-right:none;
-  border-bottom:1px solid #ddd;
-}
+  .sidebar{
+    width:100%;
+    display:flex;
+    overflow-x:auto;
+    padding:10px;
+    border-right:none;
+    border-bottom:1px solid #ddd;
+  }
 
-.sidebar h3{
-  display:none;
-}
+  .sidebar h3{
+    display:none;
+  }
 
-.menu-btn{
-  min-width:125px;
-  margin-right:5px;
-  margin-bottom:0;
-}
+  .menu-btn{
+    min-width:125px;
+    margin-right:5px;
+    margin-bottom:0;
+  }
 
-.main{
-  padding:15px;
-}
+  .main{
+    padding:15px;
+  }
 
-.welcome h1{
-  font-size:23px;
-}
+  .welcome h1{
+    font-size:23px;
+  }
 
-.cards{
-  grid-template-columns:repeat(2,1fr);
-  gap:9px;
-}
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+    gap:9px;
+  }
 
-.card{
-  padding:13px 10px;
-  border-radius:11px;
-}
+  .card{
+    padding:13px 10px;
+    border-radius:11px;
+  }
 
-.card-icon{
-  font-size:21px;
-  margin-bottom:6px;
-}
+  .card-icon{
+    font-size:21px;
+    margin-bottom:6px;
+  }
 
-.card h3{
-  font-size:11px;
-}
+  .card h3{
+    font-size:11px;
+  }
 
-.number{
-  font-size:20px;
-  margin-top:5px;
-}
+  .number{
+    font-size:20px;
+    margin-top:5px;
+  }
 
-.box{
-  padding:15px;
-}
+  .box{
+    padding:15px;
+  }
 
-.notification-header{
-  flex-wrap:wrap;
-}
-
-
-.footer{
-text-align:center;
-font-size:12px;
-color:#64748b;
-padding:10px 0 30px;
-}
+  .notification-header{
+    flex-wrap:wrap;
+  }
 
 }
 
@@ -654,11 +649,8 @@ padding:10px 0 30px;
     >
 
     <div>
-
       <h2>Kumaun Institute of Computer Education</h2>
-
       <p>Owner Management Dashboard</p>
-
     </div>
 
   </div>
@@ -710,11 +702,9 @@ padding:10px 0 30px;
           id="notificationList"
           class="notification-list"
         >
-
           <div class="notification-empty">
             Loading notifications...
           </div>
-
         </div>
 
       </div>
@@ -763,9 +753,10 @@ padding:10px 0 30px;
       📅 Mark Students Attendance
     </button>
 
-    
-    <button class="menu-btn"
-    onclick="location.href='owner-teachers.html'">
+    <button
+      class="menu-btn"
+      onclick="location.href='owner-teachers.html'"
+    >
       👨‍🏫 Mark Teachers Attendance
     </button>
 
@@ -790,13 +781,13 @@ padding:10px 0 30px;
       ⚙️ Settings
     </button>
 
-      <button
+    <button
       class="menu-btn"
       onclick="location.href='about.html'"
     >
       ℹ️ About
     </button>
-    
+
   </aside>
 
   <main class="main">
@@ -816,13 +807,9 @@ padding:10px 0 30px;
       <div class="card">
 
         <div class="card-icon">👨‍🎓</div>
-
         <h3>Total Students</h3>
 
-        <div
-          class="number"
-          id="totalStudents"
-        >
+        <div class="number" id="totalStudents">
           ...
         </div>
 
@@ -831,13 +818,9 @@ padding:10px 0 30px;
       <div class="card">
 
         <div class="card-icon">🆕</div>
-
         <h3>Monthly New Students</h3>
 
-        <div
-          class="number"
-          id="monthlyNewStudents"
-        >
+        <div class="number" id="monthlyNewStudents">
           ...
         </div>
 
@@ -846,13 +829,9 @@ padding:10px 0 30px;
       <div class="card">
 
         <div class="card-icon">💰</div>
-
         <h3>Fees Collected</h3>
 
-        <div
-          class="number"
-          id="feesCollected"
-        >
+        <div class="number" id="feesCollected">
           ₹0
         </div>
 
@@ -861,13 +840,9 @@ padding:10px 0 30px;
       <div class="card">
 
         <div class="card-icon">⏳</div>
-
         <h3>Pending Fees</h3>
 
-        <div
-          class="number"
-          id="pendingFees"
-        >
+        <div class="number" id="pendingFees">
           ₹0
         </div>
 
@@ -879,7 +854,6 @@ padding:10px 0 30px;
       >
 
         <div class="card-icon">💳</div>
-
         <h3>Fee Payment Requests</h3>
 
         <div
@@ -897,7 +871,6 @@ padding:10px 0 30px;
       >
 
         <div class="card-icon">📮</div>
-
         <h3>New Complaints</h3>
 
         <div
@@ -988,9 +961,7 @@ padding:10px 0 30px;
       <div class="box">
 
         <div class="box-header">
-
           <h2>Quick Actions</h2>
-
         </div>
 
         <div class="actions">
@@ -1030,11 +1001,11 @@ padding:10px 0 30px;
             📮 Complaints Box
           </button>
 
-                    <button
+          <button
             class="action"
             onclick="location.href='about.html'"
           >
-             ℹ️ About
+            ℹ️ About
           </button>
 
         </div>
@@ -1048,9 +1019,7 @@ padding:10px 0 30px;
 </div>
 
 <footer class="footer">
-
-© Kumaun Institute of Computer Education
-
+  © Kumaun Institute of Computer Education
 </footer>
 
 <script>
@@ -1066,6 +1035,41 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_KEY
   );
+
+
+/* ================================
+   OWNER LOGIN CHECK
+================================ */
+
+async function checkOwnerLogin(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth.getSession();
+
+  if(
+    error ||
+    !data.session
+  ){
+
+    window.location.replace(
+      "index.html"
+    );
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+/* ================================
+   NOTIFICATION SYSTEM
+================================ */
 
 let allStudents = [];
 
@@ -1266,6 +1270,11 @@ function updateNotificationBadge(){
 
 }
 
+
+/* ================================
+   LOAD STUDENTS
+================================ */
+
 async function loadStudents(){
 
   const tableBody =
@@ -1439,6 +1448,11 @@ async function loadStudents(){
 
 }
 
+
+/* ================================
+   FEE REQUESTS
+================================ */
+
 async function loadFeeRequests(){
 
   const countElement =
@@ -1518,6 +1532,11 @@ async function loadFeeRequests(){
 
 }
 
+
+/* ================================
+   COMPLAINTS
+================================ */
+
 async function loadComplaints(){
 
   const countElement =
@@ -1594,6 +1613,11 @@ async function loadComplaints(){
   }
 
 }
+
+
+/* ================================
+   NOTIFICATIONS LOAD
+================================ */
 
 async function loadNotifications(){
 
@@ -1933,6 +1957,11 @@ document.addEventListener(
   }
 );
 
+
+/* ================================
+   STUDENTS TABLE
+================================ */
+
 function renderStudents(students){
 
   const tableBody =
@@ -2132,6 +2161,11 @@ function renderStudents(students){
 
 }
 
+
+/* ================================
+   STUDENT SEARCH
+================================ */
+
 document
   .getElementById(
     "studentSearch"
@@ -2197,6 +2231,11 @@ document
 
     }
   );
+
+
+/* ================================
+   DATE FORMAT
+================================ */
 
 function formatDate(value){
 
@@ -2264,6 +2303,11 @@ function formatDateTime(value){
 
 }
 
+
+/* ================================
+   SECURITY
+================================ */
+
 function escapeHTML(value){
 
   return String(
@@ -2297,12 +2341,86 @@ function escapeHTML(value){
 
 }
 
-function logout(){
 
-  window.location.href =
-    "login.html";
+/* ================================
+   LOGOUT - FIXED
+================================ */
+
+async function logout(){
+
+  const confirmLogout =
+    confirm(
+      "Are you sure you want to logout?"
+    );
+
+  if(!confirmLogout){
+
+    return;
+
+  }
+
+  try{
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .auth
+      .signOut();
+
+    if(error){
+
+      console.error(
+        "Supabase logout error:",
+        error
+      );
+
+    }
+
+  }
+  catch(error){
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+
+  /* Local login data remove */
+
+  localStorage.removeItem(
+    "isLoggedIn"
+  );
+
+  localStorage.removeItem(
+    "userRole"
+  );
+
+  localStorage.removeItem(
+    "kumaun_owner_login"
+  );
+
+  localStorage.removeItem(
+    "supabase.auth.token"
+  );
+
+  sessionStorage.clear();
+
+
+  /* Index page */
+
+  window.location.replace(
+    "index.html"
+  );
 
 }
+
+
+/* ================================
+   LOAD DASHBOARD
+================================ */
 
 async function loadDashboardData(){
 
@@ -2312,7 +2430,28 @@ async function loadDashboardData(){
 
 }
 
-loadDashboardData();
+
+/* ================================
+   START DASHBOARD
+================================ */
+
+async function startDashboard(){
+
+  const isLoggedIn =
+    await checkOwnerLogin();
+
+  if(!isLoggedIn){
+
+    return;
+
+  }
+
+  await loadDashboardData();
+
+}
+
+startDashboard();
+
 
 setInterval(
   function(){
