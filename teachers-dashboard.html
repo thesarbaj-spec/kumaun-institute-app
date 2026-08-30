@@ -1620,7 +1620,7 @@ async function loadTeacher() {
 
       setTimeout(() => {
         window.location.replace(
-          "student-login.html"
+          "index.html"
         );
       }, 1200);
 
@@ -2361,7 +2361,7 @@ supabaseClient.auth.onAuthStateChange(
       clearTeacherLoginState();
 
       window.location.replace(
-        "student-login.html"
+        "index.html"
       );
     }
   }
@@ -2398,7 +2398,7 @@ async function logout() {
 
   } finally {
     window.location.replace(
-      "student-login.html"
+      "index.html"
     );
   }
 }
@@ -2505,7 +2505,7 @@ document.addEventListener(
       clearTeacherLoginState();
 
       window.location.replace(
-        "student-login.html"
+        "index.html"
       );
     }
   }
