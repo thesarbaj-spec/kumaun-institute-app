@@ -35,6 +35,10 @@ body{
     color:#172033;
 }
 
+/* =========================
+   LOGIN BOX
+========================= */
+
 .login-box{
     width:100%;
     max-width:420px;
@@ -241,6 +245,10 @@ input:focus{
     margin-bottom:20px;
 }
 
+/* =========================
+   LOADING SCREEN
+========================= */
+
 .loading-screen{
     display:none;
     position:fixed;
@@ -275,13 +283,346 @@ input:focus{
 
 }
 
+/* =========================
+   ABOUT BUTTON
+========================= */
+
+.about-button{
+    width:100%;
+    margin-top:18px;
+    border:1px solid #dbe1ea;
+    background:#f8fafc;
+    color:#172554;
+    padding:12px;
+    border-radius:9px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.about-button:hover{
+    background:#eef2ff;
+    border-color:#94a3b8;
+    transform:translateY(-1px);
+}
+
+/* =========================
+   ABOUT MODAL
+========================= */
+
+.about-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    z-index:10000;
+    padding:15px;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(4px);
+}
+
+.about-overlay.show{
+    display:flex;
+}
+
+.about-modal{
+    width:100%;
+    max-width:850px;
+    max-height:92vh;
+    background:#eef3f8;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 15px 50px rgba(0,0,0,.25);
+    display:flex;
+    flex-direction:column;
+}
+
+/* ABOUT HEADER */
+
+.about-header{
+    background:#172b68;
+    color:white;
+    padding:14px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-shrink:0;
+}
+
+.about-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.about-brand-logo{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:white;
+    padding:3px;
+    object-fit:contain;
+}
+
+.about-brand-text h2{
+    margin:0;
+    font-size:16px;
+}
+
+.about-brand-text p{
+    margin:3px 0 0;
+    font-size:10px;
+    color:#dbe6ff;
+}
+
+.about-close{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.about-close:hover{
+    background:rgba(255,255,255,.25);
+}
+
+/* ABOUT CONTENT */
+
+.about-content{
+    overflow-y:auto;
+    padding:18px;
+    flex:1;
+}
+
+.about-card{
+    background:white;
+    border-radius:17px;
+    padding:22px;
+    margin-bottom:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.about-title{
+    text-align:center;
+    font-size:20px;
+    font-weight:800;
+    color:#10265f;
+    margin-bottom:18px;
+}
+
+/* DEVELOPER */
+
+.developer-photo{
+    display:block;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    object-position:center;
+    margin:0 auto 13px;
+    border:4px solid #172b68;
+    background:#f1f5f9;
+}
+
+.developer-name{
+    text-align:center;
+    font-size:21px;
+    font-weight:800;
+    color:#10265f;
+}
+
+.developer-role{
+    text-align:center;
+    color:#64748b;
+    margin-top:5px;
+    font-size:13px;
+}
+
+/* SOCIAL */
+
+.social-links{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+.social{
+    width:46px;
+    height:46px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    transition:.2s;
+    text-decoration:none;
+}
+
+.social img{
+    width:27px;
+    height:27px;
+    object-fit:contain;
+}
+
+.social:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(0,0,0,.12);
+}
+
+/* INSTITUTE LOGO */
+
+.institute-logo{
+    display:block;
+    width:115px;
+    height:115px;
+    object-fit:contain;
+    margin:0 auto 18px;
+}
+
+/* INFO */
+
+.info{
+    background:#f8fafc;
+    border:1px solid #dce5f0;
+    border-radius:11px;
+    padding:13px;
+    margin-top:10px;
+    line-height:1.6;
+    font-size:13px;
+    color:#334155;
+}
+
+.info strong{
+    display:block;
+    margin-bottom:4px;
+    color:#172b68;
+    font-size:13px;
+}
+
+/* ABOUT FOOTER */
+
+.about-footer{
+    padding:12px 18px 16px;
+    background:white;
+    border-top:1px solid #e2e8f0;
+    flex-shrink:0;
+}
+
+.about-ok{
+    width:100%;
+    border:0;
+    border-radius:10px;
+    background:#172b68;
+    color:white;
+    padding:13px;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.about-ok:hover{
+    background:#1e3a8a;
+}
+
+/* MOBILE ABOUT */
+
+@media(max-width:600px){
+
+    body{
+        padding:15px;
+    }
+
+    .login-box{
+        padding:24px 20px;
+    }
+
+    .about-overlay{
+        padding:8px;
+    }
+
+    .about-modal{
+        max-height:94vh;
+        border-radius:16px;
+    }
+
+    .about-header{
+        padding:11px 13px;
+    }
+
+    .about-brand-logo{
+        width:40px;
+        height:40px;
+    }
+
+    .about-brand-text h2{
+        font-size:13px;
+    }
+
+    .about-brand-text p{
+        font-size:9px;
+    }
+
+    .about-content{
+        padding:10px;
+    }
+
+    .about-card{
+        padding:18px 13px;
+        border-radius:15px;
+    }
+
+    .about-title{
+        font-size:18px;
+    }
+
+    .developer-photo{
+        width:105px;
+        height:105px;
+    }
+
+    .developer-name{
+        font-size:19px;
+    }
+
+    .social{
+        width:43px;
+        height:43px;
+    }
+
+    .social img{
+        width:25px;
+        height:25px;
+    }
+
+    .info{
+        font-size:12px;
+    }
+
+}
+
 </style>
 
 </head>
 
-
 <body>
 
+<!-- =========================
+     LOADING SCREEN
+========================= -->
 
 <div
 id="loadingScreen"
@@ -297,9 +638,11 @@ class="loading-screen"
 </div>
 
 
+<!-- =========================
+     LOGIN BOX
+========================= -->
 
 <div class="login-box">
-
 
     <div class="logo">
 
@@ -311,11 +654,9 @@ class="loading-screen"
     </div>
 
 
-
     <h1>
         Kumaun Institute of Computer Education
     </h1>
-
 
 
     <p class="subtitle">
@@ -323,13 +664,11 @@ class="loading-screen"
     </p>
 
 
-
     <!-- =========================
-         STUDENT LOGIN SECTION
+         STUDENT LOGIN
     ========================== -->
 
     <div id="loginSection">
-
 
         <div
         id="loginMessage"
@@ -337,9 +676,7 @@ class="loading-screen"
         ></div>
 
 
-
         <form id="loginForm">
-
 
             <div class="form-group">
 
@@ -360,7 +697,6 @@ class="loading-screen"
             </div>
 
 
-
             <div class="form-group">
 
                 <label>
@@ -378,7 +714,6 @@ class="loading-screen"
             </div>
 
 
-
             <button
             type="submit"
             id="loginBtn"
@@ -390,7 +725,6 @@ class="loading-screen"
         </form>
 
 
-
         <button
         type="button"
         id="forgotBtn"
@@ -400,11 +734,9 @@ class="loading-screen"
         </button>
 
 
-
         <div class="portal-divider">
             OR
         </div>
-
 
 
         <p class="portal-title">
@@ -412,9 +744,7 @@ class="loading-screen"
         </p>
 
 
-
         <div class="portal-buttons">
-
 
             <button
             type="button"
@@ -425,7 +755,6 @@ class="loading-screen"
             </button>
 
 
-
             <button
             type="button"
             id="teacherLoginBtn"
@@ -434,16 +763,26 @@ class="loading-screen"
                 👨‍🏫 Teacher Login
             </button>
 
-
         </div>
 
+
+        <!-- =========================
+             ABOUT BUTTON
+        ========================== -->
+
+        <button
+        type="button"
+        id="aboutBtn"
+        class="about-button"
+        >
+            ℹ️ About
+        </button>
 
     </div>
 
 
-
     <!-- =========================
-         PASSWORD RESET SECTION
+         PASSWORD RESET
     ========================== -->
 
     <div
@@ -451,12 +790,10 @@ class="loading-screen"
     class="reset-box"
     >
 
-
         <div
         id="resetMessage"
         class="message"
         ></div>
-
 
 
         <p class="small-note">
@@ -469,9 +806,7 @@ class="loading-screen"
         </p>
 
 
-
         <form id="resetForm">
-
 
             <div class="form-group">
 
@@ -491,7 +826,6 @@ class="loading-screen"
             </div>
 
 
-
             <div class="form-group">
 
                 <label>
@@ -507,7 +841,6 @@ class="loading-screen"
             </div>
 
 
-
             <div class="form-group">
 
                 <label>
@@ -521,7 +854,6 @@ class="loading-screen"
                 >
 
             </div>
-
 
 
             <div class="form-group">
@@ -541,7 +873,6 @@ class="loading-screen"
             </div>
 
 
-
             <div class="form-group">
 
                 <label>
@@ -559,7 +890,6 @@ class="loading-screen"
             </div>
 
 
-
             <button
             type="submit"
             id="resetBtn"
@@ -568,9 +898,7 @@ class="loading-screen"
                 Reset Password
             </button>
 
-
         </form>
-
 
 
         <button
@@ -581,24 +909,385 @@ class="loading-screen"
             ← Back to Login
         </button>
 
-
     </div>
-
 
 
     <div class="footer">
-
         © Kumaun Institute of Computer Education
-
     </div>
-
 
 </div>
 
 
+<!-- =====================================================
+     ABOUT POPUP
+====================================================== -->
+
+<div
+id="aboutOverlay"
+class="about-overlay"
+>
+
+    <div class="about-modal">
+
+
+        <!-- ABOUT HEADER -->
+
+        <header class="about-header">
+
+            <div class="about-brand">
+
+                <img
+                class="about-brand-logo"
+                src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+                alt="Kumaun Institute Logo"
+                >
+
+                <div class="about-brand-text">
+
+                    <h2>
+                        Kumaun Institute of Computer Education
+                    </h2>
+
+                    <p>
+                        About
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+            type="button"
+            id="aboutClose"
+            class="about-close"
+            aria-label="Close About"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <!-- ABOUT CONTENT -->
+
+        <main class="about-content">
+
+
+            <!-- DEVELOPER CARD -->
+
+            <section class="about-card">
+
+                <div class="about-title">
+                    👨‍💻 App Developer
+                </div>
+
+
+                <img
+                class="developer-photo"
+                src="https://student-desk.odoo.com/web/image/2137-6a8c7e59/243263.webp?access_token=fbc8f0b8-bfaa-4670-be8e-9ae6879d39c2"
+                alt="Sarbaj - App Developer"
+                >
+
+
+                <div class="developer-name">
+                    Sarbaj
+                </div>
+
+
+                <div class="developer-role">
+                    App Developer & Web Developer
+                </div>
+
+
+                <div class="social-links">
+
+
+                    <a
+                    class="social"
+                    href="https://www.instagram.com/thesarbaj/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Instagram"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/instagram/E4405F"
+                        alt="Instagram"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://www.facebook.com/thesarbaj/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Facebook"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/facebook/1877F2"
+                        alt="Facebook"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://wa.me/918171484740"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="WhatsApp"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/whatsapp/25D366"
+                        alt="WhatsApp"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://www.snapchat.com/add/thesarbaj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Snapchat"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/snapchat/FFFC00"
+                        alt="Snapchat"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://x.com/sarbajofficial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="X"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/x/000000"
+                        alt="X"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://linktr.ee/sarbaj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Linktree"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/linktree/43E660"
+                        alt="Linktree"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://sarbaj.odoo.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Website"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/googlechrome/4285F4"
+                        alt="Website"
+                        >
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- INSTITUTE CARD -->
+
+            <section class="about-card">
+
+                <div class="about-title">
+                    🏫 Institute Details
+                </div>
+
+
+                <img
+                class="institute-logo"
+                src="https://sfgnwdljakmtuyoxmltr.supabase.co/storage/v1/object/public/institute-assets/kumaun%20institute%20logo.png"
+                alt="Kumaun Institute Logo"
+                >
+
+
+                <div class="info">
+
+                    <strong>
+                        Institute Name
+                    </strong>
+
+                    Kumaun Institute of Computer Education
+
+                </div>
+
+
+                <div class="info">
+
+                    <strong>
+                        Owner Name
+                    </strong>
+
+                    Manoj Kumar
+
+                </div>
+
+
+                <div class="info">
+
+                    <strong>
+                        Address
+                    </strong>
+
+                    2nd floor, Kumaun Institute of Computer Education,
+                    near Charlie cafe, Degree College Road,
+                    Khatima, Uttarakhand 262308
+
+                </div>
+
+
+                <div class="info">
+
+                    <strong>
+                        Contact Number
+                    </strong>
+
+                    +91 97192 65658
+
+                </div>
+
+
+                <div class="info">
+
+                    <strong>
+                        Email
+                    </strong>
+
+                    kumauninstitute66@gmail.com
+
+                </div>
+
+
+                <div class="social-links">
+
+
+                    <a
+                    class="social"
+                    href="https://www.instagram.com/manojchand30"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Institute Instagram"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/instagram/E4405F"
+                        alt="Instagram"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://wa.me/919719265658"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Institute WhatsApp"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/whatsapp/25D366"
+                        alt="WhatsApp"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://www.facebook.com/manoj.chand.3150"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Institute Facebook"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/facebook/1877F2"
+                        alt="Facebook"
+                        >
+
+                    </a>
+
+
+                    <a
+                    class="social"
+                    href="https://kumauninstitute.odoo.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Institute Website"
+                    >
+
+                        <img
+                        src="https://cdn.simpleicons.org/googlechrome/4285F4"
+                        alt="Website"
+                        >
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+        <!-- ABOUT OK BUTTON -->
+
+        <div class="about-footer">
+
+            <button
+            type="button"
+            id="aboutOk"
+            class="about-ok"
+            >
+                OK
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
 
 <script>
-
 
 /* =========================================
    SUPABASE CONFIGURATION
@@ -607,10 +1296,8 @@ class="loading-screen"
 const SUPABASE_URL =
     "https://sfgnwdljakmtuyoxmltr.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -626,7 +1313,6 @@ const supabaseClient =
     );
 
 
-
 /* =========================================
    PAGE NAMES
 ========================================= */
@@ -634,14 +1320,11 @@ const supabaseClient =
 const OWNER_LOGIN_PAGE =
     "login.html";
 
-
 const TEACHER_LOGIN_PAGE =
     "teacher-login.html";
 
-
 const STUDENT_DASHBOARD_PAGE =
     "student-dashboard.html";
-
 
 
 /* =========================================
@@ -651,86 +1334,77 @@ const STUDENT_DASHBOARD_PAGE =
 const loadingScreen =
     document.getElementById("loadingScreen");
 
-
 const loadingText =
     document.getElementById("loadingText");
-
 
 const loginSection =
     document.getElementById("loginSection");
 
-
 const resetSection =
     document.getElementById("resetSection");
-
 
 const loginForm =
     document.getElementById("loginForm");
 
-
 const mobileInput =
     document.getElementById("mobile");
-
 
 const passwordInput =
     document.getElementById("password");
 
-
 const loginBtn =
     document.getElementById("loginBtn");
-
 
 const forgotBtn =
     document.getElementById("forgotBtn");
 
-
 const loginMessage =
     document.getElementById("loginMessage");
-
 
 const resetForm =
     document.getElementById("resetForm");
 
-
 const resetMobile =
     document.getElementById("resetMobile");
-
 
 const dob =
     document.getElementById("dob");
 
-
 const joiningDate =
     document.getElementById("joiningDate");
-
 
 const newPassword =
     document.getElementById("newPassword");
 
-
 const confirmPassword =
     document.getElementById("confirmPassword");
-
 
 const resetBtn =
     document.getElementById("resetBtn");
 
-
 const resetMessage =
     document.getElementById("resetMessage");
-
 
 const backBtn =
     document.getElementById("backBtn");
 
-
 const ownerLoginBtn =
     document.getElementById("ownerLoginBtn");
-
 
 const teacherLoginBtn =
     document.getElementById("teacherLoginBtn");
 
+const aboutBtn =
+    document.getElementById("aboutBtn");
+
+const aboutOverlay =
+    document.getElementById("aboutOverlay");
+
+const aboutClose =
+    document.getElementById("aboutClose");
+
+const aboutOk =
+    document.getElementById("aboutOk");
 
 
 /* =========================================
@@ -755,7 +1429,6 @@ function showMessage(
 }
 
 
-
 /* =========================================
    HIDE MESSAGE
 ========================================= */
@@ -766,7 +1439,6 @@ function hideMessage(element){
         "none";
 
 }
-
 
 
 /* =========================================
@@ -789,7 +1461,6 @@ function showLoading(text){
 }
 
 
-
 /* =========================================
    HIDE LOADING
 ========================================= */
@@ -801,7 +1472,6 @@ function hideLoading(){
     );
 
 }
-
 
 
 /* =========================================
@@ -833,19 +1503,11 @@ function clearStudentLocalData(){
 }
 
 
-
 /* =========================================
-   CLEAR OLD OWNER / TEACHER DATA
+   CLEAR OLD PORTAL DATA
 ========================================= */
 
 function clearOldPortalData(){
-
-    /*
-     * IMPORTANT:
-     *
-     * Student Login page par Owner/Teacher
-     * ka old localStorage data ignore karna hai.
-     */
 
     localStorage.removeItem(
         "loggedInPortal"
@@ -870,7 +1532,6 @@ function clearOldPortalData(){
 }
 
 
-
 /* =========================================
    CLEAR ALL STUDENT DATA
 ========================================= */
@@ -884,7 +1545,6 @@ function clearAllStudentData(){
     );
 
 }
-
 
 
 /* =========================================
@@ -901,34 +1561,25 @@ function saveStudentLoginData(
         String(studentId)
     );
 
-
     localStorage.setItem(
         "student_id",
         String(studentId)
     );
-
 
     localStorage.setItem(
         "loggedInStudentId",
         String(studentId)
     );
 
-
     localStorage.setItem(
         "studentAuthUserId",
         String(authUserId)
     );
 
-
     localStorage.setItem(
         "studentLoggedIn",
         "true"
     );
-
-
-    /*
-     * Student ke liye hi portal set hoga.
-     */
 
     localStorage.setItem(
         "loggedInPortal",
@@ -936,7 +1587,6 @@ function saveStudentLoginData(
     );
 
 }
-
 
 
 /* =========================================
@@ -952,6 +1602,109 @@ function redirectToStudentDashboard(){
 }
 
 
+/* =========================================
+   ABOUT POPUP OPEN
+========================================= */
+
+function openAbout(){
+
+    aboutOverlay.classList.add(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================
+   ABOUT POPUP CLOSE
+========================================= */
+
+function closeAbout(){
+
+    aboutOverlay.classList.remove(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================
+   ABOUT BUTTON
+========================================= */
+
+aboutBtn.addEventListener(
+    "click",
+    openAbout
+);
+
+
+/* =========================================
+   ABOUT CLOSE BUTTON
+========================================= */
+
+aboutClose.addEventListener(
+    "click",
+    closeAbout
+);
+
+
+/* =========================================
+   ABOUT OK BUTTON
+========================================= */
+
+aboutOk.addEventListener(
+    "click",
+    closeAbout
+);
+
+
+/* =========================================
+   CLOSE ABOUT BY CLICKING OUTSIDE
+========================================= */
+
+aboutOverlay.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target ===
+            aboutOverlay
+        ){
+
+            closeAbout();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   ESC KEY CLOSE ABOUT
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            closeAbout();
+
+        }
+
+    }
+);
+
 
 /* =========================================
    OWNER LOGIN BUTTON
@@ -961,15 +1714,9 @@ ownerLoginBtn.addEventListener(
     "click",
     function(){
 
-        /*
-         * Student session ko disturb nahi karna.
-         * Sirf Owner Login page open karna hai.
-         */
-
         showLoading(
             "Opening Owner Login..."
         );
-
 
         setTimeout(
             function(){
@@ -985,7 +1732,6 @@ ownerLoginBtn.addEventListener(
 );
 
 
-
 /* =========================================
    TEACHER LOGIN BUTTON
 ========================================= */
@@ -994,15 +1740,9 @@ teacherLoginBtn.addEventListener(
     "click",
     function(){
 
-        /*
-         * Student session ko disturb nahi karna.
-         * Sirf Teacher Login page open karna hai.
-         */
-
         showLoading(
             "Opening Teacher Login..."
         );
-
 
         setTimeout(
             function(){
@@ -1018,7 +1758,6 @@ teacherLoginBtn.addEventListener(
 );
 
 
-
 /* =========================================
    AUTO LOGIN CHECK
 ========================================= */
@@ -1029,29 +1768,10 @@ async function checkExistingLogin(){
         "Checking student login..."
     );
 
-
     try{
-
-        /*
-         * IMPORTANT FIX
-         *
-         * Yahan Owner/Teacher ka
-         * loggedInPortal check NAHI hoga.
-         *
-         * Isliye:
-         *
-         * loggedInPortal = teacher
-         *
-         * hone ke baad bhi Teacher Dashboard
-         * automatic open nahi hoga.
-         */
 
         clearOldPortalData();
 
-
-        /*
-         * SUPABASE SESSION CHECK
-         */
 
         const {
             data,
@@ -1085,12 +1805,6 @@ async function checkExistingLogin(){
                 : null;
 
 
-        /*
-         * SESSION NAHI HAI
-         *
-         * Normal Student Login page show hoga.
-         */
-
         if(
             !session ||
             !session.user
@@ -1105,17 +1819,9 @@ async function checkExistingLogin(){
         }
 
 
-        /*
-         * CURRENT SUPABASE USER
-         */
-
         const authUserId =
             session.user.id;
 
-
-        /*
-         * STUDENTS TABLE ME CHECK
-         */
 
         const {
             data: studentData,
@@ -1149,10 +1855,6 @@ async function checkExistingLogin(){
         }
 
 
-        /*
-         * STUDENT PROFILE MIL GAYI
-         */
-
         if(studentData){
 
             saveStudentLoginData(
@@ -1160,21 +1862,12 @@ async function checkExistingLogin(){
                 authUserId
             );
 
-
             redirectToStudentDashboard();
 
             return;
 
         }
 
-
-        /*
-         * SUPABASE SESSION ACTIVE HAI
-         * LEKIN STUDENT PROFILE NAHI HAI.
-         *
-         * Isliye kisi bhi dashboard par
-         * redirect nahi karna hai.
-         */
 
         clearStudentLocalData();
 
@@ -1197,7 +1890,6 @@ async function checkExistingLogin(){
 }
 
 
-
 /* =========================================
    FORGOT PASSWORD
 ========================================= */
@@ -1210,17 +1902,14 @@ forgotBtn.addEventListener(
             loginMessage
         );
 
-
         loginSection.style.display =
             "none";
-
 
         resetSection.style.display =
             "block";
 
     }
 );
-
 
 
 /* =========================================
@@ -1235,17 +1924,14 @@ backBtn.addEventListener(
             resetMessage
         );
 
-
         resetSection.style.display =
             "none";
-
 
         loginSection.style.display =
             "block";
 
     }
 );
-
 
 
 /* =========================================
@@ -1258,15 +1944,12 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-
         hideMessage(
             loginMessage
         );
 
-
         const mobile =
             mobileInput.value.trim();
-
 
         const password =
             passwordInput.value;
@@ -1305,25 +1988,16 @@ loginForm.addEventListener(
         loginBtn.disabled =
             true;
 
-
         loginBtn.textContent =
             "Logging in...";
 
 
         try{
 
-            /*
-             * STUDENT AUTH EMAIL
-             */
-
             const authEmail =
                 mobile +
                 "@students.kumauninstitute.local";
 
-
-            /*
-             * LOGIN
-             */
 
             const {
                 data: authData,
@@ -1346,21 +2020,17 @@ loginForm.addEventListener(
                     authError
                 );
 
-
                 showMessage(
                     loginMessage,
                     "Mobile number or password is incorrect.",
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
                     "Student Login";
-
 
                 return;
 
@@ -1378,31 +2048,20 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
                     "Student Login";
-
 
                 return;
 
             }
 
 
-            /*
-             * AUTH USER ID
-             */
-
             const authUserId =
                 authData.user.id;
 
-
-            /*
-             * STUDENT PROFILE CHECK
-             */
 
             const {
                 data: studentData,
@@ -1425,14 +2084,11 @@ loginForm.addEventListener(
                     studentError
                 );
 
-
                 await supabaseClient
                     .auth
                     .signOut();
 
-
                 clearAllStudentData();
-
 
                 showMessage(
                     loginMessage,
@@ -1440,14 +2096,11 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
                     "Student Login";
-
 
                 return;
 
@@ -1460,9 +2113,7 @@ loginForm.addEventListener(
                     .auth
                     .signOut();
 
-
                 clearAllStudentData();
-
 
                 showMessage(
                     loginMessage,
@@ -1470,33 +2121,22 @@ loginForm.addEventListener(
                     "error"
                 );
 
-
                 loginBtn.disabled =
                     false;
 
-
                 loginBtn.textContent =
                     "Student Login";
-
 
                 return;
 
             }
 
 
-            /*
-             * SAVE STUDENT DATA
-             */
-
             saveStudentLoginData(
                 studentData.id,
                 authUserId
             );
 
-
-            /*
-             * SUCCESS
-             */
 
             showMessage(
                 loginMessage,
@@ -1522,17 +2162,14 @@ loginForm.addEventListener(
                 error
             );
 
-
             showMessage(
                 loginMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
-
             loginBtn.disabled =
                 false;
-
 
             loginBtn.textContent =
                 "Student Login";
@@ -1541,7 +2178,6 @@ loginForm.addEventListener(
 
     }
 );
-
 
 
 /* =========================================
@@ -1554,27 +2190,21 @@ resetForm.addEventListener(
 
         event.preventDefault();
 
-
         hideMessage(
             resetMessage
         );
 
-
         const mobile =
             resetMobile.value.trim();
-
 
         const dateOfBirth =
             dob.value;
 
-
         const admissionDate =
             joiningDate.value;
 
-
         const password =
             newPassword.value;
-
 
         const confirm =
             confirmPassword.value;
@@ -1655,7 +2285,6 @@ resetForm.addEventListener(
 
         resetBtn.disabled =
             true;
-
 
         resetBtn.textContent =
             "Verifying...";
@@ -1740,14 +2369,11 @@ resetForm.addEventListener(
                     "error"
                 );
 
-
                 resetBtn.disabled =
                     false;
 
-
                 resetBtn.textContent =
                     "Reset Password";
-
 
                 return;
 
@@ -1770,19 +2396,15 @@ resetForm.addEventListener(
                     resetSection.style.display =
                         "none";
 
-
                     loginSection.style.display =
                         "block";
-
 
                     hideMessage(
                         resetMessage
                     );
 
-
                     resetBtn.disabled =
                         false;
-
 
                     resetBtn.textContent =
                         "Reset Password";
@@ -1799,17 +2421,14 @@ resetForm.addEventListener(
                 error
             );
 
-
             showMessage(
                 resetMessage,
                 "Server error. Please try again.",
                 "error"
             );
 
-
             resetBtn.disabled =
                 false;
-
 
             resetBtn.textContent =
                 "Reset Password";
@@ -1820,7 +2439,6 @@ resetForm.addEventListener(
 );
 
 
-
 /* =========================================
    AUTH STATE LISTENER
 ========================================= */
@@ -1829,16 +2447,6 @@ supabaseClient
 .auth
 .onAuthStateChange(
     function(event,session){
-
-        /*
-         * IMPORTANT:
-         *
-         * SIGNED_OUT par sirf student ka data
-         * clear hoga.
-         *
-         * Owner/Teacher ka login is page se
-         * control nahi hoga.
-         */
 
         if(
             event === "SIGNED_OUT"
@@ -1856,13 +2464,11 @@ supabaseClient
 );
 
 
-
 /* =========================================
    START
 ========================================= */
 
 checkExistingLogin();
-
 
 </script>
 
