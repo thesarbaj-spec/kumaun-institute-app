@@ -503,11 +503,6 @@ onclick="location.href='teachers-dashboard.html'"
 
   <h2>📅 Salary Month</h2>
 
-  <p>
-    Kisi bhi month ki salary dekh sakte hain.
-    Salary sirf owner update kar sakta hai.
-  </p>
-
 </div>
 
 <div class="filter-grid">
@@ -630,7 +625,7 @@ onclick="location.href='teachers-dashboard.html'"
   <h2>📊 My Salary Details</h2>
 
   <p>
-    Selected month ki salary information.
+    Selected month salary information.
   </p>
 
 </div>
@@ -699,8 +694,7 @@ onclick="location.href='teachers-dashboard.html'"
   <h2>📋 My Salary History</h2>
 
   <p>
-    Aapki previous aur current months ki salary history.
-    Is section me koi edit option nahi hai.
+    All salary records for this teacher.
   </p>
 
 </div>
@@ -1111,7 +1105,7 @@ function displayCurrentSalary(record){
 async function loadCurrentUser(){
 
   setLoadingText(
-    "Login account verify ho raha hai..."
+    "Login account is being verified..."
   );
 
   const {
@@ -1125,7 +1119,7 @@ async function loadCurrentUser(){
   if(error){
 
     throw new Error(
-      "Login account verify nahi ho saka: " +
+      "Login account is being verified: " +
       error.message
     );
 
@@ -1137,7 +1131,7 @@ async function loadCurrentUser(){
   ){
 
     throw new Error(
-      "Aap logged in nahi hain. Pehle teacher account se login karein."
+      "Not logged in. Please login with your teacher account."
     );
 
   }
@@ -1150,13 +1144,13 @@ async function loadCurrentUser(){
 async function findMyTeacher(){
 
   setLoadingText(
-    "Aapka teacher record search ho raha hai..."
+    "Teacher record searching..."
   );
 
   if(!currentUser){
 
     throw new Error(
-      "Login user available nahi hai."
+      "Login user not available."
     );
 
   }
@@ -1172,7 +1166,7 @@ async function findMyTeacher(){
   if(!userEmail){
 
     throw new Error(
-      "Aapke login account me email available nahi hai."
+      "Email is not available in your login account."
     );
 
   }
@@ -1188,7 +1182,7 @@ async function findMyTeacher(){
   if(error){
 
     throw new Error(
-      "Teachers table read nahi ho paayi: " +
+      "Teachers table not read : " +
       error.message
     );
 
@@ -1200,7 +1194,7 @@ async function findMyTeacher(){
   ){
 
     throw new Error(
-      "Teachers table me koi teacher record nahi mila."
+      "Teacher record not found.."
     );
 
   }
@@ -1273,7 +1267,7 @@ async function loadSelectedSalary(){
 
   showStatus(
     "salaryStatus",
-    "⏳ Salary information load ho rahi hai...",
+    "⏳ Salary information not loaded...",
     "info"
   );
 
@@ -1310,7 +1304,7 @@ async function loadSelectedSalary(){
 
       showStatus(
         "salaryStatus",
-        "✅ Salary information latest record ke according show ho rahi hai.",
+        "✅ Salary information latest record.",
         "success"
       );
 
@@ -1321,7 +1315,7 @@ async function loadSelectedSalary(){
 
       showStatus(
         "salaryStatus",
-        "ℹ️ Is month ke liye owner ne abhi salary record add nahi kiya hai.",
+        "ℹ️ The owner hasn't added the salary record for this month yet.",
         "info"
       );
 
@@ -1349,7 +1343,7 @@ async function loadSelectedSalary(){
 
     showStatus(
       "salaryStatus",
-      "❌ Salary load nahi hui: " +
+      "❌ Salary not loaded: " +
       error.message,
       "error"
     );
@@ -1418,7 +1412,7 @@ async function loadSalaryHistory(){
       tbody.innerHTML =
         '<tr>' +
         '<td colspan="6" class="empty">' +
-        'Is teacher ki abhi salary history nahi hai.' +
+        'The teacher does not have a salary history yet..' +
         '</td>' +
         '</tr>';
 
@@ -1564,7 +1558,7 @@ async function loadSalaryHistory(){
     tbody.innerHTML =
       '<tr>' +
       '<td colspan="6" class="empty">' +
-      '❌ Salary history load nahi hui.' +
+      '❌ Salary history not loaded.' +
       '</td>' +
       '</tr>';
 
@@ -1647,7 +1641,7 @@ async function initializeTeacherSalary(){
       "block";
 
     setLoadingText(
-      "Salary information load ho rahi hai..."
+      "Salary information not loaded..."
     );
 
     await loadSelectedSalary();
@@ -1680,7 +1674,7 @@ async function initializeTeacherSalary(){
 
     showError(
       error.message ||
-      "Teacher dashboard load nahi ho saka."
+      "Teacher dashboard not loaded."
     );
 
   }
