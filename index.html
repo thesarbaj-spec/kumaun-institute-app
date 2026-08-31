@@ -1374,7 +1374,7 @@ loginForm.addEventListener(
 
                 showMessage(
                     loginMessage,
-                    "Login nahi ho paya. Please try again.",
+                    "Login failed. Please try again.",
                     "error"
                 );
 
@@ -1436,7 +1436,7 @@ loginForm.addEventListener(
 
                 showMessage(
                     loginMessage,
-                    "Student profile nahi mili.",
+                    "Student profile not found.",
                     "error"
                 );
 
@@ -1466,7 +1466,7 @@ loginForm.addEventListener(
 
                 showMessage(
                     loginMessage,
-                    "Student profile linked nahi hai.",
+                    "Student profile not linked.",
                     "error"
                 );
 
@@ -1629,7 +1629,7 @@ resetForm.addEventListener(
 
             showMessage(
                 resetMessage,
-                "New password kam se kam 6 characters ka hona chahiye.",
+                "❌ Password must be at least 6 characters long.",
                 "error"
             );
 
@@ -1644,7 +1644,7 @@ resetForm.addEventListener(
 
             showMessage(
                 resetMessage,
-                "New password aur confirm password same nahi hain.",
+                "❌ New password and confirm password do not match.",
                 "error"
             );
 
@@ -1722,7 +1722,7 @@ resetForm.addEventListener(
             catch(jsonError){
 
                 throw new Error(
-                    "Server response invalid hai."
+                    "Server response invalid."
                 );
 
             }
@@ -1736,7 +1736,7 @@ resetForm.addEventListener(
                 showMessage(
                     resetMessage,
                     result.message ||
-                    "Student details match nahi hui.",
+                    "Student details not matched.",
                     "error"
                 );
 
@@ -1756,7 +1756,7 @@ resetForm.addEventListener(
 
             showMessage(
                 resetMessage,
-                "✅ Password successfully reset ho gaya. Ab naye password se login karein.",
+                "✅ Password reset successfully.",
                 "success"
             );
 
