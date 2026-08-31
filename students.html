@@ -502,7 +502,7 @@ async function loadStudents(){
 
   container.innerHTML =
     `<div class="loading">
-      ⏳ Students load ho rahe hain...
+      ⏳ Students loading...
     </div>`;
 
 
@@ -549,7 +549,7 @@ async function loadStudents(){
 
       container.innerHTML =
         `<div class="error">
-          ❌ Students load nahi hue.
+          ❌ Students not loaded .
           <br><br>
           ${escapeHTML(error.message)}
         </div>`;
@@ -579,7 +579,7 @@ async function loadStudents(){
 
     container.innerHTML =
       `<div class="error">
-        ❌ Students load nahi hue.
+        ❌ Students not loaded .
       </div>`;
 
   }
@@ -772,7 +772,7 @@ function renderStudents(
       `<div class="no-data">
         📭
         <br><br>
-        Koi student nahi mila.
+        No students found.
       </div>`;
 
     return;
