@@ -216,9 +216,12 @@ button:disabled{
 
 </head>
 
+
 <body>
 
+
 <div class="login-box">
+
 
     <div class="logo-area">
 
@@ -244,6 +247,7 @@ button:disabled{
     >
 
         <form id="loginForm">
+
 
             <div class="form-group">
 
@@ -314,10 +318,10 @@ button:disabled{
                 class="status"
             ></div>
 
+
         </form>
 
     </div>
-
 
 
     <!-- FORGOT PASSWORD SECTION -->
@@ -435,9 +439,12 @@ button:disabled{
             class="status"
         ></div>
 
+
     </div>
 
+
 </div>
+
 
 
 <script>
@@ -452,6 +459,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
 
+
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
@@ -460,58 +468,68 @@ const supabaseClient =
             auth:{
                 persistSession:true,
                 autoRefreshToken:true,
-                detectSessionInUrl:true
+                detectSessionInUrl:true,
+                storage:window.localStorage
             }
         }
     );
 
 
 /* =========================================
-   CHECK EXISTING LOGIN SESSION
+   TEACHER STORAGE KEYS
 ========================================= */
 
-async function checkExistingTeacherSession(){
+const TEACHER_PORTAL_KEY =
+    "loggedInPortal";
+
+const TEACHER_LOGGED_KEY =
+    "teacherLoggedIn";
+
+const TEACHER_USER_ID_KEY =
+    "teacherAuthUserId";
+
+const TEACHER_EMAIL_KEY =
+    "teacherEmail";
+
+
+/* =========================================
+   SAVE TEACHER LOGIN
+========================================= */
+
+function saveTeacherLogin(user){
 
     try{
 
-        const {
-            data:{
-                session
-            }
-        } =
-        await supabaseClient
-            .auth
-            .getSession();
+        localStorage.setItem(
+            TEACHER_PORTAL_KEY,
+            "teacher"
+        );
 
+        localStorage.setItem(
+            TEACHER_LOGGED_KEY,
+            "true"
+        );
 
-        if(
-            session &&
-            session.user
-        ){
+        localStorage.setItem(
+            TEACHER_USER_ID_KEY,
+            String(
+                user.id || ""
+            )
+        );
 
-            const savedPortal =
-                localStorage.getItem(
-                    "loggedInPortal"
-                );
+        localStorage.setItem(
+            TEACHER_EMAIL_KEY,
+            String(
+                user.email || ""
+            )
+            .trim()
+            .toLowerCase()
+        );
 
+    }catch(error){
 
-            if(
-                savedPortal === "teacher"
-            ){
-
-                window.location.replace(
-                    "teachers-dashboard.html"
-                );
-
-            }
-
-        }
-
-    }
-    catch(error){
-
-        console.error(
-            "Session check error:",
+        console.warn(
+            "Teacher login storage error:",
             error
         );
 
@@ -521,10 +539,151 @@ async function checkExistingTeacherSession(){
 
 
 /* =========================================
-   RUN SESSION CHECK
+   CLEAR TEACHER LOCAL LOGIN
 ========================================= */
 
-checkExistingTeacherSession();
+function clearTeacherLogin(){
+
+    try{
+
+        localStorage.removeItem(
+            TEACHER_PORTAL_KEY
+        );
+
+        localStorage.removeItem(
+            TEACHER_LOGGED_KEY
+        );
+
+        localStorage.removeItem(
+            TEACHER_USER_ID_KEY
+        );
+
+        localStorage.removeItem(
+            TEACHER_EMAIL_KEY
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Teacher local clear error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CHECK EXISTING SUPABASE SESSION
+========================================= */
+
+async function checkExistingTeacherSession(){
+
+    try{
+
+        const result =
+            await supabaseClient.auth.getSession();
+
+
+        if(
+            result.error
+        ){
+
+            console.warn(
+                "Existing session error:",
+                result.error
+            );
+
+            return;
+
+        }
+
+
+        const session =
+            result.data &&
+            result.data.session;
+
+
+        if(
+            session &&
+            session.user
+        ){
+
+            const portal =
+                localStorage.getItem(
+                    TEACHER_PORTAL_KEY
+                );
+
+
+            const loggedIn =
+                localStorage.getItem(
+                    TEACHER_LOGGED_KEY
+                );
+
+
+            /*
+              Agar Supabase session active hai
+              aur teacher portal saved hai,
+              to direct dashboard.
+            */
+
+            if(
+                portal === "teacher" &&
+                loggedIn === "true"
+            ){
+
+                saveTeacherLogin(
+                    session.user
+                );
+
+
+                window.location.replace(
+                    "teachers-dashboard.html"
+                );
+
+                return;
+
+            }
+
+
+            /*
+              Agar Supabase session active hai
+              lekin localStorage missing hai,
+              to bhi teacher session ko
+              continue karne dein.
+            */
+
+            if(
+                session.user.email
+            ){
+
+                saveTeacherLogin(
+                    session.user
+                );
+
+
+                window.location.replace(
+                    "teachers-dashboard.html"
+                );
+
+                return;
+
+            }
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "Existing teacher session check error:",
+            error
+        );
+
+    }
+
+}
 
 
 /* =========================================
@@ -541,6 +700,11 @@ function showStatus(
         document.getElementById(
             elementId
         );
+
+
+    if(!element){
+        return;
+    }
 
 
     element.textContent =
@@ -567,6 +731,11 @@ function hideStatus(
         );
 
 
+    if(!element){
+        return;
+    }
+
+
     element.textContent =
         "";
 
@@ -586,7 +755,6 @@ function showForgotPassword(){
     hideStatus(
         "loginStatus"
     );
-
 
     hideStatus(
         "resetStatus"
@@ -620,7 +788,6 @@ function showLogin(){
     hideStatus(
         "loginStatus"
     );
-
 
     hideStatus(
         "resetStatus"
@@ -726,7 +893,6 @@ document
 
             try{
 
-
                 showStatus(
                     "loginStatus",
                     "Login verify ho raha hai...",
@@ -734,21 +900,29 @@ document
                 );
 
 
-                const {
-                    data,
-                    error
-                } =
-                await supabaseClient
-                    .auth
-                    .signInWithPassword({
+                const result =
+                    await supabaseClient.auth.signInWithPassword({
 
                         email:email,
+
                         password:password
 
                     });
 
 
+                const data =
+                    result.data;
+
+                const error =
+                    result.error;
+
+
                 if(error){
+
+                    console.error(
+                        "Supabase login error:",
+                        error
+                    );
 
                     throw error;
 
@@ -757,40 +931,25 @@ document
 
                 if(
                     !data ||
+                    !data.session ||
                     !data.user
                 ){
 
                     throw new Error(
-                        "Login failed"
+                        "Login session was not created."
                     );
 
                 }
 
 
-                /* SAVE TEACHER LOGIN SESSION */
+                /*
+                  IMPORTANT:
+                  Login successful hone ke baad
+                  signOut NAHI karna hai.
+                */
 
-                localStorage.setItem(
-                    "loggedInPortal",
-                    "teacher"
-                );
-
-
-                localStorage.setItem(
-                    "teacherLoggedIn",
-                    "true"
-                );
-
-
-                localStorage.setItem(
-                    "teacherAuthUserId",
-                    data.user.id
-                );
-
-
-                localStorage.setItem(
-                    "teacherEmail",
-                    data.user.email ||
-                    email
+                saveTeacherLogin(
+                    data.user
                 );
 
 
@@ -809,7 +968,7 @@ document
                         );
 
                     },
-                    700
+                    500
                 );
 
 
@@ -822,29 +981,13 @@ document
                 );
 
 
-                await supabaseClient
-                    .auth
-                    .signOut();
+                /*
+                  Yahan signOut NAHI kar rahe.
+                  Sirf failed login par local
+                  teacher data clear karenge.
+                */
 
-
-                localStorage.removeItem(
-                    "loggedInPortal"
-                );
-
-
-                localStorage.removeItem(
-                    "teacherLoggedIn"
-                );
-
-
-                localStorage.removeItem(
-                    "teacherAuthUserId"
-                );
-
-
-                localStorage.removeItem(
-                    "teacherEmail"
-                );
+                clearTeacherLogin();
 
 
                 showStatus(
@@ -872,7 +1015,6 @@ document
 ========================================= */
 
 async function resetTeacherPassword(){
-
 
     hideStatus(
         "resetStatus"
@@ -988,31 +1130,36 @@ async function resetTeacherPassword(){
 
     try{
 
+        /*
+          VERIFY TEACHER DETAILS
+        */
 
-        /* VERIFY TEACHER DETAILS */
+        const result =
+            await supabaseClient
+                .from("teachers")
+                .select(
+                    "id,name,email,dob,joining_date"
+                )
+                .eq(
+                    "email",
+                    email
+                )
+                .eq(
+                    "dob",
+                    dob
+                )
+                .eq(
+                    "joining_date",
+                    joiningDate
+                )
+                .maybeSingle();
 
-        const {
-            data:teacher,
-            error:teacherError
-        } =
-        await supabaseClient
-            .from("teachers")
-            .select(
-                "id,name,email,dob,joining_date"
-            )
-            .eq(
-                "email",
-                email
-            )
-            .eq(
-                "dob",
-                dob
-            )
-            .eq(
-                "joining_date",
-                joiningDate
-            )
-            .maybeSingle();
+
+        const teacher =
+            result.data;
+
+        const teacherError =
+            result.error;
 
 
         if(teacherError){
@@ -1042,25 +1189,29 @@ async function resetTeacherPassword(){
         );
 
 
-        /* CALL PASSWORD RESET FUNCTION */
+        /*
+          PASSWORD RESET FUNCTION
+        */
 
-        const {
-            data,
-            error:resetError
-        } =
-        await supabaseClient
-            .functions
-            .invoke(
-                "reset-teacher-password",
-                {
-
-                    body:{
-                        email:email,
-                        newPassword:newPassword
+        const resetResult =
+            await supabaseClient
+                .functions
+                .invoke(
+                    "reset-teacher-password",
+                    {
+                        body:{
+                            email:email,
+                            newPassword:newPassword
+                        }
                     }
+                );
 
-                }
-            );
+
+        const data =
+            resetResult.data;
+
+        const resetError =
+            resetResult.error;
 
 
         if(resetError){
@@ -1138,7 +1289,6 @@ async function resetTeacherPassword(){
             2000
         );
 
-
     }
     catch(error){
 
@@ -1167,6 +1317,95 @@ async function resetTeacherPassword(){
     }
 
 }
+
+
+/* =========================================
+   AUTH STATE LISTENER
+========================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    function(event, session){
+
+        console.log(
+            "Teacher Auth Event:",
+            event
+        );
+
+
+        /*
+          SIGNED_IN:
+          Login ko save rakho.
+        */
+
+        if(
+            event === "SIGNED_IN" &&
+            session &&
+            session.user
+        ){
+
+            saveTeacherLogin(
+                session.user
+            );
+
+            return;
+
+        }
+
+
+        /*
+          TOKEN_REFRESHED:
+          Login ko active rakho.
+        */
+
+        if(
+            event === "TOKEN_REFRESHED" &&
+            session &&
+            session.user
+        ){
+
+            saveTeacherLogin(
+                session.user
+            );
+
+            return;
+
+        }
+
+
+        /*
+          SIGNED_OUT:
+          Sirf actual logout par
+          local teacher login clear hoga.
+        */
+
+        if(
+            event === "SIGNED_OUT"
+        ){
+
+            clearTeacherLogin();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   PAGE LOAD
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        /*
+          Existing Supabase session check.
+        */
+
+        checkExistingTeacherSession();
+
+    }
+);
 
 </script>
 
