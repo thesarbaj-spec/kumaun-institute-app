@@ -1978,7 +1978,7 @@ async function loadTeacher(){
     true;
 
   setLoading(
-    "⏳ Teacher details loading..."
+  "⏳ Teacher details loading..."
   );
 
   hideError();
@@ -2025,7 +2025,7 @@ async function loadTeacher(){
       hideLoading();
 
       showError(
-        "Login account ka email nahi mila."
+        "Email is not available in your login account."
       );
 
       return;
@@ -2063,7 +2063,7 @@ async function loadTeacher(){
       hideLoading();
 
       showError(
-        "Teacher details load karte waqt problem aa rahi hai. Page refresh karke try karein."
+        "There is an issue while loading the teacher details. Please refresh the page and try again.."
       );
 
       return;
@@ -2078,7 +2078,7 @@ async function loadTeacher(){
       hideLoading();
 
       showError(
-        "Is login email ke saath teachers table me koi teacher record nahi mila."
+        "No teacher record was found associated with this login email.."
       );
 
       return;
@@ -2106,7 +2106,7 @@ async function loadTeacher(){
     hideLoading();
 
     showError(
-      "Dashboard load nahi ho paya. Please refresh karke try karein."
+      "Dashboard not loaded. Please refresh the page and try again."
     );
 
 
@@ -2976,7 +2976,7 @@ function downloadTeacherIDCard(){
   ){
 
     alert(
-      "Teacher information abhi load nahi hui."
+      "Teacher not loading information ."
     );
 
     return;
@@ -3184,7 +3184,7 @@ async function logout(){
 
   const confirmLogout =
     confirm(
-      "Kya aap logout karna chahte hain?"
+      "Are you sure you want to Logout?"
     );
 
 
