@@ -634,10 +634,6 @@ tr:hover{
 
       <h2>📊 My Attendance Report</h2>
 
-      <p>
-        Yahan sirf aapki attendance report dikhai jayegi.
-      </p>
-
     </div>
 
     <div class="filter-grid">
@@ -791,7 +787,7 @@ tr:hover{
       <h2>📋 Daily Attendance History</h2>
 
       <p>
-        Selected month ki aapki daily attendance details.
+        Selected month daily attendance details.
       </p>
 
     </div>
@@ -1160,7 +1156,7 @@ async function loadLoggedInTeacher(){
     if(!teacherEmail){
 
       showError(
-        "❌ Teacher login information nahi mili. Please dobara teacher dashboard se login karein."
+        "❌ Teacher login information not found.Please log in again from the teacher dashboard."
       );
 
       document.getElementById(
@@ -1215,7 +1211,7 @@ async function loadLoggedInTeacher(){
     if(!data){
 
       showError(
-        "❌ Is email se teacher record nahi mila: " +
+        "❌No teacher record was found for this email: " +
         teacherEmail
       );
 
@@ -1419,7 +1415,7 @@ async function loadReport(){
   if(!loggedInTeacher){
 
     showError(
-      "❌ Teacher information available nahi hai."
+      "❌ Teacher information not available ."
     );
 
     return;
@@ -1450,7 +1446,7 @@ async function loadReport(){
   if(!teacherId){
 
     showError(
-      "❌ Teacher ID nahi mili."
+      "❌ Teacher ID not found."
     );
 
     return;
@@ -1552,7 +1548,7 @@ async function loadReport(){
     );
 
     showError(
-      "❌ Attendance report load nahi hui: " +
+      "❌ Attendance report not loaded: " +
       error.message
     );
 
@@ -1688,7 +1684,7 @@ function updateHistory(records){
     tbody.innerHTML =
       '<tr>' +
       '<td colspan="4" class="empty">' +
-      'Selected month me aapki attendance record nahi mila.' +
+      'Your attendance record was not found for the selected month.' +
       '</td>' +
       '</tr>';
 
