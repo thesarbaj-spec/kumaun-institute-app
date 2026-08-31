@@ -319,6 +319,17 @@ const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
 
 
+/* =========================================
+   IMPORTANT AUTH STORAGE KEY
+
+   Login page aur Owner Dashboard dono
+   mein SAME storageKey hona chahiye.
+========================================= */
+
+const OWNER_AUTH_STORAGE_KEY =
+    "kumaun-institute-owner-auth";
+
+
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
@@ -328,14 +339,14 @@ const supabaseClient =
                 persistSession:true,
                 autoRefreshToken:true,
                 detectSessionInUrl:true,
-                storageKey:"kumaun-institute-owner-auth"
+                storageKey:OWNER_AUTH_STORAGE_KEY
             }
         }
     );
 
 
 /* =========================================
-   PAGE SETTINGS
+   OWNER DASHBOARD PAGE
 ========================================= */
 
 const OWNER_DASHBOARD_PAGE =
@@ -372,7 +383,7 @@ const message =
 
 
 /* =========================================
-   SHOW LOADING
+   LOADING
 ========================================= */
 
 function showLoading(text){
@@ -389,10 +400,6 @@ function showLoading(text){
 }
 
 
-/* =========================================
-   HIDE LOADING
-========================================= */
-
 function hideLoading(){
 
     loadingScreen.classList.remove("show");
@@ -401,7 +408,7 @@ function hideLoading(){
 
 
 /* =========================================
-   SHOW MESSAGE
+   MESSAGE
 ========================================= */
 
 function showMessage(text,type){
@@ -443,10 +450,6 @@ function showMessage(text,type){
 }
 
 
-/* =========================================
-   HIDE MESSAGE
-========================================= */
-
 function hideMessage(){
 
     message.style.display =
@@ -456,7 +459,7 @@ function hideMessage(){
 
 
 /* =========================================
-   SAVE OWNER LOGIN
+   SAVE OWNER LOGIN DATA
 ========================================= */
 
 function saveOwnerLoginData(
@@ -498,10 +501,14 @@ function saveOwnerLoginData(
 
 
 /* =========================================
-   CLEAR ONLY OWNER DATA
+   CLEAR OWNER LOCAL DATA
 ========================================= */
 
 function clearOwnerLocalData(){
+
+    localStorage.removeItem(
+        "loggedInPortal"
+    );
 
     localStorage.removeItem(
         "ownerLoggedIn"
@@ -523,18 +530,6 @@ function clearOwnerLocalData(){
         "userRole"
     );
 
-    if(
-        localStorage.getItem(
-            "loggedInPortal"
-        ) === "owner"
-    ){
-
-        localStorage.removeItem(
-            "loggedInPortal"
-        );
-
-    }
-
 }
 
 
@@ -552,7 +547,11 @@ function openOwnerDashboard(){
 
 
 /* =========================================
-   CHECK OWNER SESSION
+   CHECK EXISTING OWNER LOGIN
+
+   Agar Owner already logged-in hai,
+   login page kabhi nahi dikhega.
+   Direct Dashboard khulega.
 ========================================= */
 
 async function checkExistingOwnerLogin(){
@@ -562,11 +561,6 @@ async function checkExistingOwnerLogin(){
     );
 
     try{
-
-        /*
-           Supabase se current session
-           check karo.
-        */
 
         const {
             data,
@@ -595,10 +589,9 @@ async function checkExistingOwnerLogin(){
             data?.session || null;
 
 
-        /*
-           Agar Supabase session nahi hai
-           to login page normal dikhega.
-        */
+        /* =====================================
+           NO SUPABASE SESSION
+        ===================================== */
 
         if(
             !session ||
@@ -617,11 +610,13 @@ async function checkExistingOwnerLogin(){
         const authUserId =
             session.user.id;
 
+        const authEmail =
+            session.user.email || "";
 
-        /*
-           Local owner login data
-           check karo.
-        */
+
+        /* =====================================
+           LOCAL OWNER DATA
+        ===================================== */
 
         const savedPortal =
             localStorage.getItem(
@@ -639,13 +634,12 @@ async function checkExistingOwnerLogin(){
             );
 
 
-        /*
-           EXACT OWNER SESSION
+        /* =====================================
+           VALID OWNER SESSION
 
-           Agar current Supabase user wahi hai
-           jiske saath Owner login hua tha,
-           to direct Owner Dashboard.
-        */
+           Same user + Owner marker
+           = Direct Dashboard
+        ===================================== */
 
         if(
             savedPortal === "owner" &&
@@ -660,9 +654,12 @@ async function checkExistingOwnerLogin(){
         }
 
 
-        /*
-           Old system compatibility.
-        */
+        /* =====================================
+           COMPATIBILITY
+
+           Agar Supabase session hai aur
+           old owner markers present hain.
+        ===================================== */
 
         const oldLoggedIn =
             localStorage.getItem(
@@ -682,7 +679,7 @@ async function checkExistingOwnerLogin(){
 
             saveOwnerLoginData(
                 authUserId,
-                session.user.email || ""
+                authEmail
             );
 
             openOwnerDashboard();
@@ -692,14 +689,13 @@ async function checkExistingOwnerLogin(){
         }
 
 
-        /*
-           IMPORTANT:
+        /* =====================================
+           SESSION EXISTS BUT OWNER MARKER NAHI
 
-           Agar Supabase session active hai
-           lekin Owner login marker nahi hai,
-           to automatically Owner Dashboard
-           nahi kholenge.
-        */
+           Is situation mein session ko
+           automatically logout nahi karna.
+           Login page show hoga.
+        ===================================== */
 
         hideLoading();
 
@@ -803,15 +799,12 @@ loginForm.addEventListener(
 
         try{
 
-            /*
-               Previous portal markers clear karo.
+            /* =================================
+               OTHER PORTAL LOCAL MARKERS CLEAR
 
-               Supabase session ko yahan
-               blindly signOut nahi karenge,
-               kyunki wahi session Owner login
-               ke baad browser reopen par
-               persist hona hai.
-            */
+               Owner login ko Teacher/Student
+               login ke saath mix nahi karenge.
+            ================================= */
 
             localStorage.removeItem(
                 "teacherLoggedIn"
@@ -820,7 +813,6 @@ loginForm.addEventListener(
             localStorage.removeItem(
                 "teacherAuthUserId"
             );
-
 
             localStorage.removeItem(
                 "studentLoggedIn"
@@ -831,30 +823,37 @@ loginForm.addEventListener(
             );
 
 
-            /*
-               Existing logged-in Owner ho aur
-               different email se login kar raha ho
-               to current session replace karna hai.
-            */
+            /* =================================
+               CURRENT SUPABASE SESSION CHECK
+            ================================= */
 
-            const currentSessionResult =
-                await supabaseClient
-                    .auth
-                    .getSession();
+            const {
+                data:sessionData
+            } =
+            await supabaseClient
+                .auth
+                .getSession();
 
 
             const currentSession =
-                currentSessionResult
-                    ?.data
-                    ?.session;
+                sessionData?.session || null;
 
+
+            /* =================================
+               DIFFERENT USER LOGGED IN
+
+               Sirf tab signOut karenge jab
+               current account alag ho.
+            ================================= */
 
             if(
                 currentSession &&
                 currentSession.user &&
                 currentSession.user.email &&
-                currentSession.user.email.toLowerCase()
-                !== email.toLowerCase()
+                currentSession.user.email
+                    .toLowerCase()
+                !==
+                email.toLowerCase()
             ){
 
                 await supabaseClient
@@ -864,9 +863,9 @@ loginForm.addEventListener(
             }
 
 
-            /*
+            /* =================================
                OWNER LOGIN
-            */
+            ================================= */
 
             const {
                 data,
@@ -927,14 +926,80 @@ loginForm.addEventListener(
             }
 
 
-            /*
-               OWNER LOGIN SUCCESS
-            */
+            /* =================================
+               SAVE OWNER SESSION
+            ================================= */
 
             saveOwnerLoginData(
                 data.user.id,
                 data.user.email || email
             );
+
+
+            /* =================================
+               VERIFY SESSION ONCE
+
+               Redirect se pehle ensure karte hain
+               ki Supabase session actually save ho
+               chuki hai.
+            ================================= */
+
+            const {
+                data:verifyData,
+                error:verifyError
+            } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+            if(
+                verifyError ||
+                !verifyData ||
+                !verifyData.session ||
+                !verifyData.session.user
+            ){
+
+                showMessage(
+                    "❌ Session save nahi hui. Please try again.",
+                    "error"
+                );
+
+                loginBtn.disabled =
+                    false;
+
+                loginBtn.textContent =
+                    "Login to Dashboard";
+
+                return;
+
+            }
+
+
+            /* =================================
+               FINAL OWNER ID CHECK
+            ================================= */
+
+            if(
+                verifyData.session.user.id
+                !==
+                data.user.id
+            ){
+
+                showMessage(
+                    "❌ Owner session verification failed.",
+                    "error"
+                );
+
+                loginBtn.disabled =
+                    false;
+
+                loginBtn.textContent =
+                    "Login to Dashboard";
+
+                return;
+
+            }
 
 
             showMessage(
@@ -943,13 +1008,20 @@ loginForm.addEventListener(
             );
 
 
+            /* =================================
+               DIRECT DASHBOARD
+
+               Login ke baad index.html
+               par nahi jayega.
+            ================================= */
+
             setTimeout(
                 function(){
 
                     openOwnerDashboard();
 
                 },
-                500
+                300
             );
 
         }
@@ -979,6 +1051,11 @@ loginForm.addEventListener(
 
 /* =========================================
    AUTH STATE LISTENER
+
+   SIGNED_IN par kuch redirect nahi.
+   Login function khud dashboard kholega.
+
+   SIGNED_OUT par owner local data clear.
 ========================================= */
 
 supabaseClient
@@ -986,10 +1063,11 @@ supabaseClient
     .onAuthStateChange(
         function(event,session){
 
-            /*
-               ONLY REAL LOGOUT PAR OWNER DATA
-               CLEAR HOGA.
-            */
+            console.log(
+                "Owner Auth Event:",
+                event
+            );
+
 
             if(
                 event === "SIGNED_OUT"
@@ -1004,7 +1082,7 @@ supabaseClient
 
 
 /* =========================================
-   START
+   START LOGIN PAGE
 ========================================= */
 
 checkExistingOwnerLogin();
