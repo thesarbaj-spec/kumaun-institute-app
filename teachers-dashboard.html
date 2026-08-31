@@ -844,6 +844,7 @@ body{
     </button>
 
     <button
+      type="button"
       class="logout-btn"
       onclick="logout()"
     >
@@ -898,6 +899,7 @@ body{
   >
 
     <div class="notification-empty">
+
       <div class="notification-empty-icon">
         🔔
       </div>
@@ -909,6 +911,7 @@ body{
       <div class="notification-empty-text">
         You are all caught up.
       </div>
+
     </div>
 
   </div>
@@ -1161,6 +1164,7 @@ body{
         class="report-card"
         onclick="go('teacher-salary-report.html')"
       >
+
         <div class="report-icon">
           💰
         </div>
@@ -1179,6 +1183,7 @@ body{
         class="report-card"
         onclick="go('teacher-attendance-report.html')"
       >
+
         <div class="report-icon">
           📊
         </div>
@@ -1233,20 +1238,25 @@ body{
 </div>
 
 <script>
-const SUPABASE_URL = "https://sfgnwdljakmtuyoxmltr.supabase.co";
-const SUPABASE_KEY = "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
+const SUPABASE_URL =
+  "https://sfgnwdljakmtuyoxmltr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
+      }
     }
-  }
-);
+  );
 
 let currentTeacher = null;
 let currentTeacherId = null;
@@ -1256,247 +1266,585 @@ let realtimeChannel = null;
 let teacherLoading = false;
 let dashboardStarted = false;
 let isLoggingOut = false;
+let redirectingToLogin = false;
 
-function formatDate(value) {
-  if (!value) return "-";
 
-  const date = new Date(value);
+/* =========================================
+   CACHE / BACK BUTTON PROTECTION
+========================================= */
 
-  if (isNaN(date.getTime())) {
+function preventDashboardAfterLogout(){
+
+  if(
+    isLoggingOut ||
+    redirectingToLogin
+  ){
+    return;
+  }
+
+  const currentPage =
+    window.location.pathname
+      .split("/")
+      .pop()
+      .toLowerCase();
+
+  if(
+    currentPage !==
+    "teachers-dashboard.html"
+  ){
+    return;
+  }
+
+  supabaseClient.auth.getSession()
+    .then(function(result){
+
+      const session =
+        result &&
+        result.data &&
+        result.data.session;
+
+      if(
+        !session ||
+        !session.user
+      ){
+
+        redirectingToLogin = true;
+
+        clearTeacherLoginState();
+
+        window.location.replace(
+          "index.html"
+        );
+      }
+
+    })
+    .catch(function(){
+
+      redirectingToLogin = true;
+
+      clearTeacherLoginState();
+
+      window.location.replace(
+        "index.html"
+      );
+
+    });
+
+}
+
+
+/* Browser Back / Forward Cache */
+window.addEventListener(
+  "pageshow",
+  function(event){
+
+    if(event.persisted){
+
+      preventDashboardAfterLogout();
+
+      return;
+    }
+
+    preventDashboardAfterLogout();
+
+  }
+);
+
+
+/* Browser Page Show */
+window.addEventListener(
+  "popstate",
+  function(){
+
+    preventDashboardAfterLogout();
+
+  }
+);
+
+
+/* =========================================
+   BASIC FUNCTIONS
+========================================= */
+
+function formatDate(value){
+
+  if(!value){
+    return "-";
+  }
+
+  const date =
+    new Date(value);
+
+  if(
+    isNaN(
+      date.getTime()
+    )
+  ){
     return String(value);
   }
 
-  return date.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  });
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
+    }
+  );
+
 }
 
-function showError(message) {
-  const box = document.getElementById("errorBox");
 
-  if (!box) return;
+function showError(message){
 
-  box.textContent = message;
-  box.style.display = "block";
+  const box =
+    document.getElementById(
+      "errorBox"
+    );
+
+  if(!box){
+    return;
+  }
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
 }
 
-function hideError() {
-  const box = document.getElementById("errorBox");
 
-  if (!box) return;
+function hideError(){
 
-  box.textContent = "";
-  box.style.display = "none";
+  const box =
+    document.getElementById(
+      "errorBox"
+    );
+
+  if(!box){
+    return;
+  }
+
+  box.textContent =
+    "";
+
+  box.style.display =
+    "none";
+
 }
 
-function setLoading(message) {
-  const box = document.getElementById("loadingBox");
 
-  if (!box) return;
+function setLoading(message){
 
-  box.textContent = message;
-  box.style.display = "block";
+  const box =
+    document.getElementById(
+      "loadingBox"
+    );
+
+  if(!box){
+    return;
+  }
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
 }
 
-function hideLoading() {
-  const box = document.getElementById("loadingBox");
 
-  if (!box) return;
+function hideLoading(){
 
-  box.style.display = "none";
+  const box =
+    document.getElementById(
+      "loadingBox"
+    );
+
+  if(!box){
+    return;
+  }
+
+  box.style.display =
+    "none";
+
 }
 
-function go(page) {
-  window.location.href = page;
+
+function go(page){
+
+  if(isLoggingOut){
+    return;
+  }
+
+  window.location.href =
+    page;
+
 }
 
-function getTeacherRedirectKey() {
+
+/* =========================================
+   TEACHER LOGIN STATE
+========================================= */
+
+function getTeacherRedirectKey(){
+
   return "kumaun_teacher_logged_in";
+
 }
 
-function setTeacherLoginState() {
-  sessionStorage.setItem(
-    getTeacherRedirectKey(),
-    "true"
+
+function setTeacherLoginState(){
+
+  try{
+
+    sessionStorage.setItem(
+      getTeacherRedirectKey(),
+      "true"
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Session storage error:",
+      error
+    );
+
+  }
+
+}
+
+
+function clearTeacherLoginState(){
+
+  try{
+
+    sessionStorage.removeItem(
+      getTeacherRedirectKey()
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Session storage clear error:",
+      error
+    );
+
+  }
+
+}
+
+
+function clearTeacherLocalData(){
+
+  try{
+
+    sessionStorage.removeItem(
+      getTeacherRedirectKey()
+    );
+
+    sessionStorage.removeItem(
+      "teacher_id"
+    );
+
+    sessionStorage.removeItem(
+      "teacher_email"
+    );
+
+    sessionStorage.removeItem(
+      "current_teacher"
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Teacher local data clear error:",
+      error
+    );
+
+  }
+
+}
+
+
+function isTeacherDashboardPage(){
+
+  const page =
+    window.location.pathname
+      .split("/")
+      .pop()
+      .toLowerCase();
+
+  return (
+    page ===
+    "teachers-dashboard.html"
   );
+
 }
 
-function clearTeacherLoginState() {
-  sessionStorage.removeItem(
-    getTeacherRedirectKey()
-  );
-}
 
-function isTeacherDashboardPage() {
-  const page = window.location.pathname
-    .split("/")
-    .pop()
-    .toLowerCase();
+/* =========================================
+   GET LOGGED IN USER
+========================================= */
 
-  return page === "teachers-dashboard.html";
-}
+async function getLoggedInUser(){
 
-async function getLoggedInUser() {
-  try {
+  try{
+
     const {
-      data: sessionData,
-      error: sessionError
-    } = await supabaseClient.auth.getSession();
+      data:sessionData,
+      error:sessionError
+    } =
+      await supabaseClient.auth
+        .getSession();
 
-    if (sessionError) {
+    if(sessionError){
+
       console.warn(
         "Session error:",
         sessionError
       );
+
     }
 
-    if (
+    if(
       sessionData &&
       sessionData.session &&
       sessionData.session.user
-    ) {
+    ){
+
       return sessionData.session.user;
+
     }
 
-    const {
-      data: refreshData,
-      error: refreshError
-    } = await supabaseClient.auth.refreshSession();
 
-    if (
+    const {
+      data:refreshData,
+      error:refreshError
+    } =
+      await supabaseClient.auth
+        .refreshSession();
+
+    if(
       refreshError ||
       !refreshData ||
       !refreshData.session ||
       !refreshData.session.user
-    ) {
+    ){
+
       return null;
+
     }
 
     return refreshData.session.user;
 
-  } catch (error) {
+  }catch(error){
+
     console.error(
       "Get logged in user error:",
       error
     );
 
     return null;
+
   }
+
 }
 
-async function getTeacherSerialId(teacherId) {
-  try {
+
+/* =========================================
+   TEACHER SERIAL ID
+========================================= */
+
+async function getTeacherSerialId(
+  teacherId
+){
+
+  try{
+
     const {
       data,
       error
-    } = await supabaseClient
-      .from("teachers")
-      .select("id")
-      .order("id", {
-        ascending: true
-      });
+    } =
+      await supabaseClient
+        .from("teachers")
+        .select("id")
+        .order(
+          "id",
+          {
+            ascending:true
+          }
+        );
 
-    if (error) {
+    if(error){
+
       console.warn(
         "Teacher serial error:",
         error
       );
 
       return "-";
+
     }
 
-    const index = (data || []).findIndex(
-      teacher =>
-        String(teacher.id) ===
-        String(teacherId)
-    );
+    const index =
+      (data || [])
+        .findIndex(
+          teacher =>
+            String(
+              teacher.id
+            ) ===
+            String(
+              teacherId
+            )
+        );
 
-    if (index === -1) {
+    if(index === -1){
+
       return "-";
+
     }
 
     return index + 1;
 
-  } catch (error) {
+  }catch(error){
+
     console.warn(
       "Serial ID failed:",
       error
     );
 
     return "-";
+
   }
+
 }
 
-async function findTeacherByEmail(email) {
-  const cleanEmail = String(email || "")
-    .trim()
-    .toLowerCase();
 
-  if (!cleanEmail) {
-    return {
-      teacher: null,
-      error: null
+/* =========================================
+   FIND TEACHER
+========================================= */
+
+async function findTeacherByEmail(
+  email
+){
+
+  const cleanEmail =
+    String(
+      email || ""
+    )
+      .trim()
+      .toLowerCase();
+
+  if(!cleanEmail){
+
+    return{
+      teacher:null,
+      error:null
     };
+
   }
 
   const {
     data,
     error
-  } = await supabaseClient
-    .from("teachers")
-    .select(`
-      id,
-      name,
-      email,
-      phone,
-      subject,
-      batch_timing,
-      dob,
-      joining_date,
-      address,
-      photo_url
-    `)
-    .ilike(
-      "email",
-      cleanEmail
-    )
-    .limit(1);
+  } =
+    await supabaseClient
+      .from("teachers")
+      .select(`
+        id,
+        name,
+        email,
+        phone,
+        subject,
+        batch_timing,
+        dob,
+        joining_date,
+        address,
+        photo_url
+      `)
+      .ilike(
+        "email",
+        cleanEmail
+      )
+      .limit(1);
 
-  if (error) {
-    return {
-      teacher: null,
-      error: error
+  if(error){
+
+    return{
+      teacher:null,
+      error:error
     };
+
   }
 
-  if (
+  if(
     data &&
     data.length > 0
-  ) {
-    return {
-      teacher: data[0],
-      error: null
+  ){
+
+    return{
+      teacher:data[0],
+      error:null
     };
+
   }
 
-  return {
-    teacher: null,
-    error: null
+  return{
+    teacher:null,
+    error:null
   };
+
 }
 
-async function displayTeacher(teacher) {
-  currentTeacher = teacher;
-  currentTeacherId = teacher.id;
-  currentTeacherEmail = String(
-    teacher.email || ""
-  )
-    .trim()
-    .toLowerCase();
+
+/* =========================================
+   DISPLAY TEACHER
+========================================= */
+
+async function displayTeacher(
+  teacher
+){
+
+  currentTeacher =
+    teacher;
+
+  currentTeacherId =
+    teacher.id;
+
+  currentTeacherEmail =
+    String(
+      teacher.email || ""
+    )
+      .trim()
+      .toLowerCase();
 
   setTeacherLoginState();
+
+  try{
+
+    sessionStorage.setItem(
+      "teacher_id",
+      String(
+        teacher.id
+      )
+    );
+
+    sessionStorage.setItem(
+      "teacher_email",
+      currentTeacherEmail
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Teacher session data save error:",
+      error
+    );
+
+  }
+
 
   const name =
     teacher.name ||
@@ -1504,7 +1852,9 @@ async function displayTeacher(teacher) {
 
   document.getElementById(
     "welcomeTeacherName"
-  ).textContent = name;
+  ).textContent =
+    name;
+
 
   const serialId =
     await getTeacherSerialId(
@@ -1513,11 +1863,13 @@ async function displayTeacher(teacher) {
 
   document.getElementById(
     "cardId"
-  ).textContent = serialId;
+  ).textContent =
+    serialId;
 
   document.getElementById(
     "cardName"
-  ).textContent = name;
+  ).textContent =
+    name;
 
   document.getElementById(
     "cardEmail"
@@ -1558,16 +1910,23 @@ async function displayTeacher(teacher) {
   ).textContent =
     teacher.address || "-";
 
+
   const photoBox =
     document.getElementById(
       "teacherPhoto"
     );
 
-  if (teacher.photo_url) {
-    photoBox.innerHTML = "";
+  if(
+    teacher.photo_url
+  ){
+
+    photoBox.innerHTML =
+      "";
 
     const img =
-      document.createElement("img");
+      document.createElement(
+        "img"
+      );
 
     img.src =
       teacher.photo_url;
@@ -1575,29 +1934,48 @@ async function displayTeacher(teacher) {
     img.alt =
       "Teacher Photo";
 
-    img.onerror = function () {
-      photoBox.innerHTML =
-        '<div class="id-photo-placeholder">👤</div>';
-    };
+    img.onerror =
+      function(){
 
-    photoBox.appendChild(img);
+        photoBox.innerHTML =
+          '<div class="id-photo-placeholder">👤</div>';
 
-  } else {
+      };
+
+    photoBox.appendChild(
+      img
+    );
+
+  }else{
+
     photoBox.innerHTML =
       '<div class="id-photo-placeholder">👤</div>';
+
   }
 
   hideError();
 
   await loadNotifications();
+
 }
 
-async function loadTeacher() {
-  if (teacherLoading) {
+
+/* =========================================
+   LOAD TEACHER
+========================================= */
+
+async function loadTeacher(){
+
+  if(
+    teacherLoading
+  ){
+
     return;
+
   }
 
-  teacherLoading = true;
+  teacherLoading =
+    true;
 
   setLoading(
     "⏳ Teacher details load ho rahi hain..."
@@ -1605,27 +1983,32 @@ async function loadTeacher() {
 
   hideError();
 
-  try {
+
+  try{
+
     const user =
       await getLoggedInUser();
 
-    if (!user) {
+
+    if(
+      !user
+    ){
+
       clearTeacherLoginState();
 
       hideLoading();
 
-      showError(
-        "Teacher login session nahi mili. Login page par redirect kiya ja raha hai."
+      redirectingToLogin =
+        true;
+
+      window.location.replace(
+        "index.html"
       );
 
-      setTimeout(() => {
-        window.location.replace(
-          "index.html"
-        );
-      }, 1200);
-
       return;
+
     }
+
 
     const teacherEmail =
       String(
@@ -1634,7 +2017,11 @@ async function loadTeacher() {
         .trim()
         .toLowerCase();
 
-    if (!teacherEmail) {
+
+    if(
+      !teacherEmail
+    ){
+
       hideLoading();
 
       showError(
@@ -1642,21 +2029,32 @@ async function loadTeacher() {
       );
 
       return;
+
     }
 
+
     setTeacherLoginState();
+
+    currentTeacherEmail =
+      teacherEmail;
+
 
     console.log(
       "Teacher logged in:",
       teacherEmail
     );
 
+
     const result =
       await findTeacherByEmail(
         teacherEmail
       );
 
-    if (result.error) {
+
+    if(
+      result.error
+    ){
+
       console.error(
         "Teacher query error:",
         result.error
@@ -1669,9 +2067,14 @@ async function loadTeacher() {
       );
 
       return;
+
     }
 
-    if (!result.teacher) {
+
+    if(
+      !result.teacher
+    ){
+
       hideLoading();
 
       showError(
@@ -1679,7 +2082,9 @@ async function loadTeacher() {
       );
 
       return;
+
     }
+
 
     await displayTeacher(
       result.teacher
@@ -1687,9 +2092,12 @@ async function loadTeacher() {
 
     hideLoading();
 
-    dashboardStarted = true;
+    dashboardStarted =
+      true;
 
-  } catch (error) {
+
+  }catch(error){
+
     console.error(
       "Teacher dashboard error:",
       error
@@ -1701,117 +2109,203 @@ async function loadTeacher() {
       "Dashboard load nahi ho paya. Please refresh karke try karein."
     );
 
-  } finally {
-    teacherLoading = false;
+
+  }finally{
+
+    teacherLoading =
+      false;
+
   }
+
 }
 
-function getSeenKey() {
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+function getSeenKey(){
+
   const teacherKey =
     currentTeacherId ||
     currentTeacherEmail ||
     "unknown_teacher";
 
-  return (
+  return(
     "teacher_notifications_seen_" +
-    String(teacherKey)
+    String(
+      teacherKey
+    )
   );
+
 }
 
-function getSeenNotifications() {
-  try {
+
+function getSeenNotifications(){
+
+  try{
+
     const saved =
       localStorage.getItem(
         getSeenKey()
       );
 
-    if (!saved) {
-      return [];
+    if(!saved){
+
+      return[];
+
     }
 
     const parsed =
-      JSON.parse(saved);
+      JSON.parse(
+        saved
+      );
 
-    return Array.isArray(parsed)
+    return Array.isArray(
+      parsed
+    )
       ? parsed
       : [];
 
-  } catch (error) {
-    return [];
+  }catch(error){
+
+    return[];
+
   }
+
 }
 
-function saveSeenNotifications(list) {
-  try {
+
+function saveSeenNotifications(
+  list
+){
+
+  try{
+
     localStorage.setItem(
       getSeenKey(),
-      JSON.stringify(list)
+      JSON.stringify(
+        list
+      )
     );
-  } catch (error) {
+
+  }catch(error){
+
     console.warn(
       "Notification save error:",
       error
     );
+
   }
+
 }
 
-function isNotificationSeen(id) {
+
+function isNotificationSeen(
+  id
+){
+
   return getSeenNotifications()
-    .includes(String(id));
+    .includes(
+      String(
+        id
+      )
+    );
+
 }
 
-function markNotificationSeen(id) {
-  if (
+
+function markNotificationSeen(
+  id
+){
+
+  if(
     id === undefined ||
     id === null
-  ) {
+  ){
+
     return;
+
   }
 
   const notificationId =
-    String(id);
+    String(
+      id
+    );
 
   const seen =
     getSeenNotifications();
 
-  if (
+  if(
     !seen.includes(
       notificationId
     )
-  ) {
+  ){
+
     seen.push(
       notificationId
     );
+
   }
 
   saveSeenNotifications(
     seen
   );
+
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+
+function escapeHtml(
+  value
+){
+
+  return String(
+    value
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
 }
+
 
 function makeNotificationId(
   source,
   item
-) {
-  if (
+){
+
+  if(
     item.id !== undefined &&
     item.id !== null
-  ) {
-    return (
+  ){
+
+    return(
       source +
       "_" +
-      String(item.id)
+      String(
+        item.id
+      )
     );
+
   }
+
 
   const title =
     item.title ||
@@ -1824,160 +2318,238 @@ function makeNotificationId(
     item.date ||
     "";
 
-  return (
+  return(
     source +
     "_" +
     title +
     "_" +
     date
   );
+
 }
 
-async function loadOwnerNotices() {
-  try {
+
+/* =========================================
+   OWNER NOTICES
+========================================= */
+
+async function loadOwnerNotices(){
+
+  try{
+
     const {
       data,
       error
-    } = await supabaseClient
-      .from("notices")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+    } =
+      await supabaseClient
+        .from("notices")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
-    if (error) {
+    if(error){
+
       console.warn(
         "Notice error:",
         error
       );
 
-      return [];
+      return[];
+
     }
 
     return data || [];
 
-  } catch (error) {
-    return [];
+  }catch(error){
+
+    return[];
+
   }
+
 }
 
-async function loadNormalNotifications() {
-  try {
-    if (!currentTeacherId) {
-      return [];
+
+/* =========================================
+   NORMAL NOTIFICATIONS
+========================================= */
+
+async function loadNormalNotifications(){
+
+  try{
+
+    if(
+      !currentTeacherId
+    ){
+
+      return[];
+
     }
 
     const {
       data,
       error
-    } = await supabaseClient
-      .from("notifications")
-      .select("*")
-      .eq(
-        "teacher_id",
-        currentTeacherId
-      )
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+    } =
+      await supabaseClient
+        .from("notifications")
+        .select("*")
+        .eq(
+          "teacher_id",
+          currentTeacherId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
-    if (error) {
+    if(error){
+
       console.warn(
         "Notification error:",
         error
       );
 
-      return [];
+      return[];
+
     }
 
     return data || [];
 
-  } catch (error) {
-    return [];
+  }catch(error){
+
+    return[];
+
   }
+
 }
 
-function buildOwnerNotification(notice) {
-  return {
-    id: makeNotificationId(
-      "notice",
-      notice
-    ),
+
+/* =========================================
+   BUILD NOTIFICATIONS
+========================================= */
+
+function buildOwnerNotification(
+  notice
+){
+
+  return{
+
+    id:
+      makeNotificationId(
+        "notice",
+        notice
+      ),
+
     title:
       notice.title ||
       notice.notice_title ||
       notice.heading ||
       "Institute Notice",
+
     message:
       notice.message ||
       notice.description ||
       notice.content ||
       "New notice from institute",
+
     created_at:
       notice.created_at ||
       notice.date ||
       null,
-    type: "notice"
+
+    type:
+      "notice"
+
   };
+
 }
 
-function buildNormalNotification(notification) {
-  return {
-    id: makeNotificationId(
-      "notification",
-      notification
-    ),
+
+function buildNormalNotification(
+  notification
+){
+
+  return{
+
+    id:
+      makeNotificationId(
+        "notification",
+        notification
+      ),
+
     title:
       notification.title ||
       notification.subject ||
       notification.type ||
       "Notification",
+
     message:
       notification.message ||
       notification.description ||
       notification.body ||
       "New notification",
+
     created_at:
       notification.created_at ||
       notification.date ||
       null,
+
     type:
       notification.type ||
       "notification"
+
   };
+
 }
 
-async function loadNotifications() {
-  if (!currentTeacher) {
+
+/* =========================================
+   LOAD ALL NOTIFICATIONS
+========================================= */
+
+async function loadNotifications(){
+
+  if(
+    !currentTeacher
+  ){
+
     return;
+
   }
 
-  try {
-    const [
+  try{
+
+    const[
       normalNotifications,
       ownerNotices
-    ] = await Promise.all([
-      loadNormalNotifications(),
-      loadOwnerNotices()
-    ]);
+    ] =
+      await Promise.all([
+        loadNormalNotifications(),
+        loadOwnerNotices()
+      ]);
+
 
     allNotifications = [
+
       ...normalNotifications.map(
         buildNormalNotification
       ),
+
       ...ownerNotices.map(
         buildOwnerNotification
       )
+
     ];
 
+
     allNotifications.sort(
-      (a, b) => {
+      function(a,b){
+
         const dateA =
           new Date(
             a.created_at || 0
@@ -1989,65 +2561,104 @@ async function loadNotifications() {
           ).getTime();
 
         return dateB - dateA;
+
       }
     );
 
+
     const unread =
       allNotifications.filter(
-        notification =>
-          !isNotificationSeen(
-            notification.id
-          )
+        function(notification){
+
+          return(
+            !isNotificationSeen(
+              notification.id
+            )
+          );
+
+        }
       );
+
 
     setNotificationCount(
       unread.length
     );
 
+
     const unreadNotices =
       allNotifications.filter(
-        notification =>
-          notification.type === "notice" &&
-          !isNotificationSeen(
-            notification.id
-          )
+        function(notification){
+
+          return(
+            notification.type ===
+            "notice" &&
+            !isNotificationSeen(
+              notification.id
+            )
+          );
+
+        }
       );
+
 
     setNoticeMenuBadge(
       unreadNotices.length
     );
+
 
     const panel =
       document.getElementById(
         "notificationPanel"
       );
 
-    if (
+
+    if(
       panel &&
       panel.classList.contains(
         "show"
       )
-    ) {
+    ){
+
       renderNotifications();
+
     }
 
-  } catch (error) {
+
+  }catch(error){
+
     console.warn(
       "Notification load error:",
       error
     );
+
   }
+
 }
 
-function setNotificationCount(count) {
+
+/* =========================================
+   NOTIFICATION BADGES
+========================================= */
+
+function setNotificationCount(
+  count
+){
+
   const badge =
     document.getElementById(
       "notificationCount"
     );
 
-  if (!badge) return;
+  if(!badge){
 
-  if (count > 0) {
+    return;
+
+  }
+
+  if(
+    count > 0
+  ){
+
     badge.textContent =
       count > 99
         ? "99+"
@@ -2057,24 +2668,39 @@ function setNotificationCount(count) {
       "show"
     );
 
-  } else {
-    badge.textContent = "0";
+  }else{
+
+    badge.textContent =
+      "0";
 
     badge.classList.remove(
       "show"
     );
+
   }
+
 }
 
-function setNoticeMenuBadge(count) {
+
+function setNoticeMenuBadge(
+  count
+){
+
   const badge =
     document.getElementById(
       "noticeMenuBadge"
     );
 
-  if (!badge) return;
+  if(!badge){
 
-  if (count > 0) {
+    return;
+
+  }
+
+  if(
+    count > 0
+  ){
+
     badge.textContent =
       count > 99
         ? "99+"
@@ -2084,126 +2710,201 @@ function setNoticeMenuBadge(count) {
       "show"
     );
 
-  } else {
-    badge.textContent = "0";
+  }else{
+
+    badge.textContent =
+      "0";
 
     badge.classList.remove(
       "show"
     );
+
   }
+
 }
 
-function renderNotifications() {
+
+/* =========================================
+   RENDER NOTIFICATIONS
+========================================= */
+
+function renderNotifications(){
+
   const list =
     document.getElementById(
       "notificationList"
     );
 
-  if (!list) return;
+  if(!list){
+
+    return;
+
+  }
+
 
   const unread =
     allNotifications.filter(
-      notification =>
-        !isNotificationSeen(
-          notification.id
-        )
+      function(notification){
+
+        return(
+          !isNotificationSeen(
+            notification.id
+          )
+        );
+
+      }
     );
 
-  if (unread.length === 0) {
+
+  if(
+    unread.length === 0
+  ){
+
     list.innerHTML = `
       <div class="notification-empty">
+
         <div class="notification-empty-icon">
           ✅
         </div>
+
         <div class="notification-empty-title">
           All caught up!
         </div>
+
         <div class="notification-empty-text">
           There are no new notifications.
         </div>
+
       </div>
     `;
 
     return;
+
   }
 
+
   list.innerHTML =
-    unread.map(
-      notification => {
-        const date =
-          notification.created_at
-            ? new Date(
-                notification.created_at
-              ).toLocaleString(
-                "en-IN",
-                {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit"
-                }
-              )
-            : "";
+    unread
+      .map(
+        function(notification){
 
-        return `
-          <div class="notification-item unread">
-            <div class="notification-item-title">
-              ${escapeHtml(notification.title)}
+          const date =
+            notification.created_at
+              ? new Date(
+                  notification.created_at
+                ).toLocaleString(
+                  "en-IN",
+                  {
+                    day:"2-digit",
+                    month:"short",
+                    year:"numeric",
+                    hour:"2-digit",
+                    minute:"2-digit"
+                  }
+                )
+              : "";
+
+
+          return `
+            <div class="notification-item unread">
+
+              <div class="notification-item-title">
+                ${escapeHtml(
+                  notification.title
+                )}
+              </div>
+
+              <div class="notification-item-message">
+                ${escapeHtml(
+                  notification.message
+                )}
+              </div>
+
+              <div class="notification-item-date">
+                ${escapeHtml(
+                  date
+                )}
+              </div>
+
+              <button
+                type="button"
+                class="notification-seen-btn"
+                data-id="${escapeHtml(
+                  notification.id
+                )}"
+              >
+                ✓ Seen
+              </button>
+
             </div>
+          `;
 
-            <div class="notification-item-message">
-              ${escapeHtml(notification.message)}
-            </div>
+        }
+      )
+      .join("");
 
-            <div class="notification-item-date">
-              ${escapeHtml(date)}
-            </div>
 
-            <button
-              type="button"
-              class="notification-seen-btn"
-              data-id="${escapeHtml(notification.id)}"
-            >
-              ✓ Seen
-            </button>
-          </div>
-        `;
-      }
-    ).join("");
+  list
+    .querySelectorAll(
+      ".notification-seen-btn"
+    )
+    .forEach(
+      function(button){
 
-  list.querySelectorAll(
-    ".notification-seen-btn"
-  ).forEach(button => {
-    button.addEventListener(
-      "click",
-      async function () {
-        markNotificationSeen(
-          this.dataset.id
+        button.addEventListener(
+          "click",
+          async function(){
+
+            markNotificationSeen(
+              this.dataset.id
+            );
+
+            renderNotifications();
+
+            await loadNotifications();
+
+          }
         );
 
-        renderNotifications();
-
-        await loadNotifications();
       }
     );
-  });
+
 }
 
-async function markAllNotificationsSeen() {
+
+/* =========================================
+   MARK ALL SEEN
+========================================= */
+
+async function markAllNotificationsSeen(){
+
   const seen =
     getSeenNotifications();
 
-  allNotifications.forEach(
-    notification => {
-      const id =
-        String(notification.id);
 
-      if (!seen.includes(id)) {
-        seen.push(id);
+  allNotifications.forEach(
+    function(notification){
+
+      const id =
+        String(
+          notification.id
+        );
+
+      if(
+        !seen.includes(
+          id
+        )
+      ){
+
+        seen.push(
+          id
+        );
+
       }
+
     }
   );
+
 
   saveSeenNotifications(
     seen
@@ -2212,49 +2913,84 @@ async function markAllNotificationsSeen() {
   renderNotifications();
 
   await loadNotifications();
+
 }
 
-function openNotificationPanel() {
+
+/* =========================================
+   NOTIFICATION PANEL
+========================================= */
+
+function openNotificationPanel(){
+
   document
     .getElementById(
       "notificationPanel"
     )
-    .classList.add("show");
+    .classList.add(
+      "show"
+    );
 
   document
     .getElementById(
       "notificationOverlay"
     )
-    .classList.add("show");
+    .classList.add(
+      "show"
+    );
 
   renderNotifications();
+
 }
 
-function closeNotificationPanel() {
+
+function closeNotificationPanel(){
+
   document
     .getElementById(
       "notificationPanel"
     )
-    .classList.remove("show");
+    .classList.remove(
+      "show"
+    );
 
   document
     .getElementById(
       "notificationOverlay"
     )
-    .classList.remove("show");
+    .classList.remove(
+      "show"
+    );
+
 }
 
-function downloadTeacherIDCard() {
-  if (!currentTeacher) {
+
+/* =========================================
+   DOWNLOAD ID
+========================================= */
+
+function downloadTeacherIDCard(){
+
+  if(
+    !currentTeacher
+  ){
+
     alert(
       "Teacher information abhi load nahi hui."
     );
 
     return;
+
   }
 
   window.print();
+
 }
+
+
+/* =========================================
+   NOTIFICATION EVENTS
+========================================= */
 
 document
   .getElementById(
@@ -2262,23 +2998,30 @@ document
   )
   ?.addEventListener(
     "click",
-    function () {
+    function(){
+
       const panel =
         document.getElementById(
           "notificationPanel"
         );
 
-      if (
+      if(
         panel.classList.contains(
           "show"
         )
-      ) {
+      ){
+
         closeNotificationPanel();
-      } else {
+
+      }else{
+
         openNotificationPanel();
+
       }
+
     }
   );
+
 
 document
   .getElementById(
@@ -2289,6 +3032,7 @@ document
     closeNotificationPanel
   );
 
+
 document
   .getElementById(
     "notificationOverlay"
@@ -2297,6 +3041,7 @@ document
     "click",
     closeNotificationPanel
   );
+
 
 document
   .getElementById(
@@ -2307,103 +3052,267 @@ document
     markAllNotificationsSeen
   );
 
+
+/* =========================================
+   SUPABASE AUTH STATE
+========================================= */
+
 supabaseClient.auth.onAuthStateChange(
-  (event, session) => {
+  function(event,session){
+
     console.log(
       "Teacher auth event:",
       event
     );
 
-    /*
-      IMPORTANT FIX:
-      Teacher ke SIGNED_IN ya TOKEN_REFRESHED
-      hone par index.html par redirect nahi hoga.
-      Teacher dashboard par hi rahega.
-    */
 
-    if (
+    if(
       event === "SIGNED_IN" &&
       session &&
       session.user
-    ) {
-      setTeacherLoginState();
+    ){
 
-      if (
+      if(
+        !isLoggingOut
+      ){
+
+        setTeacherLoginState();
+
+      }
+
+
+      if(
         isTeacherDashboardPage() &&
         !teacherLoading &&
-        !dashboardStarted
-      ) {
+        !dashboardStarted &&
+        !isLoggingOut
+      ){
+
         setTimeout(
-          () => {
+          function(){
+
             loadTeacher();
+
           },
           200
         );
+
       }
+
     }
 
-    if (
+
+    if(
       event === "TOKEN_REFRESHED" &&
       session &&
       session.user
-    ) {
-      setTeacherLoginState();
+    ){
+
+      if(
+        !isLoggingOut
+      ){
+
+        setTeacherLoginState();
+
+      }
+
     }
+
 
     /*
-      Sirf actual logout ke baad redirect
+      IMPORTANT:
+
+      SIGNED_OUT ke baad sirf
+      index.html par redirect hoga.
+
+      Agar browser back button se
+      dashboard restore hota hai,
+      pageshow/session check usko
+      turant index.html par bhej dega.
     */
 
-    if (
-      event === "SIGNED_OUT" &&
-      isLoggingOut
-    ) {
+    if(
+      event === "SIGNED_OUT"
+    ){
+
       clearTeacherLoginState();
 
-      window.location.replace(
-        "index.html"
-      );
+      clearTeacherLocalData();
+
+      currentTeacher =
+        null;
+
+      currentTeacherId =
+        null;
+
+      currentTeacherEmail =
+        null;
+
+      if(
+        !redirectingToLogin
+      ){
+
+        redirectingToLogin =
+          true;
+
+        window.location.replace(
+          "index.html"
+        );
+
+      }
+
     }
+
   }
 );
 
-async function logout() {
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout(){
+
+  if(
+    isLoggingOut
+  ){
+
+    return;
+
+  }
+
+
   const confirmLogout =
     confirm(
       "Kya aap logout karna chahte hain?"
     );
 
-  if (!confirmLogout) {
+
+  if(
+    !confirmLogout
+  ){
+
     return;
+
   }
 
-  isLoggingOut = true;
 
-  try {
-    if (realtimeChannel) {
-      await supabaseClient.removeChannel(
-        realtimeChannel
-      );
+  isLoggingOut =
+    true;
+
+  redirectingToLogin =
+    true;
+
+
+  try{
+
+    /*
+      Realtime channel band
+    */
+
+    if(
+      realtimeChannel
+    ){
+
+      try{
+
+        await supabaseClient
+          .removeChannel(
+            realtimeChannel
+          );
+
+      }catch(channelError){
+
+        console.warn(
+          "Realtime channel remove error:",
+          channelError
+        );
+
+      }
+
+      realtimeChannel =
+        null;
+
     }
+
+
+    /*
+      Teacher local state clear
+    */
 
     clearTeacherLoginState();
 
-    await supabaseClient.auth.signOut();
+    clearTeacherLocalData();
 
-  } catch (error) {
+
+    currentTeacher =
+      null;
+
+    currentTeacherId =
+      null;
+
+    currentTeacherEmail =
+      null;
+
+    allNotifications =
+      [];
+
+
+    /*
+      Supabase se actual logout
+    */
+
+    const{
+      error
+    } =
+      await supabaseClient.auth
+        .signOut();
+
+
+    if(error){
+
+      console.error(
+        "Supabase logout error:",
+        error
+      );
+
+    }
+
+
+  }catch(error){
+
     console.error(
       "Teacher logout error:",
       error
     );
 
-  } finally {
+
+  }finally{
+
+    /*
+      FINAL redirect:
+      Student Login = index.html
+    */
+
+    clearTeacherLoginState();
+
+    clearTeacherLocalData();
+
     window.location.replace(
       "index.html"
     );
+
   }
+
 }
 
-try {
+
+/* =========================================
+   REALTIME NOTICES
+========================================= */
+
+try{
+
   realtimeChannel =
     supabaseClient
       .channel(
@@ -2412,102 +3321,196 @@ try {
       .on(
         "postgres_changes",
         {
-          event: "*",
-          schema: "public",
-          table: "notices"
+          event:"*",
+          schema:"public",
+          table:"notices"
         },
-        function () {
-          loadNotifications();
+        function(){
+
+          if(
+            !isLoggingOut &&
+            currentTeacher
+          ){
+
+            loadNotifications();
+
+          }
+
         }
       )
       .subscribe();
 
-} catch (error) {
+}catch(error){
+
   console.warn(
     "Realtime unavailable:",
     error
   );
+
 }
 
+
+/* =========================================
+   AUTO REFRESH NOTIFICATIONS
+========================================= */
+
 setInterval(
-  function () {
-    if (
+  function(){
+
+    if(
       currentTeacher &&
+      !isLoggingOut &&
       document.visibilityState ===
         "visible"
-    ) {
+    ){
+
       loadNotifications();
+
     }
+
   },
   10000
 );
 
+
+/* =========================================
+   VISIBILITY CHANGE
+========================================= */
+
 document.addEventListener(
   "visibilitychange",
-  function () {
-    /*
-      Tab wapas open hone par
-      session refresh ke baad bhi
-      teacher dashboard hi rahega.
-    */
+  function(){
 
-    if (
+    if(
       document.visibilityState ===
         "visible"
-    ) {
-      getLoggedInUser()
-        .then(user => {
-          if (
-            user &&
-            user.email
-          ) {
-            setTeacherLoginState();
+    ){
 
-            if (
-              !currentTeacher &&
-              !teacherLoading
-            ) {
-              loadTeacher();
+      if(
+        isLoggingOut
+      ){
+
+        return;
+
+      }
+
+
+      getLoggedInUser()
+        .then(
+          function(user){
+
+            if(
+              isLoggingOut
+            ){
+
+              return;
+
             }
+
+
+            if(
+              user &&
+              user.email
+            ){
+
+              setTeacherLoginState();
+
+              if(
+                !currentTeacher &&
+                !teacherLoading
+              ){
+
+                loadTeacher();
+
+              }
+
+            }else{
+
+              clearTeacherLoginState();
+
+              redirectingToLogin =
+                true;
+
+              window.location.replace(
+                "index.html"
+              );
+
+            }
+
           }
-        })
+        )
         .catch(
-          console.warn
+          function(error){
+
+            console.warn(
+              "Visibility session check error:",
+              error
+            );
+
+          }
         );
+
     }
+
   }
 );
 
-/*
-  IMPORTANT:
-  Page load hote hi teacher session check hogi.
-  Agar valid session hai to dashboard load hoga.
-  Koi bhi condition yahan index.html par redirect nahi karegi.
-*/
+
+/* =========================================
+   PAGE LOAD
+========================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
-  async function () {
-    isLoggingOut = false;
+  async function(){
+
+    isLoggingOut =
+      false;
+
+    redirectingToLogin =
+      false;
+
+    dashboardStarted =
+      false;
+
+
+    /*
+      Browser cache/back se dashboard
+      open hone par pehle session check
+    */
 
     const user =
       await getLoggedInUser();
 
-    if (
+
+    if(
       user &&
       user.email
-    ) {
+    ){
+
       setTeacherLoginState();
 
       await loadTeacher();
 
-    } else {
+    }else{
+
       clearTeacherLoginState();
+
+      clearTeacherLocalData();
+
+      redirectingToLogin =
+        true;
 
       window.location.replace(
         "index.html"
       );
+
     }
+
   }
 );
+
 </script>
+
+</body>
+</html>
