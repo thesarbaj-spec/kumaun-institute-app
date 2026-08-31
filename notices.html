@@ -140,6 +140,29 @@ body{
     line-height:1.5;
     font-size:13px;
     white-space:pre-wrap;
+    word-break:break-word;
+}
+
+/* SENDER */
+
+.notice-sender{
+    margin-top:10px;
+    padding:8px 11px;
+    background:#f0f7ff;
+    border:1px solid #dbeafe;
+    border-radius:9px;
+    color:#1e40af;
+    font-size:12px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.notice-sender-name{
+    color:#172554;
+    font-weight:800;
+    word-break:break-word;
 }
 
 .notice-date{
@@ -265,6 +288,11 @@ body{
         margin-top:8px;
     }
 
+    .notice-sender{
+        font-size:11px;
+        margin-top:8px;
+    }
+
     .notice-date{
         margin-top:8px;
         font-size:10px;
@@ -368,21 +396,15 @@ window.supabase.createClient(
 function formatDateTime(value){
 
     if(!value){
-
         return "";
-
     }
 
     const date =
     new Date(value);
 
-
     if(isNaN(date.getTime())){
-
         return value;
-
     }
-
 
     return date.toLocaleString(
         "en-IN",
@@ -405,7 +427,7 @@ function formatDateTime(value){
 
 function escapeHTML(value){
 
-    return String(value || "")
+    return String(value ?? "")
 
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
@@ -430,6 +452,20 @@ function getNoticeFile(notice){
         notice.attachment_url ||
         ""
 
+    );
+
+}
+
+
+/* =========================================
+   GET SENDER NAME
+========================================= */
+
+function getSenderName(notice){
+
+    return (
+        notice.sender_name ||
+        "Institute"
     );
 
 }
@@ -472,9 +508,7 @@ async function loadNotices(){
 
 
         if(error){
-
             throw error;
-
         }
 
 
@@ -520,6 +554,12 @@ async function loadNotices(){
             "";
 
 
+            const senderName =
+            getSenderName(
+                notice
+            );
+
+
             const dateTime =
             formatDateTime(
                 notice.created_at ||
@@ -538,6 +578,7 @@ async function loadNotices(){
                         <a
                             href="${escapeHTML(fileUrl)}"
                             target="_blank"
+                            rel="noopener noreferrer"
                             class="view-btn"
                         >
                             👁 View Document
@@ -593,6 +634,21 @@ async function loadNotices(){
                     :
                     ""
                 }
+
+
+                <div class="notice-sender">
+
+                    👤
+
+                    <span>
+                        Sent by:
+                    </span>
+
+                    <span class="notice-sender-name">
+                        ${escapeHTML(senderName)}
+                    </span>
+
+                </div>
 
 
                 ${

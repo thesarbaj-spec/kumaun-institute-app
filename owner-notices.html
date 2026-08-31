@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Notice Management | Kumaun Institute</title>
 
@@ -29,7 +24,6 @@ body{
     background:#f1f5f9;
     color:#172554;
 }
-
 
 /* =========================================
    HEADER
@@ -96,7 +90,6 @@ body{
     color:#172b68;
 }
 
-
 /* =========================================
    MAIN
 ========================================= */
@@ -106,7 +99,6 @@ body{
     max-width:1100px;
     margin:25px auto;
 }
-
 
 /* =========================================
    MESSAGE
@@ -132,7 +124,6 @@ body{
     color:#991b1b;
     border:1px solid #fecaca;
 }
-
 
 /* =========================================
    TOP
@@ -160,6 +151,9 @@ body{
     font-weight:700;
 }
 
+.refresh-btn:hover{
+    background:#1e3a8a;
+}
 
 /* =========================================
    BOX
@@ -172,7 +166,6 @@ body{
     margin-bottom:22px;
     box-shadow:0 5px 20px rgba(0,0,0,.06);
 }
-
 
 /* =========================================
    FORM
@@ -260,7 +253,6 @@ textarea{
     cursor:pointer;
 }
 
-
 /* =========================================
    SUMMARY
 ========================================= */
@@ -275,7 +267,6 @@ textarea{
     font-size:14px;
 }
 
-
 /* =========================================
    NOTICE LIST
 ========================================= */
@@ -288,7 +279,7 @@ textarea{
 .notice-card{
     border:1px solid #e2e8f0;
     border-radius:12px;
-    padding:0px 16px;
+    padding:16px;
     background:#fafcff;
 }
 
@@ -297,7 +288,7 @@ textarea{
     justify-content:space-between;
     align-items:flex-start;
     gap:10px;
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 
 .notice-title{
@@ -308,23 +299,33 @@ textarea{
 }
 
 .notice-date{
-    margin-top:4px;
+    margin-top:5px;
     color:#64748b;
     font-size:11px;
+}
+
+.notice-sender{
+    margin-top:7px;
+    color:#1d4ed8;
+    font-size:12px;
+    font-weight:700;
 }
 
 .notice-message{
     color:#334155;
     font-size:13px;
-    line-height:1;
+    line-height:1.6;
     white-space:pre-wrap;
     word-break:break-word;
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid #e2e8f0;
 }
 
 .notice-actions{
     display:flex;
     gap:7px;
-    margin-top:12px;
+    margin-top:14px;
 }
 
 .edit-btn{
@@ -338,6 +339,10 @@ textarea{
     cursor:pointer;
 }
 
+.edit-btn:hover{
+    background:#bfdbfe;
+}
+
 .delete-btn{
     border:0;
     background:#fee2e2;
@@ -347,6 +352,10 @@ textarea{
     font-size:12px;
     font-weight:700;
     cursor:pointer;
+}
+
+.delete-btn:hover{
+    background:#fecaca;
 }
 
 .empty{
@@ -363,7 +372,6 @@ textarea{
     color:#64748b;
 }
 
-
 /* =========================================
    FOOTER
 ========================================= */
@@ -374,7 +382,6 @@ textarea{
     color:#64748b;
     font-size:13px;
 }
-
 
 /* =========================================
    MOBILE
@@ -459,7 +466,6 @@ textarea{
 
     </div>
 
-
     <div>
 
         <div class="header-title">
@@ -473,7 +479,6 @@ textarea{
     </div>
 
 </div>
-
 
 <button
     class="back-btn"
@@ -493,8 +498,6 @@ textarea{
     class="message"
 ></div>
 
-
-
 <!-- TOP -->
 
 <div class="top">
@@ -502,7 +505,6 @@ textarea{
     <h1>
         📢 Notice Management
     </h1>
-
 
     <button
         class="refresh-btn"
@@ -512,8 +514,6 @@ textarea{
     </button>
 
 </div>
-
-
 
 <!-- POST / EDIT NOTICE -->
 
@@ -526,13 +526,32 @@ textarea{
         📢 Post New Notice
     </h2>
 
-
     <p class="form-subtitle">
+        Notice post karte waqt apna naam bhi enter karein,
+        taaki students ko pata chale ki notice kisne bheja hai.
     </p>
-
 
     <form id="noticeForm">
 
+        <!-- SENDER NAME -->
+
+        <div class="form-group">
+
+            <label>
+                👤 Sender Name
+            </label>
+
+            <input
+                type="text"
+                id="senderName"
+                placeholder="Enter your name"
+                maxlength="100"
+                required
+            >
+
+        </div>
+
+        <!-- NOTICE TITLE -->
 
         <div class="form-group">
 
@@ -549,7 +568,7 @@ textarea{
 
         </div>
 
-
+        <!-- NOTICE MESSAGE -->
 
         <div class="form-group">
 
@@ -565,8 +584,6 @@ textarea{
 
         </div>
 
-
-
         <div class="form-actions">
 
             <button
@@ -576,7 +593,6 @@ textarea{
             >
                 📢 Post Notice
             </button>
-
 
             <button
                 type="button"
@@ -589,12 +605,9 @@ textarea{
 
         </div>
 
-
     </form>
 
 </section>
-
-
 
 <!-- ALL NOTICES -->
 
@@ -604,10 +617,9 @@ textarea{
         📋 All Posted Notices
     </h2>
 
-
     <p class="form-subtitle">
+        Yahan sabhi notices sender name ke saath dikhengi.
     </p>
-
 
     <div
         id="noticeSummary"
@@ -615,7 +627,6 @@ textarea{
     >
         Total notices loading...
     </div>
-
 
     <div
         id="noticeList"
@@ -640,7 +651,6 @@ textarea{
 
 <script>
 
-
 /* =========================================
    SUPABASE CONNECTION
 ========================================= */
@@ -648,18 +658,14 @@ textarea{
 const SUPABASE_URL =
     "https://sfgnwdljakmtuyoxmltr.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
-
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
-
-
 
 /* =========================================
    VARIABLES
@@ -668,8 +674,6 @@ const supabaseClient =
 let notices = [];
 
 let editingNoticeId = null;
-
-
 
 /* =========================================
    ESCAPE HTML
@@ -689,8 +693,6 @@ function escapeHTML(value){
 
 }
 
-
-
 /* =========================================
    SHOW MESSAGE
 ========================================= */
@@ -705,10 +707,8 @@ function showMessage(
             "message"
         );
 
-
     message.className =
         "message";
-
 
     if(type === "success"){
 
@@ -725,14 +725,11 @@ function showMessage(
 
     }
 
-
     message.textContent =
         text;
 
-
     message.style.display =
         "block";
-
 
     setTimeout(
         function(){
@@ -746,8 +743,6 @@ function showMessage(
 
 }
 
-
-
 /* =========================================
    FORMAT DATE
 ========================================= */
@@ -760,10 +755,8 @@ function formatDateTime(value){
 
     }
 
-
     const date =
         new Date(value);
-
 
     if(
         isNaN(
@@ -774,7 +767,6 @@ function formatDateTime(value){
         return value;
 
     }
-
 
     return date.toLocaleString(
         "en-IN",
@@ -789,8 +781,6 @@ function formatDateTime(value){
 
 }
 
-
-
 /* =========================================
    LOAD NOTICES
 ========================================= */
@@ -802,14 +792,12 @@ async function loadNotices(){
             "noticeList"
         );
 
-
     noticeList.innerHTML =
         `
         <div class="loading">
             Notices loading...
         </div>
         `;
-
 
     try{
 
@@ -827,17 +815,14 @@ async function loadNotices(){
             }
         );
 
-
         if(error){
 
             throw error;
 
         }
 
-
         notices =
             data || [];
-
 
         displayNotices();
 
@@ -846,7 +831,6 @@ async function loadNotices(){
 
         console.error(error);
 
-
         noticeList.innerHTML =
             `
             <div class="empty">
@@ -854,7 +838,6 @@ async function loadNotices(){
                 ${escapeHTML(error.message)}
             </div>
             `;
-
 
         showMessage(
             "Notices loading failed: " +
@@ -865,8 +848,6 @@ async function loadNotices(){
     }
 
 }
-
-
 
 /* =========================================
    DISPLAY NOTICES
@@ -879,19 +860,16 @@ function displayNotices(){
             "noticeList"
         );
 
-
     const noticeSummary =
         document.getElementById(
             "noticeSummary"
         );
-
 
     noticeSummary.innerHTML =
         `
         📢 Total Notices:
         <strong>${notices.length}</strong>
         `;
-
 
     if(!notices.length){
 
@@ -906,10 +884,8 @@ function displayNotices(){
 
     }
 
-
     noticeList.innerHTML =
         "";
-
 
     notices.forEach(
         function(notice){
@@ -919,10 +895,12 @@ function displayNotices(){
                     "div"
                 );
 
-
             card.className =
                 "notice-card";
 
+            const senderName =
+                notice.sender_name ||
+                "Unknown";
 
             card.innerHTML =
                 `
@@ -940,7 +918,6 @@ function displayNotices(){
 
                         </div>
 
-
                         <div class="notice-date">
 
                             📅 Posted:
@@ -950,10 +927,18 @@ function displayNotices(){
 
                         </div>
 
+                        <div class="notice-sender">
+
+                            👤 Sent by:
+                            ${escapeHTML(
+                                senderName
+                            )}
+
+                        </div>
+
                     </div>
 
                 </div>
-
 
                 <div class="notice-message">
 
@@ -964,23 +949,21 @@ function displayNotices(){
 
                 </div>
 
-
                 <div class="notice-actions">
 
                     <button
                         class="edit-btn"
                         onclick="editNotice(
-                            '${notice.id}'
+                            '${String(notice.id).replace(/'/g,"\\'")}'
                         )"
                     >
                         ✏️ Edit
                     </button>
 
-
                     <button
                         class="delete-btn"
                         onclick="deleteNotice(
-                            '${notice.id}'
+                            '${String(notice.id).replace(/'/g,"\\'")}'
                         )"
                     >
                         🗑 Delete
@@ -990,7 +973,6 @@ function displayNotices(){
 
                 `;
 
-
             noticeList.appendChild(
                 card
             );
@@ -999,8 +981,6 @@ function displayNotices(){
     );
 
 }
-
-
 
 /* =========================================
    POST OR UPDATE NOTICE
@@ -1014,6 +994,12 @@ document.getElementById(
 
         event.preventDefault();
 
+        const senderName =
+            document.getElementById(
+                "senderName"
+            )
+            .value
+            .trim();
 
         const title =
             document.getElementById(
@@ -1022,7 +1008,6 @@ document.getElementById(
             .value
             .trim();
 
-
         const message =
             document.getElementById(
                 "noticeMessage"
@@ -1030,6 +1015,16 @@ document.getElementById(
             .value
             .trim();
 
+        if(!senderName){
+
+            showMessage(
+                "Please enter sender name.",
+                "error"
+            );
+
+            return;
+
+        }
 
         if(!title){
 
@@ -1042,7 +1037,6 @@ document.getElementById(
 
         }
 
-
         if(!message){
 
             showMessage(
@@ -1054,26 +1048,24 @@ document.getElementById(
 
         }
 
-
         const submitBtn =
             document.getElementById(
                 "submitBtn"
             );
 
-
         submitBtn.disabled =
             true;
 
-
         try{
 
-            /* UPDATE NOTICE */
+            /* =====================================
+               UPDATE NOTICE
+            ===================================== */
 
             if(editingNoticeId){
 
                 submitBtn.textContent =
                     "Updating...";
-
 
                 const {
                     error
@@ -1081,6 +1073,8 @@ document.getElementById(
                 await supabaseClient
                 .from("notices")
                 .update({
+
+                    sender_name:senderName,
 
                     title:title,
 
@@ -1092,32 +1086,29 @@ document.getElementById(
                     editingNoticeId
                 );
 
-
                 if(error){
 
                     throw error;
 
                 }
 
-
                 showMessage(
                     "✅ Notice Successfully Updated.",
                     "success"
                 );
 
-
                 cancelEdit();
 
             }
 
-
-            /* POST NEW NOTICE */
+            /* =====================================
+               POST NEW NOTICE
+            ===================================== */
 
             else{
 
                 submitBtn.textContent =
                     "Posting...";
-
 
                 const {
                     error
@@ -1128,6 +1119,8 @@ document.getElementById(
 
                     {
 
+                        sender_name:senderName,
+
                         title:title,
 
                         message:message
@@ -1136,26 +1129,22 @@ document.getElementById(
 
                 ]);
 
-
                 if(error){
 
                     throw error;
 
                 }
 
-
                 document.getElementById(
                     "noticeForm"
                 ).reset();
 
-
                 showMessage(
-                    "✅ Notice Successfully Post.",
+                    "✅ Notice Successfully Posted.",
                     "success"
                 );
 
             }
-
 
             await loadNotices();
 
@@ -1163,7 +1152,6 @@ document.getElementById(
         catch(error){
 
             console.error(error);
-
 
             showMessage(
                 "❌ Notice not saved: " +
@@ -1177,7 +1165,6 @@ document.getElementById(
             submitBtn.disabled =
                 false;
 
-
             submitBtn.textContent =
                 editingNoticeId
                 ? "💾 Update Notice"
@@ -1187,8 +1174,6 @@ document.getElementById(
 
     }
 );
-
-
 
 /* =========================================
    EDIT NOTICE
@@ -1206,7 +1191,6 @@ function editNotice(noticeId){
             }
         );
 
-
     if(!notice){
 
         showMessage(
@@ -1218,40 +1202,38 @@ function editNotice(noticeId){
 
     }
 
-
     editingNoticeId =
         notice.id;
 
+    document.getElementById(
+        "senderName"
+    ).value =
+        notice.sender_name || "";
 
     document.getElementById(
         "noticeTitle"
     ).value =
         notice.title || "";
 
-
     document.getElementById(
         "noticeMessage"
     ).value =
         notice.message || "";
-
 
     document.getElementById(
         "formTitle"
     ).textContent =
         "✏️ Edit Notice";
 
-
     document.getElementById(
         "submitBtn"
     ).textContent =
         "💾 Update Notice";
 
-
     document.getElementById(
         "cancelBtn"
     ).style.display =
         "block";
-
 
     window.scrollTo(
         {
@@ -1262,8 +1244,6 @@ function editNotice(noticeId){
 
 }
 
-
-
 /* =========================================
    CANCEL EDIT
 ========================================= */
@@ -1273,23 +1253,19 @@ function cancelEdit(){
     editingNoticeId =
         null;
 
-
     document.getElementById(
         "noticeForm"
     ).reset();
-
 
     document.getElementById(
         "formTitle"
     ).textContent =
         "📢 Post New Notice";
 
-
     document.getElementById(
         "submitBtn"
     ).textContent =
         "📢 Post Notice";
-
 
     document.getElementById(
         "cancelBtn"
@@ -1297,8 +1273,6 @@ function cancelEdit(){
         "none";
 
 }
-
-
 
 /* =========================================
    DELETE NOTICE
@@ -1316,7 +1290,6 @@ async function deleteNotice(noticeId){
             }
         );
 
-
     if(!notice){
 
         showMessage(
@@ -1328,20 +1301,17 @@ async function deleteNotice(noticeId){
 
     }
 
-
     const confirmDelete =
         confirm(
             "Delete this notice?\n\n" +
             (notice.title || "")
         );
 
-
     if(!confirmDelete){
 
         return;
 
     }
-
 
     try{
 
@@ -1356,19 +1326,16 @@ async function deleteNotice(noticeId){
             notice.id
         );
 
-
         if(error){
 
             throw error;
 
         }
 
-
         showMessage(
-            "🗑 Notice Successfully Delete.",
+            "🗑 Notice Successfully Deleted.",
             "success"
         );
-
 
         if(
             String(editingNoticeId) ===
@@ -1379,14 +1346,12 @@ async function deleteNotice(noticeId){
 
         }
 
-
         await loadNotices();
 
     }
     catch(error){
 
         console.error(error);
-
 
         showMessage(
             "❌ Notice delete failed: " +
@@ -1398,14 +1363,11 @@ async function deleteNotice(noticeId){
 
 }
 
-
-
 /* =========================================
    START
 ========================================= */
 
 loadNotices();
-
 
 </script>
 
