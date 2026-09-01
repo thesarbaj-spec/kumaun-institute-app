@@ -389,7 +389,7 @@ input:focus{
 
 <button
     class="back-btn"
-    onclick="window.location.href='index.html'"
+    onclick="window.location.href='owner-dashboard.html'"
 >
     ← Dashboard
 </button>
@@ -437,10 +437,6 @@ input:focus{
         </div>
 
     </div>
-
-    <p class="section-subtitle">
-        Apna current password verify karke naya password set karein.
-    </p>
 
     <form id="changePasswordForm">
 
@@ -561,23 +557,6 @@ input:focus{
 
     </div>
 
-    <p class="section-subtitle">
-        Current password verify karke Owner login email change karein.
-    </p>
-
-    <div class="reset-note">
-
-        <strong>
-            ⚠️ Important
-        </strong>
-
-        <br>
-
-        Email change hone ke baad Owner Login aur Password Reset
-        dono me naya email use hoga.
-
-    </div>
-
 
     <form id="changeEmailForm">
 
@@ -674,14 +653,6 @@ input:focus{
 
     </div>
 
-    <p class="section-subtitle">
-
-        Agar aap current password bhool gaye hain,
-        to security details verify karke password reset karein.
-
-    </p>
-
-
     <div class="reset-note">
 
         <strong>
@@ -689,11 +660,6 @@ input:focus{
         </strong>
 
         <br>
-
-        Password reset karne ke liye Owner Email,
-        Owner Name, Reset KEY aur Developer Name
-        bilkul database wali information se match honi chahiye.
-
     </div>
 
 
@@ -788,11 +754,6 @@ input:focus{
                 Set New Password
             </h3>
 
-            <p>
-                Verification details submit karne par
-                ye naya password Owner account me set ho jayega.
-            </p>
-
         </div>
 
 
@@ -869,7 +830,7 @@ input:focus{
 
 <footer class="footer">
 
-© 2026 Kumaun Institute of Computer Education
+© Kumaun Institute of Computer Education
 
 </footer>
 
@@ -1033,7 +994,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ New password kam se kam 6 characters ka hona chahiye.",
+                "❌ The new password must be at least 6 characters long.",
                 "error"
             );
 
@@ -1048,7 +1009,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ New Password aur Confirm Password match nahi kar rahe.",
+                "❌ New Password and Confirm Password do not match.",
                 "error"
             );
 
@@ -1091,7 +1052,7 @@ document.getElementById(
             ){
 
                 throw new Error(
-                    "Owner login session nahi mili. Please login again."
+                    "Owner login session not found. Please login again."
                 );
 
             }
@@ -1120,7 +1081,7 @@ document.getElementById(
             if(loginError){
 
                 throw new Error(
-                    "Current password incorrect hai."
+                    "Current password incorrect."
                 );
 
             }
@@ -1156,7 +1117,7 @@ document.getElementById(
 
 
             showMessage(
-                "✅ Password successfully change ho gaya hai.",
+                "✅ Password successfully changed.",
                 "success"
             );
 
@@ -1167,7 +1128,7 @@ document.getElementById(
 
 
             showMessage(
-                "❌ Password change nahi hua: " +
+                "❌ Password not changed: " +
                 error.message,
                 "error"
             );
@@ -1231,7 +1192,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ New Email aur Confirm Email match nahi kar rahe.",
+                "❌ New Email and Confirm Email do not match.",
                 "error"
             );
 
@@ -1274,7 +1235,7 @@ document.getElementById(
             ){
 
                 throw new Error(
-                    "Owner login session nahi mili. Please login again."
+                    "Owner login session not found. Please login again."
                 );
 
             }
@@ -1293,7 +1254,7 @@ document.getElementById(
             ){
 
                 throw new Error(
-                    "Current Owner Email nahi mila."
+                    "Current Owner Email not found."
                 );
 
             }
@@ -1318,7 +1279,7 @@ document.getElementById(
             if(loginError){
 
                 throw new Error(
-                    "Current password incorrect hai."
+                    "Current password incorrect."
                 );
 
             }
@@ -1370,7 +1331,7 @@ document.getElementById(
             if(databaseError){
 
                 throw new Error(
-                    "Auth email update ho gaya, lekin owner_settings update nahi hui: " +
+                    "The email was updated, but owner_settings were not updated: " +
                     databaseError.message
                 );
 
@@ -1383,7 +1344,7 @@ document.getElementById(
 
 
             showMessage(
-                "✅ Owner Email successfully change ho gaya hai. Agar email confirmation required hai to naye email inbox me confirmation complete karein.",
+                "✅ Owner Email successfully changed. If email confirmation is required, please complete the confirmation in your new email inbox.",
                 "success"
             );
 
@@ -1394,7 +1355,7 @@ document.getElementById(
 
 
             showMessage(
-                "❌ Owner Email change nahi hua: " +
+                "❌ Owner Email not changed: " +
                 error.message,
                 "error"
             );
@@ -1481,7 +1442,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ Please sabhi details fill karein.",
+                "❌ Please fill in all details.",
                 "error"
             );
 
@@ -1495,7 +1456,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ New password kam se kam 6 characters ka hona chahiye.",
+                "❌ The new password must be at least 6 characters long.",
                 "error"
             );
 
@@ -1510,7 +1471,7 @@ document.getElementById(
         ){
 
             showMessage(
-                "❌ New Password aur Confirm Password match nahi kar rahe.",
+                "❌ New Password and Confirm Password do not match.",
                 "error"
             );
 
@@ -1589,7 +1550,7 @@ document.getElementById(
 
 
             showMessage(
-                "✅ Password successfully reset ho gaya hai. Ab aap naye password se login kar sakte hain.",
+                "✅ Password successfully reset. You can now login with your new password.",
                 "success"
             );
 
@@ -1600,7 +1561,7 @@ document.getElementById(
 
 
             showMessage(
-                "❌ Password reset nahi hua: " +
+                "❌ Password reset failed: " +
                 error.message,
                 "error"
             );

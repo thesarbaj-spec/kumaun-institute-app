@@ -5,15 +5,11 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Attendance Report | Kumaun Institute</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
 <style>
 
@@ -28,11 +24,6 @@ body{
     background:#f4f6f9;
     color:#222;
 }
-
-
-/* =========================================
-   HEADER
-========================================= */
 
 .header{
     background:#172554;
@@ -80,11 +71,6 @@ body{
     white-space:nowrap;
 }
 
-
-/* =========================================
-   MAIN
-========================================= */
-
 .main{
     padding:25px;
     max-width:1400px;
@@ -99,11 +85,6 @@ body{
     font-size:27px;
 }
 
-
-/* =========================================
-   MESSAGE
-========================================= */
-
 .message{
     display:none;
     padding:12px 15px;
@@ -112,11 +93,6 @@ body{
     background:#fee2e2;
     color:#991b1b;
 }
-
-
-/* =========================================
-   FILTERS
-========================================= */
 
 .filters{
     background:white;
@@ -142,8 +118,7 @@ body{
     margin-bottom:7px;
 }
 
-.filter-box select,
-.filter-box input{
+.filter-box select{
     width:100%;
     padding:12px;
     border:1px solid #d1d5db;
@@ -151,12 +126,8 @@ body{
     outline:none;
     font-size:15px;
     background:white;
+    cursor:pointer;
 }
-
-
-/* =========================================
-   STUDENT INFO
-========================================= */
 
 .student-info{
     background:white;
@@ -187,11 +158,6 @@ body{
     font-size:14px;
     font-weight:bold;
 }
-
-
-/* =========================================
-   SUMMARY
-========================================= */
 
 .summary{
     display:flex;
@@ -224,11 +190,6 @@ body{
     font-weight:bold;
     color:#2563eb;
 }
-
-
-/* =========================================
-   TABLE
-========================================= */
 
 .box{
     background:white;
@@ -290,11 +251,6 @@ td{
     color:#777;
 }
 
-
-/* =========================================
-   MOBILE
-========================================= */
-
 @media(max-width:650px){
 
     .header{
@@ -311,7 +267,7 @@ td{
     }
 
     .brand h2{
-        font-size:15px;
+        font-size:14px;
     }
 
     .brand p{
@@ -368,13 +324,7 @@ td{
 
 </head>
 
-
 <body>
-
-
-<!-- =========================================
-     HEADER
-========================================= -->
 
 <header class="header">
 
@@ -389,7 +339,7 @@ td{
 
         <div>
 
-            <h2>Kumaun Institute</h2>
+            <h2>Kumaun Institute of Computer Education</h2>
 
             <p>Monthly Attendance Report</p>
 
@@ -397,10 +347,9 @@ td{
 
     </div>
 
-
     <button
         class="back-btn"
-        onclick="location.href='index.html'"
+        onclick="location.href='owner-dashboard.html'"
     >
         ← Dashboard
     </button>
@@ -408,13 +357,7 @@ td{
 </header>
 
 
-
 <main class="main">
-
-
-<!-- =========================================
-     TITLE
-========================================= -->
 
 <div class="top">
 
@@ -423,24 +366,13 @@ td{
 </div>
 
 
-
-<!-- =========================================
-     MESSAGE
-========================================= -->
-
 <div
     id="message"
     class="message"
 ></div>
 
 
-
-<!-- =========================================
-     FILTERS
-========================================= -->
-
 <div class="filters">
-
 
     <div class="filter-box">
 
@@ -457,26 +389,50 @@ td{
     </div>
 
 
-
     <div class="filter-box">
 
         <label>Select Month</label>
 
-        <input
-            type="month"
-            id="monthSelect"
-        >
+        <select id="monthSelect">
+
+            <option value="">
+                Select Month
+            </option>
+
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+
+        </select>
 
     </div>
 
 
+    <div class="filter-box">
+
+        <label>Select Year</label>
+
+        <select id="yearSelect">
+
+            <option value="">
+                Select Year
+            </option>
+
+        </select>
+
+    </div>
+
 </div>
 
-
-
-<!-- =========================================
-     STUDENT INFO
-========================================= -->
 
 <div
     id="studentInfo"
@@ -487,11 +443,9 @@ td{
         -
     </h2>
 
-
     <p id="studentDetails">
         -
     </p>
-
 
     <div
         id="studentBatch"
@@ -503,13 +457,7 @@ td{
 </div>
 
 
-
-<!-- =========================================
-     SUMMARY
-========================================= -->
-
 <div class="summary">
-
 
     <div class="card">
 
@@ -520,7 +468,6 @@ td{
         </h2>
 
     </div>
-
 
 
     <div class="card">
@@ -534,7 +481,6 @@ td{
     </div>
 
 
-
     <div class="card">
 
         <p>Absent</p>
@@ -544,7 +490,6 @@ td{
         </h2>
 
     </div>
-
 
 
     <div class="card">
@@ -560,14 +505,8 @@ td{
 
     </div>
 
-
 </div>
 
-
-
-<!-- =========================================
-     ATTENDANCE DETAILS
-========================================= -->
 
 <div class="box">
 
@@ -587,7 +526,6 @@ td{
 
             </thead>
 
-
             <tbody id="reportBody">
 
                 <tr>
@@ -596,7 +534,7 @@ td{
                         colspan="2"
                         class="empty"
                     >
-                       Select the student and month.
+                        Select the student, month and year.
                     </td>
 
                 </tr>
@@ -609,24 +547,16 @@ td{
 
 </div>
 
-
 </main>
 
 
-
 <script>
-
-
-/* =========================================
-   SUPABASE
-========================================= */
 
 const SUPABASE_URL =
     "https://sfgnwdljakmtuyoxmltr.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -635,18 +565,8 @@ const supabaseClient =
     );
 
 
-
-/* =========================================
-   VARIABLES
-========================================= */
-
 let students = [];
 
-
-
-/* =========================================
-   ELEMENTS
-========================================= */
 
 const studentSelect =
     document.getElementById(
@@ -658,26 +578,27 @@ const monthSelect =
         "monthSelect"
     );
 
+const yearSelect =
+    document.getElementById(
+        "yearSelect"
+    );
+
 const reportBody =
     document.getElementById(
         "reportBody"
     );
 
 
-
 /* =========================================
-   CURRENT MONTH
+   SET MONTH + YEAR
 ========================================= */
 
-function setCurrentMonth(){
+function setCurrentMonthYear(){
 
     const now =
         new Date();
 
-    const year =
-        now.getFullYear();
-
-    const month =
+    const currentMonth =
         String(
             now.getMonth() + 1
         ).padStart(
@@ -685,18 +606,67 @@ function setCurrentMonth(){
             "0"
         );
 
+    const currentYear =
+        now.getFullYear();
+
     monthSelect.value =
-        `${year}-${month}`;
+        currentMonth;
+
+    yearSelect.value =
+        String(currentYear);
 
 }
 
 
+/* =========================================
+   LOAD YEAR DROPDOWN
+========================================= */
+
+function loadYears(){
+
+    const currentYear =
+        new Date().getFullYear();
+
+    yearSelect.innerHTML =
+        `
+        <option value="">
+            Select Year
+        </option>
+        `;
+
+    /*
+       Current year se 5 saal pehle
+       aur 5 saal future tak.
+    */
+
+    for(
+        let year = currentYear - 5;
+        year <= currentYear + 5;
+        year++
+    ){
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            String(year);
+
+        option.textContent =
+            String(year);
+
+        yearSelect.appendChild(
+            option
+        );
+
+    }
+
+}
+
 
 /* =========================================
-   FORMAT BATCH TIMING
-
-   1, 2, 3 ... 11 ko proper
-   Batch aur Timing me convert karega.
+   FORMAT BATCH
 ========================================= */
 
 function formatBatchTiming(value){
@@ -711,10 +681,8 @@ function formatBatchTiming(value){
 
     }
 
-
     const text =
         String(value).trim();
-
 
     const batchTimings = {
 
@@ -753,7 +721,6 @@ function formatBatchTiming(value){
 
     };
 
-
     if(
         batchTimings[text]
     ){
@@ -762,19 +729,9 @@ function formatBatchTiming(value){
 
     }
 
-
-    /*
-       Agar database me direct timing saved hai,
-       jaise:
-       08:00 AM to 09:00 AM
-
-       to wahi show hogi.
-    */
-
     return text;
 
 }
-
 
 
 /* =========================================
@@ -807,7 +764,7 @@ async function loadStudents(){
         console.error(error);
 
         showMessage(
-            "Students load nahi hue: " +
+            "Students not loaded: " +
             error.message
         );
 
@@ -836,20 +793,16 @@ async function loadStudents(){
                     "option"
                 );
 
-
             option.value =
                 student.id;
-
 
             const batchText =
                 formatBatchTiming(
                     student.batch_timing
                 );
 
-
             option.textContent =
                 `${student.name || "Unknown"} (${batchText})`;
-
 
             studentSelect.appendChild(
                 option
@@ -859,7 +812,6 @@ async function loadStudents(){
     );
 
 }
-
 
 
 /* =========================================
@@ -876,7 +828,6 @@ studentSelect.addEventListener(
 );
 
 
-
 /* =========================================
    MONTH CHANGE
 ========================================= */
@@ -891,6 +842,19 @@ monthSelect.addEventListener(
 );
 
 
+/* =========================================
+   YEAR CHANGE
+========================================= */
+
+yearSelect.addEventListener(
+    "change",
+    function(){
+
+        loadReport();
+
+    }
+);
+
 
 /* =========================================
    LOAD REPORT
@@ -901,13 +865,17 @@ async function loadReport(){
     const studentId =
         studentSelect.value;
 
-    const month =
+    const selectedMonth =
         monthSelect.value;
+
+    const selectedYear =
+        yearSelect.value;
 
 
     if(
         !studentId ||
-        !month
+        !selectedMonth ||
+        !selectedYear
     ){
 
         document.getElementById(
@@ -915,9 +883,7 @@ async function loadReport(){
         ).style.display =
             "none";
 
-
         resetSummary();
-
 
         reportBody.innerHTML =
             `
@@ -927,7 +893,7 @@ async function loadReport(){
                     colspan="2"
                     class="empty"
                 >
-                    Select the student and month.
+                    Select the student, month and year.
                 </td>
 
             </tr>
@@ -959,7 +925,6 @@ async function loadReport(){
     }
 
 
-
     /* STUDENT INFO */
 
     document.getElementById(
@@ -989,7 +954,6 @@ async function loadReport(){
         );
 
 
-
     /* LOADING */
 
     reportBody.innerHTML =
@@ -1007,46 +971,38 @@ async function loadReport(){
         `;
 
 
-
     /* MONTH START */
 
     const startDate =
-        `${month}-01`;
+        `${selectedYear}-${selectedMonth}-01`;
 
 
-    const parts =
-        month.split(
-            "-"
-        );
-
-
-    const year =
+    const yearNumber =
         Number(
-            parts[0]
+            selectedYear
         );
 
     const monthNumber =
         Number(
-            parts[1]
+            selectedMonth
         );
 
 
     const lastDay =
         new Date(
-            year,
+            yearNumber,
             monthNumber,
             0
         ).getDate();
 
 
     const endDate =
-        `${month}-${String(
+        `${selectedYear}-${selectedMonth}-${String(
             lastDay
         ).padStart(
             2,
             "0"
         )}`;
-
 
 
     /* LOAD ATTENDANCE */
@@ -1103,10 +1059,7 @@ async function loadReport(){
         data || [];
 
 
-
-    /* =========================================
-       SUMMARY
-    ========================================= */
+    /* SUMMARY */
 
     const total =
         records.length;
@@ -1116,8 +1069,10 @@ async function loadReport(){
         records.filter(
             function(record){
 
-                return record.status ===
-                    "Present";
+                return String(
+                    record.status
+                ).toLowerCase() ===
+                    "present";
 
             }
         ).length;
@@ -1127,8 +1082,10 @@ async function loadReport(){
         records.filter(
             function(record){
 
-                return record.status ===
-                    "Absent";
+                return String(
+                    record.status
+                ).toLowerCase() ===
+                    "absent";
 
             }
         ).length;
@@ -1175,10 +1132,7 @@ async function loadReport(){
         attendancePercentage + "%";
 
 
-
-    /* =========================================
-       TABLE
-    ========================================= */
+    /* TABLE */
 
     if(!records.length){
 
@@ -1190,7 +1144,7 @@ async function loadReport(){
                     colspan="2"
                     class="empty"
                 >
-                   I haven't received the attendance for this month.
+                    I haven't received the attendance for this month.
                 </td>
 
             </tr>
@@ -1215,28 +1169,40 @@ async function loadReport(){
 
 
             const status =
-                record.status;
+                String(
+                    record.status || ""
+                );
 
 
-            const statusHTML =
-                status === "Present"
+            let statusHTML;
 
-                ?
 
-                `<span class="present">
-                    Present
-                </span>`
+            if(
+                status.toLowerCase() ===
+                "present"
+            ){
 
-                :
+                statusHTML =
+                    `
+                    <span class="present">
+                        Present
+                    </span>
+                    `;
 
-                `<span class="absent">
-                    Absent
-                </span>`;
+            }else{
+
+                statusHTML =
+                    `
+                    <span class="absent">
+                        ${status || "Absent"}
+                    </span>
+                    `;
+
+            }
 
 
             row.innerHTML =
                 `
-
                 <td>
                     ${formatDate(
                         record.attendance_date
@@ -1246,7 +1212,6 @@ async function loadReport(){
                 <td>
                     ${statusHTML}
                 </td>
-
                 `;
 
 
@@ -1258,7 +1223,6 @@ async function loadReport(){
     );
 
 }
-
 
 
 /* =========================================
@@ -1293,7 +1257,6 @@ function resetSummary(){
 }
 
 
-
 /* =========================================
    FORMAT DATE
 ========================================= */
@@ -1323,7 +1286,6 @@ function formatDate(value){
     return value;
 
 }
-
 
 
 /* =========================================
@@ -1359,14 +1321,15 @@ function showMessage(text){
 }
 
 
-
 /* =========================================
    START
 ========================================= */
 
 async function start(){
 
-    setCurrentMonth();
+    loadYears();
+
+    setCurrentMonthYear();
 
     await loadStudents();
 
@@ -1374,7 +1337,6 @@ async function start(){
 
 
 start();
-
 
 </script>
 

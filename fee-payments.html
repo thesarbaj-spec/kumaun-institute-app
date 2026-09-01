@@ -522,7 +522,7 @@ td{
 
     <button
         class="back-btn"
-        onclick="location.href='index.html'"
+        onclick="location.href='owner-dashboard.html'"
     >
         ← Dashboard
     </button>
@@ -977,7 +977,7 @@ async function loadPayments(){
 
 
         showMessage(
-            "Payment records load nahi hue: " +
+            "Payment records not loaded: " +
             error.message,
             "error"
         );
@@ -1426,7 +1426,7 @@ async function approvePayment(paymentId){
     if(!payment){
 
         showMessage(
-            "Payment record nahi mila.",
+            "Payment record not found.",
             "error"
         );
 
@@ -1442,7 +1442,7 @@ async function approvePayment(paymentId){
     ){
 
         showMessage(
-            "Ye payment pehle hi approve ho chuki hai.",
+            "This payment has already been approved.",
             "error"
         );
 
@@ -1476,7 +1476,7 @@ async function approvePayment(paymentId){
         if(!student){
 
             throw new Error(
-                "Is payment ka student record nahi mila."
+                "Student record not found for this payment."
             );
 
         }
@@ -1545,7 +1545,7 @@ async function approvePayment(paymentId){
         ){
 
             throw new Error(
-                "Payment status Approved save nahi hua."
+                "Payment status approved not saved."
             );
 
         }
@@ -1606,7 +1606,7 @@ async function approvePayment(paymentId){
 
 
         showMessage(
-            "❌ Payment approve nahi hui: " +
+            "❌ Payment not approved: " +
             error.message,
             "error"
         );
@@ -1638,7 +1638,7 @@ async function rejectPayment(paymentId){
     if(!payment){
 
         showMessage(
-            "Payment record nahi mila.",
+            "Payment record not found.",
             "error"
         );
 
@@ -1654,7 +1654,7 @@ async function rejectPayment(paymentId){
     ){
 
         showMessage(
-            "Ye payment pehle hi reject ho chuki hai.",
+            "This payment has already been rejected.",
             "error"
         );
 
@@ -1743,7 +1743,7 @@ async function rejectPayment(paymentId){
 
 
         showMessage(
-            "❌ Payment reject nahi hui: " +
+            "❌ Payment not rejected: " +
             error.message,
             "error"
         );

@@ -427,7 +427,7 @@ td{
 
 <button
     class="back-btn"
-    onclick="location.href='index.html'">
+    onclick="location.href='owner-dashboard.html'">
 
     ← Dashboard
 
@@ -756,7 +756,7 @@ async function loadComplaints(){
 
 
         showMessage(
-            "Complaint records load nahi hue: " +
+            "Complaint records not loaded: " +
             error.message,
             "error"
         );
@@ -1079,7 +1079,7 @@ async function updateComplaintStatus(
     if(!select){
 
         showMessage(
-            "Status option nahi mila.",
+            "Status option not found.",
             "error"
         );
 
