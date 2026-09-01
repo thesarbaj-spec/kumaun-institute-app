@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Edit Student | Kumaun Institute</title>
@@ -261,6 +260,7 @@ textarea:focus{
     .cancel-btn{
         width:100%;
     }
+
 }
 
 </style>
@@ -268,7 +268,6 @@ textarea:focus{
 </head>
 
 <body>
-
 
 <header class="header">
 
@@ -300,7 +299,6 @@ textarea:focus{
 
 </header>
 
-
 <main class="main">
 
 <div class="box">
@@ -312,27 +310,23 @@ textarea:focus{
     class="message"
 ></div>
 
-
 <div
     id="studentIdBox"
     class="student-id-box"
     style="display:none;"
 ></div>
 
-
 <div
     id="loading"
     class="loading"
 >
-    ⏳ Student details load ho rahe hain...
+    ⏳ Student details loading...
 </div>
-
 
 <form
     id="editForm"
     style="display:none;"
 >
-
 
 <!-- PHOTO -->
 
@@ -359,16 +353,14 @@ textarea:focus{
         >
 
         <small>
-            New photo choose karna optional hai.
+            New photo choose (optional).
         </small>
 
     </div>
 
 </div>
 
-
 <div class="form-grid">
-
 
 <!-- NAME -->
 
@@ -386,7 +378,6 @@ textarea:focus{
 
 </div>
 
-
 <!-- EMAIL -->
 
 <div class="field">
@@ -401,7 +392,6 @@ textarea:focus{
     >
 
 </div>
-
 
 <!-- PHONE -->
 
@@ -418,7 +408,6 @@ textarea:focus{
 
 </div>
 
-
 <!-- COURSE -->
 
 <div class="field">
@@ -434,6 +423,69 @@ textarea:focus{
 
 </div>
 
+<!-- BATCH TIMING -->
+
+<div class="field">
+
+    <label>
+        Batch Timing
+    </label>
+
+    <select
+        id="batch_timing"
+    >
+
+        <option value="">
+            Select Batch Timing
+        </option>
+
+        <option value="07:00 AM - 08:00 AM">
+            07:00 AM - 08:00 AM
+        </option>
+
+        <option value="08:00 AM - 09:00 AM">
+            08:00 AM - 09:00 AM
+        </option>
+
+        <option value="09:00 AM - 10:00 AM">
+            09:00 AM - 10:00 AM
+        </option>
+
+        <option value="10:00 AM - 11:00 AM">
+            10:00 AM - 11:00 AM
+        </option>
+
+        <option value="11:00 AM - 12:00 PM">
+            11:00 AM - 12:00 PM
+        </option>
+
+        <option value="12:00 PM - 01:00 PM">
+            12:00 PM - 01:00 PM
+        </option>
+
+        <option value="01:00 PM - 02:00 PM">
+            01:00 PM - 02:00 PM
+        </option>
+
+        <option value="02:00 PM - 03:00 PM">
+            02:00 PM - 03:00 PM
+        </option>
+
+        <option value="03:00 PM - 04:00 PM">
+            03:00 PM - 04:00 PM
+        </option>
+
+        <option value="04:00 PM - 05:00 PM">
+            04:00 PM - 05:00 PM
+        </option>
+
+        <option value="05:00 PM - 06:00 PM">
+            05:00 PM - 06:00 PM
+        </option>
+
+    </select>
+
+</div>
 
 <!-- DOB -->
 
@@ -450,7 +502,6 @@ textarea:focus{
 
 </div>
 
-
 <!-- ADMISSION DATE -->
 
 <div class="field">
@@ -465,7 +516,6 @@ textarea:focus{
     >
 
 </div>
-
 
 <!-- TOTAL FEE -->
 
@@ -483,7 +533,6 @@ textarea:focus{
 
 </div>
 
-
 <!-- PAID FEE -->
 
 <div class="field">
@@ -499,7 +548,6 @@ textarea:focus{
     >
 
 </div>
-
 
 <!-- STATUS -->
 
@@ -527,7 +575,6 @@ textarea:focus{
 
 </div>
 
-
 <!-- ADDRESS -->
 
 <div class="field full">
@@ -542,9 +589,7 @@ textarea:focus{
 
 </div>
 
-
 </div>
-
 
 <div class="buttons">
 
@@ -572,9 +617,7 @@ textarea:focus{
 
 </main>
 
-
 <script>
-
 
 /* =========================================
    SUPABASE
@@ -631,7 +674,6 @@ function getStudentId(){
 
     }
 
-
     /* OLD METHOD FALLBACK */
 
     const localId =
@@ -654,7 +696,6 @@ function getStudentId(){
         }
 
     }
-
 
     return null;
 
@@ -679,7 +720,7 @@ if(!studentId){
         "loading"
     ).innerHTML = `
 
-        ❌ Student ID nahi mili.
+        ❌ Student ID not found.
 
         <br><br>
 
@@ -730,7 +771,6 @@ async function loadStudent(){
             studentId
         );
 
-
         const {
             data,
             error
@@ -754,7 +794,6 @@ async function loadStudent(){
             data
         );
 
-
         console.log(
             "Student error:",
             error
@@ -774,7 +813,7 @@ async function loadStudent(){
                 "loading"
             ).innerHTML = `
 
-                ❌ Student nahi mila.
+                ❌ Student not found.
 
                 <br><br>
 
@@ -840,6 +879,14 @@ async function loadStudent(){
             "course"
         ).value =
             data.course || "";
+
+
+        /* BATCH TIMING */
+
+        document.getElementById(
+            "batch_timing"
+        ).value =
+            data.batch_timing || "";
 
 
         /* DOB */
@@ -941,7 +988,7 @@ async function loadStudent(){
             "loading"
         ).innerHTML = `
 
-            ❌ Student load nahi hua.
+            ❌ Student not loading.
 
             <br><br>
 
@@ -985,7 +1032,7 @@ document
 
 
             showMessage(
-                "Changes save ho rahe hain...",
+                "Changes saving...",
                 "loading"
             );
 
@@ -1003,7 +1050,7 @@ document
             if(!name){
 
                 throw new Error(
-                    "Student name required hai."
+                    "Student name required."
                 );
 
             }
@@ -1028,7 +1075,7 @@ document
             if(paidFee > totalFee){
 
                 throw new Error(
-                    "Paid Fee Total Fee se zyada nahi ho sakti."
+                    "The paid fee cannot exceed the total fee."
                 );
 
             }
@@ -1056,7 +1103,7 @@ document
                 ){
 
                     throw new Error(
-                        "Photo 5 MB se chhoti honi chahiye."
+                        "Photo must be smaller than 5 MB."
                     );
 
                 }
@@ -1138,12 +1185,6 @@ document
                 photoUrl =
                     publicData.publicUrl;
 
-
-                console.log(
-                    "New photo URL:",
-                    photoUrl
-                );
-
             }
 
 
@@ -1171,15 +1212,28 @@ document
                         "course"
                     ).value.trim() || null,
 
+                /* BATCH TIMING */
+
+                batch_timing:
+                    document.getElementById(
+                        "batch_timing"
+                    ).value || null,
+
+                /* DOB */
+
                 dob:
                     document.getElementById(
                         "dob"
                     ).value || null,
 
+                /* ADDRESS */
+
                 address:
                     document.getElementById(
                         "address"
                     ).value.trim() || null,
+
+                /* ADMISSION DATE */
 
                 admission_date:
                     document.getElementById(
@@ -1255,7 +1309,7 @@ document
             if(!data || data.length === 0){
 
                 throw new Error(
-                    "Student update nahi hua. Supabase RLS policy check karein."
+                    "Student not updated. Supabase RLS policy check karein."
                 );
 
             }
@@ -1300,7 +1354,7 @@ document
 
 
             showMessage(
-                "❌ Update nahi hua: " +
+                "❌ Student not updated: " +
                 error.message,
                 "error"
             );
@@ -1469,4 +1523,3 @@ function logout(){
 
 </body>
 </html>
-

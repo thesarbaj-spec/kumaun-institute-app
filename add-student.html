@@ -1069,7 +1069,7 @@ if(
 ){
 
 alert(
-"Sirf image file select karein."
+"Select only the image file."
 );
 
 this.value = "";
@@ -1112,7 +1112,7 @@ if(
 ){
 
 alert(
-"Aapke browser me camera support nahi hai."
+"Camera not available in your browser."
 );
 
 return;
@@ -1136,7 +1136,7 @@ error
 );
 
 alert(
-"Camera open nahi ho paya. Browser me camera permission Allow karein."
+"Camera not opened. Please allow camera permission in your browser."
 );
 
 }
@@ -1241,7 +1241,7 @@ secondError
 );
 
 alert(
-"Camera change nahi ho paya."
+"The camera couldn't be changed."
 );
 
 }
@@ -1260,7 +1260,7 @@ function capturePhoto(){
 if(!cameraStream){
 
 alert(
-"Camera open nahi hai."
+"Camera not Open."
 );
 
 return;
@@ -1279,8 +1279,7 @@ if(
 ){
 
 alert(
-"Camera ready hone ka wait karein."
-);
+"Wait until the camera is ready.");
 
 return;
 
@@ -1311,7 +1310,7 @@ function(blob){
 if(!blob){
 
 alert(
-"Photo capture nahi hui."
+"Photo not captured."
 );
 
 return;
@@ -1480,7 +1479,7 @@ message.style.color =
 "#1e40af";
 
 message.textContent =
-"Student save ho raha hai...";
+"Saving Student...";
 
 saveButton.disabled =
 true;
@@ -1496,7 +1495,7 @@ if(
 ){
 
 throw new Error(
-"Date of Birth select karein."
+"Select Date of Birth."
 );
 
 }
@@ -1506,7 +1505,7 @@ if(
 ){
 
 throw new Error(
-"Admission Date select karein."
+"Select Admission Date."
 );
 
 }
@@ -1575,7 +1574,7 @@ uploadError
 );
 
 throw new Error(
-"Photo upload nahi hui: " +
+"Photo not uploaded : " +
 uploadError.message
 );
 
@@ -1703,7 +1702,7 @@ error
 );
 
 throw new Error(
-"Student save nahi hua: " +
+"Student not saved : " +
 error.message
 );
 
