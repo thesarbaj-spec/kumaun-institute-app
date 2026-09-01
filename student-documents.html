@@ -285,7 +285,7 @@ input[type="file"]{
     }
 
     .brand h2{
-        font-size:16px;
+        font-size:14px;
     }
 
     .brand p{
@@ -341,7 +341,7 @@ input[type="file"]{
 
         <div>
 
-            <h2>Kumaun Institute</h2>
+            <h2>Kumaun Institute of Computer Education</h2>
 
             <p>Student Document Management</p>
 
@@ -352,7 +352,7 @@ input[type="file"]{
     <div class="header-buttons">
 
         <a
-            href="index.html"
+            href="owner-dashboard.html"
             class="back-btn"
         >
             🔙 Dashboard
@@ -375,10 +375,6 @@ input[type="file"]{
     <div class="page-title">
 
         <h1>📚 Student Documents</h1>
-
-        <p>
-            Student ke diploma, certificate aur other documents manage karein.
-        </p>
 
     </div>
 
@@ -477,7 +473,7 @@ input[type="file"]{
         >
 
             <div class="loading">
-                ⏳ Documents load ho rahe hain...
+                ⏳ Documents loading...
             </div>
 
         </div>
@@ -599,7 +595,7 @@ async function loadStudents(){
 
             select.innerHTML = `
                 <option value="">
-                    Students load nahi hue
+                    Students loading failed.
                 </option>
             `;
 
@@ -617,7 +613,7 @@ async function loadStudents(){
 
             select.innerHTML = `
                 <option value="">
-                    Koi student nahi mila
+                    Students not found.
                 </option>
             `;
 
@@ -717,7 +713,7 @@ async function loadStudents(){
                         <div class="no-documents">
                             👨‍🎓
                             <h3>
-                                Student select karein
+                                Select student.
                             </h3>
                         </div>
                     `;
@@ -777,7 +773,7 @@ async function loadDocuments(studentId){
 
     container.innerHTML = `
         <div class="loading">
-            ⏳ Documents load ho rahe hain...
+            ⏳ Documents loading...
         </div>
     `;
 
@@ -854,7 +850,7 @@ async function loadDocuments(studentId){
             container.innerHTML = `
                 <div class="error-box">
 
-                    ❌ Documents load nahi hue.
+                    ❌ Documents not loaded.
 
                     <br><br>
 
@@ -880,7 +876,7 @@ async function loadDocuments(studentId){
                     </div>
 
                     <h3>
-                        Is student ka koi document upload nahi hai.
+                        No Documents Found
                     </h3>
 
                     <p>
@@ -1086,7 +1082,7 @@ async function loadDocuments(studentId){
         container.innerHTML = `
             <div class="error-box">
 
-                ❌ Documents load nahi hue.
+                ❌ Documents not loaded.
 
                 <br><br>
 
@@ -1111,7 +1107,7 @@ function viewDocument(url){
     if(!url){
 
         alert(
-            "File URL available nahi hai."
+            "File URL not available."
         );
 
         return;
@@ -1140,7 +1136,7 @@ async function downloadDocument(
     if(!url){
 
         alert(
-            "File URL available nahi hai."
+            "File URL not available."
         );
 
         return;
@@ -1157,7 +1153,7 @@ async function downloadDocument(
         if(!response.ok){
 
             throw new Error(
-                "File fetch nahi hui."
+                "File not fetch ."
             );
 
         }
@@ -1264,7 +1260,7 @@ async function uploadDocument(){
     if(!studentId){
 
         showMessage(
-            "Pehle student select karo.",
+            "Select student.",
             "error"
         );
 
@@ -1276,7 +1272,7 @@ async function uploadDocument(){
     if(!documentType){
 
         showMessage(
-            "Document type select karo.",
+            "Select document type.",
             "error"
         );
 
@@ -1288,7 +1284,7 @@ async function uploadDocument(){
     if(!file){
 
         showMessage(
-            "File select karo.",
+            "Select a file.",
             "error"
         );
 
@@ -1303,7 +1299,7 @@ async function uploadDocument(){
     ){
 
         showMessage(
-            "File 50 MB se chhoti honi chahiye.",
+            "File size must be less than 50 MB.",
             "error"
         );
 
@@ -1441,7 +1437,7 @@ async function uploadDocument(){
 
 
         showMessage(
-            "✅ Document successfully upload ho gaya!",
+            "✅ Document successfully uploaded!",
             "success"
         );
 
@@ -1466,7 +1462,7 @@ async function uploadDocument(){
         );
 
         showMessage(
-            "❌ Upload nahi hua: " +
+            "❌ Upload failed: " +
             error.message,
             "error"
         );

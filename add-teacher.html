@@ -9,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
   margin:0;
   padding:0;
@@ -137,6 +136,20 @@ textarea:focus{
 textarea{
   min-height:90px;
   resize:vertical;
+}
+
+/* DATE INPUT */
+
+.date-input{
+  position:relative;
+  width:100%;
+}
+
+.date-input input{
+  width:100%;
+  height:45px;
+  padding:12px 13px;
+  cursor:pointer;
 }
 
 /* PHOTO */
@@ -390,7 +403,7 @@ input[type="file"]{
 }
 
 .brand h1{
-  font-size:15px;
+  font-size:14px;
 }
 
 .brand p{
@@ -428,7 +441,6 @@ input[type="file"]{
 }
 
 }
-
 </style>
 </head>
 
@@ -452,33 +464,24 @@ input[type="file"]{
 
   <button
     class="back-btn"
-    onclick="location.href='index.html'"
+    onclick="location.href='owner-dashboard.html'"
   >
     ← Dashboard
   </button>
 
 </header>
 
-
 <div class="container">
 
   <div class="box">
 
     <div class="title">
-
       <h2>👨‍🏫 Add New Teacher</h2>
-
-      <p>
-        Teacher ki complete details yahan add karein.
-      </p>
-
     </div>
-
 
     <form id="teacherForm">
 
       <div class="form-grid">
-
 
         <!-- PHOTO -->
 
@@ -538,7 +541,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- TEACHER NAME -->
 
         <div class="form-group">
@@ -556,7 +558,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- EMAIL -->
 
         <div class="form-group">
@@ -572,7 +573,6 @@ input[type="file"]{
           >
 
         </div>
-
 
         <!-- PHONE -->
 
@@ -590,7 +590,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- SUBJECT -->
 
         <div class="form-group">
@@ -606,7 +605,6 @@ input[type="file"]{
           >
 
         </div>
-
 
         <!-- BATCH TIMING -->
 
@@ -624,7 +622,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- DOB -->
 
         <div class="form-group">
@@ -633,13 +630,26 @@ input[type="file"]{
             🎂 Date of Birth
           </label>
 
-          <input
-            type="date"
-            id="dob"
-          >
+          <div class="date-input">
+
+            <input
+              type="text"
+              id="dobDisplay"
+              placeholder="DD / MM / YYYY"
+              maxlength="10"
+              inputmode="numeric"
+              autocomplete="off"
+            >
+
+            <input
+              type="date"
+              id="dob"
+              style="display:none;"
+            >
+
+          </div>
 
         </div>
-
 
         <!-- JOINING DATE -->
 
@@ -649,13 +659,26 @@ input[type="file"]{
             📅 Joining Date
           </label>
 
-          <input
-            type="date"
-            id="joining_date"
-          >
+          <div class="date-input">
+
+            <input
+              type="text"
+              id="joiningDateDisplay"
+              placeholder="DD / MM / YYYY"
+              maxlength="10"
+              inputmode="numeric"
+              autocomplete="off"
+            >
+
+            <input
+              type="date"
+              id="joining_date"
+              style="display:none;"
+            >
+
+          </div>
 
         </div>
-
 
         <!-- MONTHLY SALARY -->
 
@@ -674,7 +697,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- PAID SALARY -->
 
         <div class="form-group">
@@ -692,7 +714,6 @@ input[type="file"]{
           >
 
         </div>
-
 
         <!-- STATUS -->
 
@@ -716,7 +737,6 @@ input[type="file"]{
 
         </div>
 
-
         <!-- ADDRESS -->
 
         <div class="form-group full">
@@ -732,17 +752,12 @@ input[type="file"]{
 
         </div>
 
-
       </div>
-
 
       <div
         id="formStatus"
         class="status"
       ></div>
-
-
-      <!-- ADD TEACHER + DASHBOARD -->
 
       <div class="submit-area">
 
@@ -770,7 +785,6 @@ input[type="file"]{
 
 </div>
 
-
 <!-- CAMERA MODAL -->
 
 <div
@@ -796,7 +810,6 @@ input[type="file"]{
 
     </div>
 
-
     <div class="camera-video-wrap">
 
       <video
@@ -807,7 +820,6 @@ input[type="file"]{
       ></video>
 
     </div>
-
 
     <div class="camera-controls">
 
@@ -841,12 +853,10 @@ input[type="file"]{
 
 </div>
 
-
 <canvas
   id="cameraCanvas"
   style="display:none;"
 ></canvas>
-
 
 <script>
 
@@ -876,6 +886,231 @@ let selectedPhotoFile = null;
 let cameraStream = null;
 
 let currentCamera = "environment";
+
+
+/* =========================================
+   DATE FORMAT
+   DD / MM / YYYY
+========================================= */
+
+function formatDateForDisplay(value){
+
+  if(!value){
+    return "";
+  }
+
+  const parts = value.split("-");
+
+  if(parts.length !== 3){
+    return "";
+  }
+
+  return (
+    parts[2] +
+    " / " +
+    parts[1] +
+    " / " +
+    parts[0]
+  );
+
+}
+
+
+/* =========================================
+   DISPLAY DATE -> DATABASE DATE
+========================================= */
+
+function displayDateToDatabase(value){
+
+  const clean =
+    value
+      .replace(/\s/g,"")
+      .replace(/\//g,"-");
+
+  const parts =
+    clean.split("-");
+
+  if(parts.length !== 3){
+    return null;
+  }
+
+  const day = parts[0];
+  const month = parts[1];
+  const year = parts[2];
+
+  if(
+    day.length !== 2 ||
+    month.length !== 2 ||
+    year.length !== 4
+  ){
+    return null;
+  }
+
+  const dayNumber = Number(day);
+  const monthNumber = Number(month);
+  const yearNumber = Number(year);
+
+  if(
+    !dayNumber ||
+    !monthNumber ||
+    !yearNumber ||
+    monthNumber < 1 ||
+    monthNumber > 12 ||
+    dayNumber < 1 ||
+    dayNumber > 31
+  ){
+    return null;
+  }
+
+  const testDate =
+    new Date(
+      yearNumber,
+      monthNumber - 1,
+      dayNumber
+    );
+
+  if(
+    testDate.getFullYear() !== yearNumber ||
+    testDate.getMonth() !== monthNumber - 1 ||
+    testDate.getDate() !== dayNumber
+  ){
+    return null;
+  }
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+/* =========================================
+   DATE INPUT SETUP
+========================================= */
+
+function setupDateInput(
+  displayId,
+  databaseId
+){
+
+  const displayInput =
+    document.getElementById(
+      displayId
+    );
+
+  const databaseInput =
+    document.getElementById(
+      databaseId
+    );
+
+  displayInput.addEventListener(
+    "input",
+    function(){
+
+      let value =
+        this.value.replace(
+          /\D/g,
+          ""
+        );
+
+      if(value.length > 8){
+        value =
+          value.substring(
+            0,
+            8
+          );
+      }
+
+      if(value.length >= 5){
+
+        this.value =
+          value.substring(0,2) +
+          " / " +
+          value.substring(2,4) +
+          " / " +
+          value.substring(4,8);
+
+      }
+      else if(value.length >= 3){
+
+        this.value =
+          value.substring(0,2) +
+          " / " +
+          value.substring(2);
+
+      }
+      else{
+
+        this.value =
+          value;
+
+      }
+
+      const databaseDate =
+        displayDateToDatabase(
+          this.value
+        );
+
+      databaseInput.value =
+        databaseDate || "";
+
+    }
+  );
+
+
+  displayInput.addEventListener(
+    "blur",
+    function(){
+
+      if(!this.value.trim()){
+        databaseInput.value = "";
+        return;
+      }
+
+      const databaseDate =
+        displayDateToDatabase(
+          this.value
+        );
+
+      if(!databaseDate){
+
+        showFormStatus(
+          "❌ Please enter a valid date in DD / MM / YYYY format.",
+          "error"
+        );
+
+        databaseInput.value = "";
+
+        return;
+
+      }
+
+      databaseInput.value =
+        databaseDate;
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   INITIALIZE DATE INPUTS
+========================================= */
+
+setupDateInput(
+  "dobDisplay",
+  "dob"
+);
+
+setupDateInput(
+  "joiningDateDisplay",
+  "joining_date"
+);
 
 
 /* =========================================
@@ -991,7 +1226,7 @@ async function openCamera(){
   ){
 
     showPhotoStatus(
-      "Is browser me camera access supported nahi hai. Choose Photo option use karein.",
+      "Camera access is not supported in this browser. Please use the photo selection option.",
       "error"
     );
 
@@ -1038,7 +1273,7 @@ async function openCamera(){
     );
 
     let message =
-      "Camera open nahi ho paya.";
+      "Camera not opening.";
 
     if(
       error.name ===
@@ -1046,7 +1281,7 @@ async function openCamera(){
     ){
 
       message =
-        "Camera permission denied hai. Browser settings me camera permission Allow karein.";
+        "Camera access denied. Please allow camera permission in your browser settings.";
 
     }
     else if(
@@ -1055,7 +1290,7 @@ async function openCamera(){
     ){
 
       message =
-        "Camera device nahi mila. Laptop ka webcam available/connected hai ya nahi check karein.";
+        "Camera device not found. Please check if your laptop's webcam is available and connected.";
 
     }
     else if(
@@ -1064,7 +1299,7 @@ async function openCamera(){
     ){
 
       message =
-        "Camera kisi doosre app me use ho raha hai. Doosre camera apps/browser tabs close karke dobara try karein.";
+        "Camera is not readable. Please close other camera apps/browser tabs and try again.";
 
     }
     else if(
@@ -1073,7 +1308,7 @@ async function openCamera(){
     ){
 
       message =
-        "Browser ne camera access block kiya hai. Website ko secure HTTPS connection par open karein.";
+        "Camera access is blocked due to security restrictions. Please use HTTPS or check your browser settings.";
 
     }
 
@@ -1128,7 +1363,7 @@ function capturePhoto(){
   ){
 
     showPhotoStatus(
-      "Camera abhi ready nahi hai. Thoda wait karke dobara Capture karein.",
+      "Camera is not ready. Please wait and try again.",
       "error"
     );
 
@@ -1178,7 +1413,7 @@ function capturePhoto(){
       closeCamera();
 
       showPhotoStatus(
-        "📸 Photo capture ho gayi.",
+        "📸 Photo capture successful.",
         "success"
       );
 
@@ -1414,15 +1649,25 @@ document
           "batch_timing"
         ).value.trim();
 
-      const dob =
+      const dobDisplay =
         document.getElementById(
-          "dob"
-        ).value || null;
+          "dobDisplay"
+        ).value.trim();
+
+      const joiningDateDisplay =
+        document.getElementById(
+          "joiningDateDisplay"
+        ).value.trim();
+
+      const dob =
+        displayDateToDatabase(
+          dobDisplay
+        );
 
       const joiningDate =
-        document.getElementById(
-          "joining_date"
-        ).value || null;
+        displayDateToDatabase(
+          joiningDateDisplay
+        );
 
       const monthlySalary =
         Number(
@@ -1448,38 +1693,72 @@ document
           "address"
         ).value.trim();
 
+
       if(!name){
 
         showFormStatus(
-          "Teacher name required hai.",
+          "Teacher name required.",
           "error"
         );
 
         return;
 
       }
+
+
+      if(
+        dobDisplay &&
+        !dob
+      ){
+
+        showFormStatus(
+          "❌ Please enter a valid Date of Birth in DD / MM / YYYY format.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      if(
+        joiningDateDisplay &&
+        !joiningDate
+      ){
+
+        showFormStatus(
+          "❌ Please enter a valid Joining Date in DD / MM / YYYY format.",
+          "error"
+        );
+
+        return;
+
+      }
+
 
       if(monthlySalary < 0){
 
         showFormStatus(
-          "Monthly salary invalid hai.",
+          "Monthly salary invalid.",
           "error"
         );
 
         return;
 
       }
+
 
       if(salaryPaid < 0){
 
         showFormStatus(
-          "Paid salary invalid hai.",
+          "Paid salary invalid.",
           "error"
         );
 
         return;
 
       }
+
 
       saveButton.disabled =
         true;
@@ -1487,19 +1766,21 @@ document
       saveButton.textContent =
         "Saving...";
 
+
       try{
 
         showFormStatus(
-          "Teacher details save ho rahi hain...",
+          "Saving teacher data...",
           "info"
         );
 
         let photoUrl = null;
 
+
         if(selectedPhotoFile){
 
           showFormStatus(
-            "Photo upload ho rahi hai...",
+            "Photo upload in progress...",
             "info"
           );
 
@@ -1507,6 +1788,7 @@ document
             await uploadTeacherPhoto();
 
         }
+
 
         const {
           error
@@ -1521,8 +1803,8 @@ document
               phone:phone || null,
               subject:subject || null,
               batch_timing:batchTiming || null,
-              dob:dob,
-              joining_date:joiningDate,
+              dob:dob || null,
+              joining_date:joiningDate || null,
               monthly_salary:monthlySalary,
               salary_paid:salaryPaid,
               status:status,
@@ -1532,16 +1814,19 @@ document
 
           ]);
 
+
         if(error){
 
           throw error;
 
         }
 
+
         showFormStatus(
-          "✅ Teacher successfully add ho gaya!",
+          "✅ Teacher successfully added!",
           "success"
         );
+
 
         document
           .getElementById(
@@ -1549,13 +1834,40 @@ document
           )
           .reset();
 
+
         selectedPhotoFile =
           null;
+
 
         document.getElementById(
           "photoPreview"
         ).innerHTML =
           "No Photo";
+
+
+        document.getElementById(
+          "dobDisplay"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "joiningDateDisplay"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "dob"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "joining_date"
+        ).value =
+          "";
+
 
         setTimeout(
           function(){
@@ -1576,7 +1888,7 @@ document
         );
 
         showFormStatus(
-          "❌ Teacher save nahi hua: " +
+          "❌ Teacher not saved: " +
           error.message,
           "error"
         );
