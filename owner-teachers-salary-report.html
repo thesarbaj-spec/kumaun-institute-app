@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
   margin:0;
   padding:0;
@@ -58,8 +55,6 @@ body{
   opacity:.8;
   margin-top:3px;
 }
-
-/* HEADER BUTTONS */
 
 .header-buttons{
   display:flex;
@@ -161,6 +156,24 @@ input:focus{
   border-color:#2563eb;
 }
 
+/* =========================
+   PAYMENT DATE DROPDOWN
+========================= */
+
+.date-dropdowns{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1fr;
+  gap:8px;
+}
+
+.date-dropdowns select{
+  padding:13px 8px;
+}
+
+/* =========================
+   STATUS
+========================= */
+
 .status{
   margin-top:18px;
   padding:12px;
@@ -226,8 +239,6 @@ input:focus{
   background:#1d4ed8;
 }
 
-/* SUMMARY */
-
 .summary-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -275,8 +286,6 @@ input:focus{
   border-top:4px solid #7c3aed;
 }
 
-/* FILTER */
-
 .filter-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -298,8 +307,6 @@ input:focus{
 .filter-btn:hover{
   background:#1d4ed8;
 }
-
-/* CURRENT SALARY */
 
 .salary-details{
   display:grid;
@@ -341,15 +348,11 @@ input:focus{
   border-top:4px solid #d97706;
 }
 
-/* PAYMENT */
-
 .payment-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:18px;
 }
-
-/* TABLE */
 
 .table-wrapper{
   overflow-x:auto;
@@ -423,8 +426,6 @@ tr:hover{
   padding:25px;
 }
 
-/* MODAL */
-
 .modal{
   display:none;
   position:fixed;
@@ -480,8 +481,6 @@ tr:hover{
   grid-template-columns:1fr;
   gap:15px;
 }
-
-/* MOBILE */
 
 @media(max-width:1000px){
 
@@ -558,10 +557,18 @@ tr:hover{
     font-size:18px;
   }
 
+  .date-dropdowns{
+    grid-template-columns:1fr 1.5fr 1fr;
+    gap:6px;
+  }
+
+  .date-dropdowns select{
+    padding:12px 5px;
+    font-size:13px;
+  }
+
 }
-
 </style>
-
 </head>
 
 <body>
@@ -570,33 +577,33 @@ tr:hover{
 
   <div class="brand">
 
-<img
-  src="kumaun institute logo.png"
-  alt="Kumaun Institute Logo"
->
+    <img
+      src="kumaun institute logo.png"
+      alt="Kumaun Institute Logo"
+    >
 
-<div>
-  <h1>Kumaun Institute of Computer Education</h1>
-  <p>Teacher Salary Management</p>
-</div>
+    <div>
+      <h1>Kumaun Institute of Computer Education</h1>
+      <p>Teacher Salary Management</p>
+    </div>
 
   </div>
 
   <div class="header-buttons">
 
-<button
-  class="back-btn"
-  onclick="location.href='owner-teachers.html'"
->
-  ← Back
-</button>
+    <button
+      class="back-btn"
+      onclick="location.href='owner-teachers.html'"
+    >
+      ← Back
+    </button>
 
-<button
-  class="dashboard-btn"
-  onclick="location.href='index.html'"
->
- Dashboard
-</button>
+    <button
+      class="dashboard-btn"
+      onclick="location.href='owner-dashboard.html'"
+    >
+      Dashboard
+    </button>
 
   </div>
 
@@ -606,331 +613,333 @@ tr:hover{
 
   <div class="box">
 
-<div class="title">
-  <h2>💰 Teacher Salary Dashboard</h2>
-  <p>Teacher ki monthly salary, paid amount aur pending salary manage karein.</p>
-</div>
+    <div class="title">
+      <h2>💰 Teacher Salary Dashboard</h2>
+    </div>
 
-<div class="filter-grid">
+    <div class="filter-grid">
 
-  <div class="form-group">
+      <div class="form-group">
 
-    <label>👨‍🏫 Select Teacher</label>
+        <label>👨‍🏫 Select Teacher</label>
 
-    <select id="teacherSelect">
-      <option value="">Loading teachers...</option>
-    </select>
+        <select id="teacherSelect">
+          <option value="">Loading teachers...</option>
+        </select>
 
-  </div>
+      </div>
 
-  <div class="form-group">
+      <div class="form-group">
 
-    <label>📅 Select Month</label>
+        <label>📅 Select Month</label>
 
-    <select id="monthSelect"></select>
+        <select id="monthSelect"></select>
 
-  </div>
+      </div>
 
-  <div class="form-group">
+      <div class="form-group">
 
-    <label>📆 Select Year</label>
+        <label>📆 Select Year</label>
 
-    <select id="yearSelect"></select>
+        <select id="yearSelect"></select>
 
-  </div>
+      </div>
 
-  <div class="form-group">
+      <div class="form-group">
 
-    <label>&nbsp;</label>
+        <label>&nbsp;</label>
 
-    <button
-      class="filter-btn"
-      onclick="loadSelectedSalary()"
-    >
-      🔍 View Salary
-    </button>
+        <button
+          class="filter-btn"
+          onclick="loadSelectedSalary()"
+        >
+          🔍 View Salary
+        </button>
 
-  </div>
+      </div>
 
-</div>
+    </div>
 
   </div>
 
   <div class="summary-grid">
 
-<div class="summary-card total-card">
+    <div class="summary-card total-card">
 
-  <div class="icon">💰</div>
+      <div class="icon">💰</div>
 
-  <h3>Selected Month Salary</h3>
+      <h3>Selected Month Salary</h3>
 
-  <div
-    class="number"
-    id="summaryTotalSalary"
-  >
-    ₹0
-  </div>
+      <div
+        class="number"
+        id="summaryTotalSalary"
+      >
+        ₹0
+      </div>
 
-</div>
+    </div>
 
-<div class="summary-card paid-card">
+    <div class="summary-card paid-card">
 
-  <div class="icon">🟢</div>
+      <div class="icon">🟢</div>
 
-  <h3>Paid Salary</h3>
+      <h3>Paid Salary</h3>
 
-  <div
-    class="number"
-    id="summaryPaidSalary"
-  >
-    ₹0
-  </div>
+      <div
+        class="number"
+        id="summaryPaidSalary"
+      >
+        ₹0
+      </div>
 
-</div>
+    </div>
 
-<div class="summary-card pending-card">
+    <div class="summary-card pending-card">
 
-  <div class="icon">🔴</div>
+      <div class="icon">🔴</div>
 
-  <h3>Pending Salary</h3>
+      <h3>Pending Salary</h3>
 
-  <div
-    class="number"
-    id="summaryPendingSalary"
-  >
-    ₹0
-  </div>
+      <div
+        class="number"
+        id="summaryPendingSalary"
+      >
+        ₹0
+      </div>
 
-</div>
+    </div>
 
-<div class="summary-card month-card">
+    <div class="summary-card month-card">
 
-  <div class="icon">📅</div>
+      <div class="icon">📅</div>
 
-  <h3>Selected Month</h3>
+      <h3>Selected Month</h3>
 
-  <div
-    class="number"
-    id="summaryMonth"
-    style="font-size:18px;"
-  >
-    —
-  </div>
+      <div
+        class="number"
+        id="summaryMonth"
+        style="font-size:18px;"
+      >
+        —
+      </div>
 
-</div>
-
-  </div>
-
-  <div class="box">
-
-<div class="title">
-
-  <h2>📊 Selected Month Salary Details</h2>
-
-  <p>Is month ki current salary information.</p>
-
-</div>
-
-<div class="salary-details">
-
-  <div class="salary-info total">
-
-    <small>Total Monthly Salary</small>
-
-    <strong id="currentTotal">
-      ₹0
-    </strong>
-
-  </div>
-
-  <div class="salary-info paid">
-
-    <small>Total Paid</small>
-
-    <strong id="currentPaid">
-      ₹0
-    </strong>
-
-  </div>
-
-  <div class="salary-info pending">
-
-    <small>Pending Amount</small>
-
-    <strong id="currentPending">
-      ₹0
-    </strong>
-
-  </div>
-
-  <div class="salary-info status-card">
-
-    <small>Payment Status</small>
-
-    <strong id="currentStatus">
-      No Record
-    </strong>
-
-  </div>
-
-</div>
+    </div>
 
   </div>
 
   <div class="box">
 
-<div class="title">
+    <div class="title">
 
-  <h2>✏️ Set / Edit Monthly Salary</h2>
+      <h2>📊 Selected Month Salary Details</h2>
 
-  <p>Selected teacher aur month ke liye total monthly salary set karein.</p>
+    </div>
 
-</div>
+    <div class="salary-details">
 
-<div class="form-grid">
+      <div class="salary-info total">
 
-  <div class="form-group">
+        <small>Total Monthly Salary</small>
 
-    <label>💰 Total Monthly Salary</label>
+        <strong id="currentTotal">
+          ₹0
+        </strong>
 
-    <input
-      type="number"
-      id="totalSalaryInput"
-      placeholder="Example: 8000"
-      min="0"
-    >
+      </div>
 
-  </div>
+      <div class="salary-info paid">
 
-  <div class="form-group">
+        <small>Total Paid</small>
 
-    <label>📅 Salary Month</label>
+        <strong id="currentPaid">
+          ₹0
+        </strong>
 
-    <input
-      type="text"
-      id="selectedMonthText"
-      disabled
-      value="Select teacher and month"
-    >
+      </div>
 
-  </div>
+      <div class="salary-info pending">
 
-</div>
+        <small>Pending Amount</small>
 
-<div
-  id="salaryStatus"
-  class="status"
-></div>
+        <strong id="currentPending">
+          ₹0
+        </strong>
 
-<button
-  class="save-btn"
-  id="saveSalaryButton"
-  onclick="saveMonthlySalary()"
->
-  💾 Save / Update Monthly Salary
-</button>
+      </div>
 
-  </div>
+      <div class="salary-info status-card">
 
-  <div class="box">
+        <small>Payment Status</small>
 
-<div class="title">
+        <strong id="currentStatus">
+          No Record
+        </strong>
 
-  <h2>💵 Add Salary Payment</h2>
+      </div>
 
-  <p>Agar pehle ₹5000 diye aur baad mein ₹2000 aur diye, to sirf ₹2000 add karein. Total paid automatically update ho jayega.</p>
-
-</div>
-
-<div class="payment-grid">
-
-  <div class="form-group">
-
-    <label>💸 Add New Payment Amount</label>
-
-    <input
-      type="number"
-      id="paymentAmount"
-      placeholder="Example: 2000"
-      min="0"
-    >
-
-  </div>
-
-  <div class="form-group">
-
-    <label>📅 Payment Date</label>
-
-    <input
-      type="date"
-      id="paymentDate"
-    >
-
-  </div>
-
-</div>
-
-<div
-  id="paymentStatus"
-  class="status"
-></div>
-
-<button
-  class="secondary-btn"
-  id="addPaymentButton"
-  onclick="addSalaryPayment()"
->
-  ➕ Add Payment
-</button>
+    </div>
 
   </div>
 
   <div class="box">
 
-<div class="title">
+    <div class="title">
 
-  <h2>📋 Salary History</h2>
+      <h2>✏️ Set / Edit Monthly Salary</h2>
 
-  <p>Selected teacher ki previous aur current months ki salary history.</p>
+    </div>
 
-</div>
+    <div class="form-grid">
 
-<div class="table-wrapper">
+      <div class="form-group">
 
-  <table>
+        <label>💰 Total Monthly Salary</label>
 
-    <thead>
-
-      <tr>
-        <th>Month</th>
-        <th>Total Salary</th>
-        <th>Paid Salary</th>
-        <th>Pending Salary</th>
-        <th>Last Payment</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-
-    </thead>
-
-    <tbody id="salaryHistory">
-
-      <tr>
-
-        <td
-          colspan="7"
-          class="empty"
+        <input
+          type="number"
+          id="totalSalaryInput"
+          placeholder="Example: 8000"
+          min="0"
         >
-          Teacher select karke salary history dekhein.
-        </td>
 
-      </tr>
+      </div>
 
-    </tbody>
+      <div class="form-group">
 
-  </table>
+        <label>📅 Salary Month</label>
 
-</div>
+        <input
+          type="text"
+          id="selectedMonthText"
+          disabled
+          value="Select teacher and month"
+        >
+
+      </div>
+
+    </div>
+
+    <div
+      id="salaryStatus"
+      class="status"
+    ></div>
+
+    <button
+      class="save-btn"
+      id="saveSalaryButton"
+      onclick="saveMonthlySalary()"
+    >
+      💾 Save / Update Monthly Salary
+    </button>
+
+  </div>
+
+  <div class="box">
+
+    <div class="title">
+
+      <h2>💵 Add Salary Payment</h2>
+
+    </div>
+
+    <div class="payment-grid">
+
+      <div class="form-group">
+
+        <label>💸 Add New Payment Amount</label>
+
+        <input
+          type="number"
+          id="paymentAmount"
+          placeholder="Example: 2000"
+          min="0"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📅 Payment Date</label>
+
+        <div class="date-dropdowns">
+
+          <select id="paymentDay">
+            <option value="">Day</option>
+          </select>
+
+          <select id="paymentMonth">
+            <option value="">Month</option>
+          </select>
+
+          <select id="paymentYear">
+            <option value="">Year</option>
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="paymentStatus"
+      class="status"
+    ></div>
+
+    <button
+      class="secondary-btn"
+      id="addPaymentButton"
+      onclick="addSalaryPayment()"
+    >
+      ➕ Add Payment
+    </button>
+
+  </div>
+
+  <div class="box">
+
+    <div class="title">
+
+      <h2>📋 Salary History</h2>
+
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Month</th>
+            <th>Total Salary</th>
+            <th>Paid Salary</th>
+            <th>Pending Salary</th>
+            <th>Last Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="salaryHistory">
+
+          <tr>
+
+            <td
+              colspan="7"
+              class="empty"
+            >
+              No salary records found for this teacher.
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
 
   </div>
 
@@ -943,86 +952,93 @@ tr:hover{
 
   <div class="modal-content">
 
-<button
-  class="close-btn"
-  onclick="closeEditModal()"
->
-  ×
-</button>
+    <button
+      class="close-btn"
+      onclick="closeEditModal()"
+    >
+      ×
+    </button>
 
-<div class="modal-title">
+    <div class="modal-title">
 
-  <h2>✏️ Edit Salary Record</h2>
+      <h2>✏️ Edit Salary Record</h2>
 
-  <p>Monthly salary record ko update karein.</p>
+      <p>Update monthly salary record.</p>
 
-</div>
-
-<input
-  type="hidden"
-  id="editRecordId"
->
-
-<div class="modal-grid">
-
-  <div class="form-group">
-
-    <label>💰 Total Salary</label>
+    </div>
 
     <input
-      type="number"
-      id="editTotalSalary"
-      min="0"
+      type="hidden"
+      id="editRecordId"
     >
 
-  </div>
+    <div class="modal-grid">
 
-  <div class="form-group">
+      <div class="form-group">
 
-    <label>🟢 Paid Salary</label>
+        <label>💰 Total Salary</label>
 
-    <input
-      type="number"
-      id="editPaidSalary"
-      min="0"
+        <input
+          type="number"
+          id="editTotalSalary"
+          min="0"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>🟢 Paid Salary</label>
+
+        <input
+          type="number"
+          id="editPaidSalary"
+          min="0"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>📅 Payment Date</label>
+
+        <div class="date-dropdowns">
+
+          <select id="editPaymentDay">
+            <option value="">Day</option>
+          </select>
+
+          <select id="editPaymentMonth">
+            <option value="">Month</option>
+          </select>
+
+          <select id="editPaymentYear">
+            <option value="">Year</option>
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      id="editStatus"
+      class="status"
+    ></div>
+
+    <button
+      class="save-btn"
+      onclick="updateSalaryRecord()"
     >
-
-  </div>
-
-  <div class="form-group">
-
-    <label>📅 Payment Date</label>
-
-    <input
-      type="date"
-      id="editPaymentDate"
-    >
-
-  </div>
-
-</div>
-
-<div
-  id="editStatus"
-  class="status"
-></div>
-
-<button
-  class="save-btn"
-  onclick="updateSalaryRecord()"
->
-  💾 Update Salary Record
-</button>
+      💾 Update Salary Record
+    </button>
 
   </div>
 
 </div>
 
 <script>
-
-/* =========================================
-   SUPABASE CONFIGURATION
-========================================= */
 
 const SUPABASE_URL =
   "https://sfgnwdljakmtuyoxmltr.supabase.co";
@@ -1036,33 +1052,311 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
-
-/* =========================================
-   GLOBAL VARIABLES
-========================================= */
-
 let currentSalaryRecord = null;
-
 let selectedTeacherName = "";
 
+const today = new Date();
 
-/* =========================================
-   SET TODAY PAYMENT DATE
-========================================= */
-
-const today =
-  new Date()
-    .toISOString()
-    .split("T")[0];
-
-document.getElementById(
-  "paymentDate"
-).value = today;
+const todayISO =
+  today.getFullYear() +
+  "-" +
+  String(today.getMonth() + 1).padStart(2,"0") +
+  "-" +
+  String(today.getDate()).padStart(2,"0");
 
 
-/* =========================================
-   LOAD MONTHS
-========================================= */
+/* =========================
+   DATE FUNCTIONS
+========================= */
+
+function formatDateDisplay(dateString){
+
+  if(!dateString){
+    return "";
+  }
+
+  const parts =
+    dateString.split("-");
+
+  if(parts.length !== 3){
+    return "";
+  }
+
+  const year =
+    Number(parts[0]);
+
+  const month =
+    Number(parts[1]);
+
+  const day =
+    Number(parts[2]);
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  if(
+    !year ||
+    !month ||
+    !day ||
+    !months[month - 1]
+  ){
+    return "";
+  }
+
+  return (
+    String(day).padStart(2,"0") +
+    " " +
+    months[month - 1] +
+    " " +
+    year
+  );
+
+}
+
+
+/* =========================
+   DATE DROPDOWNS
+========================= */
+
+function loadDateDropdowns(){
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const daySelects = [
+    document.getElementById("paymentDay"),
+    document.getElementById("editPaymentDay")
+  ];
+
+  const monthSelects = [
+    document.getElementById("paymentMonth"),
+    document.getElementById("editPaymentMonth")
+  ];
+
+  const yearSelects = [
+    document.getElementById("paymentYear"),
+    document.getElementById("editPaymentYear")
+  ];
+
+  /* DAYS */
+
+  daySelects.forEach(function(select){
+
+    select.innerHTML =
+      '<option value="">Day</option>';
+
+    for(let day = 1; day <= 31; day++){
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(day).padStart(2,"0");
+
+      option.textContent =
+        day;
+
+      select.appendChild(option);
+
+    }
+
+  });
+
+
+  /* MONTHS */
+
+  monthSelects.forEach(function(select){
+
+    select.innerHTML =
+      '<option value="">Month</option>';
+
+    monthNames.forEach(function(month,index){
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(index + 1).padStart(2,"0");
+
+      option.textContent =
+        month;
+
+      select.appendChild(option);
+
+    });
+
+  });
+
+
+  /* YEARS */
+
+  const currentYear =
+    new Date().getFullYear();
+
+  yearSelects.forEach(function(select){
+
+    select.innerHTML =
+      '<option value="">Year</option>';
+
+    for(
+      let year = 2020;
+      year <= 5000;
+      year++
+    ){
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        year;
+
+      option.textContent =
+        year;
+
+      if(year === currentYear){
+
+        option.selected = true;
+
+      }
+
+      select.appendChild(option);
+
+    }
+
+  });
+
+
+  /* PAYMENT DATE = TODAY */
+
+  setDateDropdowns(
+    "paymentDay",
+    "paymentMonth",
+    "paymentYear",
+    todayISO
+  );
+
+}
+
+
+/* =========================
+   SET DATE DROPDOWNS
+========================= */
+
+function setDateDropdowns(
+  dayId,
+  monthId,
+  yearId,
+  dateString
+){
+
+  if(!dateString){
+    return;
+  }
+
+  const parts =
+    dateString.split("-");
+
+  if(parts.length !== 3){
+    return;
+  }
+
+  document.getElementById(dayId).value =
+    parts[2];
+
+  document.getElementById(monthId).value =
+    parts[1];
+
+  document.getElementById(yearId).value =
+    parts[0];
+
+}
+
+
+/* =========================
+   GET DATE FROM DROPDOWNS
+========================= */
+
+function getDateFromDropdowns(
+  dayId,
+  monthId,
+  yearId
+){
+
+  const day =
+    document.getElementById(dayId).value;
+
+  const month =
+    document.getElementById(monthId).value;
+
+  const year =
+    document.getElementById(yearId).value;
+
+  if(!day || !month || !year){
+
+    return "";
+
+  }
+
+  const date =
+    new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day)
+    );
+
+  /*
+    Check invalid dates such as
+    31 February.
+  */
+
+  if(
+    date.getFullYear() !== Number(year) ||
+    date.getMonth() !== Number(month) - 1 ||
+    date.getDate() !== Number(day)
+  ){
+
+    return null;
+
+  }
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+/* =========================
+   MONTHS
+========================= */
 
 function loadMonths(){
 
@@ -1121,9 +1415,9 @@ function loadMonths(){
 }
 
 
-/* =========================================
-   LOAD YEARS - AUTO FUTURE YEARS
-========================================= */
+/* =========================
+   YEARS
+========================= */
 
 function loadYears(){
 
@@ -1136,7 +1430,6 @@ function loadYears(){
     new Date().getFullYear();
 
   const startYear = 2020;
-
   const endYear = 5000;
 
   yearSelect.innerHTML = "";
@@ -1152,9 +1445,11 @@ function loadYears(){
         "option"
       );
 
-    option.value = year;
+    option.value =
+      year;
 
-    option.textContent = year;
+    option.textContent =
+      year;
 
     if(year === currentYear){
 
@@ -1171,9 +1466,9 @@ function loadYears(){
 }
 
 
-/* =========================================
+/* =========================
    LOAD TEACHERS
-========================================= */
+========================= */
 
 async function loadTeachers(){
 
@@ -1267,11 +1562,11 @@ async function loadTeachers(){
     );
 
     select.innerHTML =
-      '<option value="">Teachers load nahi hue</option>';
+      '<option value="">Teachers not loading</option>';
 
     showStatus(
       "salaryStatus",
-      "❌ Teachers load nahi hue: " +
+      "❌ Teachers not loading: " +
       error.message,
       "error"
     );
@@ -1281,9 +1576,9 @@ async function loadTeachers(){
 }
 
 
-/* =========================================
-   GET SELECTED SALARY MONTH
-========================================= */
+/* =========================
+   SALARY MONTH
+========================= */
 
 function getSalaryMonth(){
 
@@ -1310,10 +1605,6 @@ function getSalaryMonth(){
 
 }
 
-
-/* =========================================
-   GET MONTH NAME
-========================================= */
 
 function getMonthName(){
 
@@ -1355,9 +1646,9 @@ function getMonthName(){
 }
 
 
-/* =========================================
-   SHOW STATUS
-========================================= */
+/* =========================
+   STATUS
+========================= */
 
 function showStatus(
   elementId,
@@ -1380,9 +1671,9 @@ function showStatus(
 }
 
 
-/* =========================================
-   FORMAT MONEY
-========================================= */
+/* =========================
+   MONEY
+========================= */
 
 function formatMoney(amount){
 
@@ -1401,9 +1692,9 @@ function formatMoney(amount){
 }
 
 
-/* =========================================
-   CALCULATE STATUS
-========================================= */
+/* =========================
+   SALARY STATUS
+========================= */
 
 function calculateSalaryStatus(
   total,
@@ -1416,21 +1707,15 @@ function calculateSalaryStatus(
   paid =
     Number(paid || 0);
 
-  if(
-    total <= 0
-  ){
+  if(total <= 0){
     return "Pending";
   }
 
-  if(
-    paid <= 0
-  ){
+  if(paid <= 0){
     return "Pending";
   }
 
-  if(
-    paid >= total
-  ){
+  if(paid >= total){
     return "Paid";
   }
 
@@ -1439,9 +1724,9 @@ function calculateSalaryStatus(
 }
 
 
-/* =========================================
-   RESET CURRENT VIEW
-========================================= */
+/* =========================
+   RESET CURRENT SALARY
+========================= */
 
 function resetCurrentSalary(){
 
@@ -1486,9 +1771,9 @@ function resetCurrentSalary(){
 }
 
 
-/* =========================================
+/* =========================
    LOAD SELECTED SALARY
-========================================= */
+========================= */
 
 async function loadSelectedSalary(){
 
@@ -1594,7 +1879,7 @@ async function loadSelectedSalary(){
 
     }
 
-    loadSalaryHistory(
+    await loadSalaryHistory(
       teacherId
     );
 
@@ -1607,7 +1892,7 @@ async function loadSelectedSalary(){
     );
 
     alert(
-      "❌ Salary load nahi hui: " +
+      "❌ Salary not loaded: " +
       error.message
     );
 
@@ -1616,9 +1901,9 @@ async function loadSelectedSalary(){
 }
 
 
-/* =========================================
+/* =========================
    DISPLAY CURRENT SALARY
-========================================= */
+========================= */
 
 function displayCurrentSalary(record){
 
@@ -1682,9 +1967,9 @@ function displayCurrentSalary(record){
 }
 
 
-/* =========================================
+/* =========================
    SAVE MONTHLY SALARY
-========================================= */
+========================= */
 
 async function saveMonthlySalary(){
 
@@ -1727,7 +2012,7 @@ async function saveMonthlySalary(){
 
     showStatus(
       "salaryStatus",
-      "❌ Valid total salary enter karein.",
+      "❌ Enter valid total salary amount.",
       "error"
     );
 
@@ -1808,7 +2093,7 @@ async function saveMonthlySalary(){
 
       showStatus(
         "salaryStatus",
-        "✅ Monthly salary successfully update ho gayi.",
+        "✅ Monthly salary successfully updated.",
         "success"
       );
 
@@ -1845,7 +2130,7 @@ async function saveMonthlySalary(){
 
       showStatus(
         "salaryStatus",
-        "✅ New monthly salary record successfully create ho gaya.",
+        "✅ New monthly salary record successfully created.",
         "success"
       );
 
@@ -1863,7 +2148,7 @@ async function saveMonthlySalary(){
 
     showStatus(
       "salaryStatus",
-      "❌ Salary save nahi hui: " +
+      "❌ Salary not saved: " +
       error.message,
       "error"
     );
@@ -1882,9 +2167,9 @@ async function saveMonthlySalary(){
 }
 
 
-/* =========================================
+/* =========================
    ADD SALARY PAYMENT
-========================================= */
+========================= */
 
 async function addSalaryPayment(){
 
@@ -1901,9 +2186,11 @@ async function addSalaryPayment(){
     );
 
   const paymentDate =
-    document.getElementById(
-      "paymentDate"
-    ).value;
+    getDateFromDropdowns(
+      "paymentDay",
+      "paymentMonth",
+      "paymentYear"
+    );
 
   const salaryMonth =
     getSalaryMonth();
@@ -1917,7 +2204,7 @@ async function addSalaryPayment(){
 
     showStatus(
       "paymentStatus",
-      "❌ Please teacher select karein.",
+      "❌ Please select a teacher.",
       "error"
     );
 
@@ -1932,7 +2219,31 @@ async function addSalaryPayment(){
 
     showStatus(
       "paymentStatus",
-      "❌ Valid payment amount enter karein.",
+      "❌ Enter valid payment amount.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(paymentDate === ""){
+
+    showStatus(
+      "paymentStatus",
+      "❌ Please select Day, Month and Year.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(paymentDate === null){
+
+    showStatus(
+      "paymentStatus",
+      "❌ Invalid date selected. Please select a valid date.",
       "error"
     );
 
@@ -1967,7 +2278,7 @@ async function addSalaryPayment(){
 
       showStatus(
         "paymentStatus",
-        "❌ Pehle is month ki total salary set karein.",
+        "❌ Please set the total salary for this month first.",
         "error"
       );
 
@@ -2019,8 +2330,7 @@ async function addSalaryPayment(){
           pending_salary:
             newPending,
           payment_date:
-            paymentDate ||
-            today,
+            paymentDate,
           status:
             newStatus
         })
@@ -2040,7 +2350,7 @@ async function addSalaryPayment(){
 
     showStatus(
       "paymentStatus",
-      "✅ Payment successfully add ho gaya. Total paid salary automatically update ho gayi.",
+      "✅ Payment successfully added. Total paid salary automatically updated.",
       "success"
     );
 
@@ -2056,7 +2366,7 @@ async function addSalaryPayment(){
 
     showStatus(
       "paymentStatus",
-      "❌ Payment add nahi hua: " +
+      "❌ Payment not added: " +
       error.message,
       "error"
     );
@@ -2075,9 +2385,9 @@ async function addSalaryPayment(){
 }
 
 
-/* =========================================
-   LOAD SALARY HISTORY
-========================================= */
+/* =========================
+   SALARY HISTORY
+========================= */
 
 async function loadSalaryHistory(
   teacherId
@@ -2089,11 +2399,11 @@ async function loadSalaryHistory(
     );
 
   tbody.innerHTML =
-    '<tr>' +
+    "<tr>" +
     '<td colspan="7" class="empty">' +
-    'Loading salary history...' +
-    '</td>' +
-    '</tr>';
+    "Loading salary history..." +
+    "</td>" +
+    "</tr>";
 
   try{
 
@@ -2128,11 +2438,11 @@ async function loadSalaryHistory(
     ){
 
       tbody.innerHTML =
-        '<tr>' +
+        "<tr>" +
         '<td colspan="7" class="empty">' +
-        'Is teacher ki abhi koi salary history nahi hai.' +
-        '</td>' +
-        '</tr>';
+        "No salary history found for this teacher." +
+        "</td>" +
+        "</tr>";
 
       return;
 
@@ -2184,16 +2494,8 @@ async function loadSalaryHistory(
         if(record.payment_date){
 
           paymentDateText =
-            new Date(
-              record.payment_date +
-              "T00:00:00"
-            ).toLocaleDateString(
-              "en-IN",
-              {
-                day:"2-digit",
-                month:"short",
-                year:"numeric"
-              }
+            formatDateDisplay(
+              record.payment_date
             );
 
         }
@@ -2245,24 +2547,28 @@ async function loadSalaryHistory(
           status +
           "</span></td>" +
 
-          '<td>' +
+          "<td>" +
+
           '<button ' +
           'class="edit-btn" ' +
           'onclick="openEditModal(' +
-          '\'' + record.id + '\'' +
-          ',' +
+          "'" + record.id + "'" +
+          "," +
           total +
-          ',' +
+          "," +
           paid +
-          ',' +
-          '\'' +
+          "," +
+          "'" +
           (record.payment_date || "") +
-          '\'' +
-          ')"' +
-          '>' +
-          '✏️ Edit' +
-          '</button>' +
-          '</td>' +
+          "'" +
+          ")" +
+          ">" +
+
+          "✏️ Edit" +
+
+          "</button>" +
+
+          "</td>" +
 
           "</tr>";
 
@@ -2278,20 +2584,20 @@ async function loadSalaryHistory(
     );
 
     tbody.innerHTML =
-      '<tr>' +
+      "<tr>" +
       '<td colspan="7" class="empty">' +
-      '❌ Salary history load nahi hui.' +
-      '</td>' +
-      '</tr>';
+      "❌ Salary history not loaded." +
+      "</td>" +
+      "</tr>";
 
   }
 
 }
 
 
-/* =========================================
-   OPEN EDIT MODAL
-========================================= */
+/* =========================
+   EDIT MODAL
+========================= */
 
 function openEditModal(
   id,
@@ -2315,10 +2621,12 @@ function openEditModal(
   ).value =
     paid;
 
-  document.getElementById(
-    "editPaymentDate"
-  ).value =
-    paymentDate || "";
+  setDateDropdowns(
+    "editPaymentDay",
+    "editPaymentMonth",
+    "editPaymentYear",
+    paymentDate || ""
+  );
 
   document.getElementById(
     "editStatus"
@@ -2333,10 +2641,6 @@ function openEditModal(
 }
 
 
-/* =========================================
-   CLOSE EDIT MODAL
-========================================= */
-
 function closeEditModal(){
 
   document.getElementById(
@@ -2347,9 +2651,9 @@ function closeEditModal(){
 }
 
 
-/* =========================================
+/* =========================
    UPDATE SALARY RECORD
-========================================= */
+========================= */
 
 async function updateSalaryRecord(){
 
@@ -2373,9 +2677,11 @@ async function updateSalaryRecord(){
     );
 
   const paymentDate =
-    document.getElementById(
-      "editPaymentDate"
-    ).value;
+    getDateFromDropdowns(
+      "editPaymentDay",
+      "editPaymentMonth",
+      "editPaymentYear"
+    );
 
   if(
     !Number.isFinite(total) ||
@@ -2384,7 +2690,7 @@ async function updateSalaryRecord(){
 
     showStatus(
       "editStatus",
-      "❌ Valid total salary enter karein.",
+      "❌ Enter valid total salary amount.",
       "error"
     );
 
@@ -2399,7 +2705,19 @@ async function updateSalaryRecord(){
 
     showStatus(
       "editStatus",
-      "❌ Valid paid salary enter karein.",
+      "❌ Enter valid paid salary amount.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(paymentDate === null){
+
+    showStatus(
+      "editStatus",
+      "❌ Invalid payment date selected.",
       "error"
     );
 
@@ -2450,7 +2768,7 @@ async function updateSalaryRecord(){
 
     showStatus(
       "editStatus",
-      "✅ Salary record successfully update ho gaya.",
+      "✅ Salary record successfully updated.",
       "success"
     );
 
@@ -2475,7 +2793,7 @@ async function updateSalaryRecord(){
 
     showStatus(
       "editStatus",
-      "❌ Salary update nahi hui: " +
+      "❌ Salary not updated: " +
       error.message,
       "error"
     );
@@ -2485,9 +2803,9 @@ async function updateSalaryRecord(){
 }
 
 
-/* =========================================
-   CLOSE MODAL OUTSIDE CLICK
-========================================= */
+/* =========================
+   MODAL CLOSE
+========================= */
 
 window.onclick =
   function(event){
@@ -2508,9 +2826,9 @@ window.onclick =
   };
 
 
-/* =========================================
-   AUTO RELOAD ON MONTH CHANGE
-========================================= */
+/* =========================
+   MONTH CHANGE
+========================= */
 
 document
   .getElementById(
@@ -2535,6 +2853,10 @@ document
   );
 
 
+/* =========================
+   YEAR CHANGE
+========================= */
+
 document
   .getElementById(
     "yearSelect"
@@ -2558,6 +2880,10 @@ document
   );
 
 
+/* =========================
+   TEACHER CHANGE
+========================= */
+
 document
   .getElementById(
     "teacherSelect"
@@ -2571,23 +2897,25 @@ document
       document.getElementById(
         "salaryHistory"
       ).innerHTML =
-        '<tr>' +
+        "<tr>" +
         '<td colspan="7" class="empty">' +
-        'View Salary button click karke history dekhein.' +
-        '</td>' +
-        '</tr>';
+        "Click the View Salary button to see the history." +
+        "</td>" +
+        "</tr>";
 
     }
   );
 
 
-/* =========================================
+/* =========================
    START
-========================================= */
+========================= */
 
 loadMonths();
 
 loadYears();
+
+loadDateDropdowns();
 
 loadTeachers();
 
