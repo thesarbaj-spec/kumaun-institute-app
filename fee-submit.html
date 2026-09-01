@@ -1316,7 +1316,7 @@ document
         if(!currentStudent){
 
             showMessage(
-                "Student information load nahi hui.",
+                "Student information not loaded.",
                 "error"
             );
 
@@ -1384,7 +1384,7 @@ document
         if(amount <= 0){
 
             showMessage(
-                "Please valid payment amount enter karein.",
+                "Please enter a valid payment amount.",
                 "error"
             );
 
@@ -1396,7 +1396,7 @@ document
         if(amount > remaining){
 
             showMessage(
-                "Payment amount remaining fee se zyada nahi ho sakti.",
+                "Payment amount cannot exceed remaining fee.",
                 "error"
             );
 
@@ -1408,7 +1408,7 @@ document
         if(!transactionId){
 
             showMessage(
-                "Transaction ID / UTR Number enter karein.",
+                "Transaction ID / UTR Number enter.",
                 "error"
             );
 
@@ -1420,7 +1420,7 @@ document
         if(!paymentDate){
 
             showMessage(
-                "Payment date select karein.",
+                "Please select a payment date.",
                 "error"
             );
 
@@ -1630,7 +1630,7 @@ async function loadPaymentHistory(){
         `
         <tr>
             <td colspan="6" class="empty">
-                Payment history load nahi hui.
+                Payment history not loaded.
             </td>
         </tr>
         `;
@@ -1650,7 +1650,7 @@ async function loadPaymentHistory(){
         `
         <tr>
             <td colspan="6" class="empty">
-                Abhi tak koi payment request nahi hai.
+                No payment requests found.
             </td>
         </tr>
         `;
@@ -1857,7 +1857,7 @@ async function startPage(){
 
 
             showMessage(
-                "Student record nahi mila.",
+                "Student record not found.",
                 "error"
             );
 
@@ -1887,7 +1887,7 @@ async function startPage(){
 
 
         showMessage(
-            "Page load nahi ho paaya: " +
+            "Page could not be loaded.: " +
             error.message,
             "error"
         );

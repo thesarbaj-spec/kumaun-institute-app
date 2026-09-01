@@ -136,17 +136,30 @@ body{
     font-size:13px;
     font-weight:700;
     color:#64748b;
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 
-.month-box input{
-    width:100%;
-    max-width:350px;
+.date-selectors{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.date-selectors select{
+    flex:1;
+    min-width:160px;
     padding:12px;
     border:1px solid #cbd5e1;
     border-radius:10px;
     font-size:15px;
+    background:white;
+    color:#172554;
     outline:none;
+    cursor:pointer;
+}
+
+.date-selectors select:focus{
+    border-color:#2563eb;
 }
 
 .summary-grid{
@@ -372,8 +385,12 @@ td{
         padding:15px;
     }
 
-    .month-box input{
-        max-width:none;
+    .date-selectors{
+        flex-direction:column;
+    }
+
+    .date-selectors select{
+        width:100%;
     }
 
 }
@@ -415,14 +432,12 @@ td{
 
 </header>
 
-
 <main class="container">
 
     <div
         id="errorBox"
         class="error-box">
     </div>
-
 
     <div class="welcome-box">
 
@@ -436,7 +451,6 @@ td{
 
     </div>
 
-
     <div
         id="loading"
         class="loading">
@@ -445,22 +459,38 @@ td{
 
     </div>
 
-
     <div id="attendanceContent">
-
 
         <section class="month-box">
 
-            <label for="monthSelect">
-                📅 Select Month
+            <label>
+                📅 Select Month & Year
             </label>
 
-            <input
-                type="month"
-                id="monthSelect">
+            <div class="date-selectors">
+
+                <select id="monthSelect">
+
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+
+                </select>
+
+                <select id="yearSelect"></select>
+
+            </div>
 
         </section>
-
 
         <div class="summary-grid">
 
@@ -484,7 +514,6 @@ td{
 
             </div>
 
-
             <div class="summary-card">
 
                 <div class="summary-icon">
@@ -505,7 +534,6 @@ td{
 
             </div>
 
-
             <div class="summary-card">
 
                 <div class="summary-icon">
@@ -525,7 +553,6 @@ td{
                 </div>
 
             </div>
-
 
             <div class="summary-card">
 
@@ -548,7 +575,6 @@ td{
             </div>
 
         </div>
-
 
         <section class="section">
 
@@ -582,7 +608,6 @@ td{
             </div>
 
         </section>
-
 
         <section class="section">
 
@@ -628,13 +653,11 @@ td{
 
 </main>
 
-
 <footer class="footer">
 
     © 2026 Kumaun Institute of Computer Education
 
 </footer>
-
 
 <script>
 
@@ -677,6 +700,9 @@ const errorBox =
 
 const monthSelect =
     document.getElementById("monthSelect");
+
+const yearSelect =
+    document.getElementById("yearSelect");
 
 const attendanceBody =
     document.getElementById("attendanceBody");
@@ -766,6 +792,63 @@ function getDay(value){
 
 
 /* =========================================
+   CREATE YEAR DROPDOWN
+   AUTOMATICALLY ADD FUTURE YEARS
+========================================= */
+
+function createYearDropdown(){
+
+    const currentYear =
+        new Date().getFullYear();
+
+    yearSelect.innerHTML = "";
+
+    /*
+       Previous 5 years
+       Current year
+       Next 10 years
+
+       Example:
+       2021 → 2036
+
+       Next year automatically
+       2027 → 2028 → 2029...
+    */
+
+    const startYear =
+        currentYear - 5;
+
+    const endYear =
+        currentYear + 10;
+
+    for(
+        let year = startYear;
+        year <= endYear;
+        year++
+    ){
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            year;
+
+        option.textContent =
+            year;
+
+        yearSelect.appendChild(
+            option
+        );
+
+    }
+
+    yearSelect.value =
+        currentYear;
+
+}
+
+
+/* =========================================
    SET CURRENT MONTH
 ========================================= */
 
@@ -774,19 +857,35 @@ function setCurrentMonth(){
     const now =
         new Date();
 
-    const year =
+    monthSelect.value =
+        now.getMonth() + 1;
+
+    yearSelect.value =
         now.getFullYear();
 
+}
+
+
+/* =========================================
+   GET SELECTED MONTH
+========================================= */
+
+function getSelectedMonth(){
+
     const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
+        Number(
+            monthSelect.value
         );
 
-    monthSelect.value =
-        year + "-" + month;
+    const year =
+        Number(
+            yearSelect.value
+        );
+
+    return {
+        month: month,
+        year: year
+    };
 
 }
 
@@ -805,17 +904,14 @@ async function findStudent(){
     .auth
     .getSession();
 
-
     if(error){
 
         throw error;
 
     }
 
-
     const session =
         data.session;
-
 
     if(
         !session ||
@@ -829,10 +925,8 @@ async function findStudent(){
 
     }
 
-
     const authUserId =
         session.user.id;
-
 
     const {
         data:student,
@@ -851,13 +945,11 @@ async function findStudent(){
 
     .maybeSingle();
 
-
     if(studentError){
 
         throw studentError;
 
     }
-
 
     return student;
 
@@ -873,20 +965,16 @@ function showStudent(student){
     currentStudent =
         student;
 
-
     document.getElementById(
         "welcomeName"
     ).textContent =
         "My Attendance 📊";
 
-
     const studentName =
         student.name || "Student";
 
-
     const studentId =
         student.id || "-";
-
 
     document.getElementById(
         "studentInfo"
@@ -910,32 +998,44 @@ async function loadAttendance(){
 
     }
 
+    const selected =
+        getSelectedMonth();
 
-    const selectedMonth =
-        monthSelect.value;
+    const month =
+        selected.month;
 
+    const year =
+        selected.year;
 
-    if(!selectedMonth){
+    if(
+        !month ||
+        !year
+    ){
 
         return;
 
     }
 
-
     const startDate =
-        selectedMonth + "-01";
+        year +
+        "-" +
+        String(month).padStart(2,"0") +
+        "-01";
 
 
-    const parts =
-        selectedMonth.split("-");
+    /*
+       JavaScript month is 0-based.
 
+       Example:
+       month = 12
 
-    const year =
-        Number(parts[0]);
+       new Date(2026,12,1)
+       automatically becomes
+       January 2027.
 
-    const month =
-        Number(parts[1]);
-
+       So December → January next year
+       automatically works.
+    */
 
     const nextMonth =
         new Date(
@@ -944,10 +1044,8 @@ async function loadAttendance(){
             1
         );
 
-
     const nextYear =
         nextMonth.getFullYear();
-
 
     const nextMonthNumber =
         String(
@@ -956,7 +1054,6 @@ async function loadAttendance(){
             2,
             "0"
         );
-
 
     const endDate =
         nextYear +
@@ -1041,7 +1138,6 @@ async function loadAttendance(){
                 present++;
 
             }
-
 
             if(
                 record.status ===
@@ -1224,12 +1320,52 @@ monthSelect.addEventListener(
 
 
 /* =========================================
+   YEAR CHANGE
+========================================= */
+
+yearSelect.addEventListener(
+    "change",
+    async function(){
+
+        try{
+
+            await loadAttendance();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            showError(
+                "Attendance load nahi ho paayi: " +
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
    START PAGE
 ========================================= */
 
 async function startPage(){
 
     try{
+
+        /*
+           Pehle year dropdown create hoga.
+        */
+
+        createYearDropdown();
+
+
+        /*
+           Current month + current year
+           automatically select hoga.
+        */
 
         setCurrentMonth();
 
