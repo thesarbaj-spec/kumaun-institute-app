@@ -194,6 +194,28 @@ body{
   border-color:#2563eb;
 }
 
+.date-select-row{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1.2fr;
+  gap:8px;
+}
+
+.date-select-row select{
+  width:100%;
+  padding:12px 8px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  outline:none;
+  font-size:13px;
+  background:white;
+  color:#172554;
+  cursor:pointer;
+}
+
+.date-select-row select:focus{
+  border-color:#2563eb;
+}
+
 .primary-btn{
   width:100%;
   border:none;
@@ -321,6 +343,16 @@ button:disabled{
     padding:20px;
   }
 
+  .date-select-row{
+    grid-template-columns:1fr 1.4fr 1.1fr;
+    gap:6px;
+  }
+
+  .date-select-row select{
+    font-size:12px;
+    padding:11px 5px;
+  }
+
 }
 
 </style>
@@ -416,6 +448,8 @@ button:disabled{
     >
 
 
+      <!-- CHANGE PASSWORD -->
+
       <section class="settings-card">
 
         <div class="card-icon">
@@ -425,11 +459,6 @@ button:disabled{
         <h3>
           Change Password
         </h3>
-
-        <p class="card-description">
-          Change your password.
-        </p>
-
 
         <div class="form-group">
 
@@ -508,6 +537,7 @@ button:disabled{
       </section>
 
 
+      <!-- RESET PASSWORD -->
 
       <section class="settings-card">
 
@@ -518,11 +548,6 @@ button:disabled{
         <h3>
           Reset Password
         </h3>
-
-        <p class="card-description">
-          Reset your password.
-        </p>
-
 
         <div class="form-group">
 
@@ -539,19 +564,34 @@ button:disabled{
         </div>
 
 
+        <!-- DOB -->
+
         <div class="form-group">
 
           <label>
             🎂 Date of Birth
           </label>
 
-          <input
-            type="date"
-            id="resetDob"
-          >
+          <div class="date-select-row">
+
+            <select id="resetDobDay">
+              <option value="">Day</option>
+            </select>
+
+            <select id="resetDobMonth">
+              <option value="">Month</option>
+            </select>
+
+            <select id="resetDobYear">
+              <option value="">Year</option>
+            </select>
+
+          </div>
 
         </div>
 
+
+        <!-- JOINING DATE -->
 
         <div class="form-group">
 
@@ -559,10 +599,21 @@ button:disabled{
             📅 Joining Date
           </label>
 
-          <input
-            type="date"
-            id="resetJoiningDate"
-          >
+          <div class="date-select-row">
+
+            <select id="resetJoiningDay">
+              <option value="">Day</option>
+            </select>
+
+            <select id="resetJoiningMonth">
+              <option value="">Month</option>
+            </select>
+
+            <select id="resetJoiningYear">
+              <option value="">Year</option>
+            </select>
+
+          </div>
 
         </div>
 
@@ -667,6 +718,275 @@ function showStatus(
 
 
 /* =========================================
+   MONTHS
+========================================= */
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
+
+/* =========================================
+   CREATE DAY DROPDOWN
+========================================= */
+
+function fillDays(selectId){
+
+  const select =
+    document.getElementById(
+      selectId
+    );
+
+  for(
+    let day = 1;
+    day <= 31;
+    day++
+  ){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      String(day).padStart(
+        2,
+        "0"
+      );
+
+    option.textContent =
+      day;
+
+    select.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   CREATE MONTH DROPDOWN
+========================================= */
+
+function fillMonths(selectId){
+
+  const select =
+    document.getElementById(
+      selectId
+    );
+
+  monthNames.forEach(
+    function(month,index){
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        String(index + 1).padStart(
+          2,
+          "0"
+        );
+
+      option.textContent =
+        month;
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   CREATE YEAR DROPDOWN
+   AUTOMATIC FUTURE YEARS
+========================================= */
+
+function fillYears(
+  selectId,
+  startYear,
+  endYear
+){
+
+  const select =
+    document.getElementById(
+      selectId
+    );
+
+  for(
+    let year = endYear;
+    year >= startYear;
+    year--
+  ){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      year;
+
+    option.textContent =
+      year;
+
+    select.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   INITIALIZE DATE DROPDOWNS
+========================================= */
+
+function initializeDateDropdowns(){
+
+  const currentYear =
+    new Date().getFullYear();
+
+
+  /*
+    DOB:
+    Current year tak + purane years.
+    Future DOB year nahi dikhega.
+  */
+
+  fillDays(
+    "resetDobDay"
+  );
+
+  fillMonths(
+    "resetDobMonth"
+  );
+
+  fillYears(
+    "resetDobYear",
+    1950,
+    currentYear
+  );
+
+
+  /*
+    JOINING DATE:
+    Current year tak.
+    Agar next year aata hai,
+    automatically dropdown mein aa jayega.
+  */
+
+  fillDays(
+    "resetJoiningDay"
+  );
+
+  fillMonths(
+    "resetJoiningMonth"
+  );
+
+  fillYears(
+    "resetJoiningYear",
+    2000,
+    currentYear
+  );
+
+}
+
+
+/* =========================================
+   GET DATE FROM DROPDOWNS
+   YYYY-MM-DD
+========================================= */
+
+function getDateFromDropdowns(
+  dayId,
+  monthId,
+  yearId
+){
+
+  const day =
+    document.getElementById(
+      dayId
+    ).value;
+
+  const month =
+    document.getElementById(
+      monthId
+    ).value;
+
+  const year =
+    document.getElementById(
+      yearId
+    ).value;
+
+
+  if(
+    !day ||
+    !month ||
+    !year
+  ){
+
+    return "";
+
+  }
+
+
+  const date =
+    new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day)
+    );
+
+
+  /*
+    Invalid date check
+    Example:
+    31 February
+  */
+
+  if(
+    date.getFullYear() !== Number(year) ||
+    date.getMonth() !== Number(month) - 1 ||
+    date.getDate() !== Number(day)
+  ){
+
+    return "";
+
+  }
+
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+/* =========================================
    LOAD LOGGED-IN TEACHER
 ========================================= */
 
@@ -708,7 +1028,7 @@ async function loadTeacherAccount(){
     ){
 
       loadingBox.textContent =
-        "❌ Teacher login session nahi mili.";
+        "❌ Teacher login session not found. ";
 
       setTimeout(
         function(){
@@ -740,7 +1060,7 @@ async function loadTeacherAccount(){
     if(!loggedInTeacherEmail){
 
       throw new Error(
-        "Teacher email nahi mili."
+        "Teacher email not found."
       );
 
     }
@@ -780,7 +1100,7 @@ async function loadTeacherAccount(){
 
 
     loadingBox.textContent =
-      "❌ Settings load nahi ho paayi: " +
+      "❌ Settings not loading: " +
       error.message;
 
   }
@@ -833,7 +1153,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "❌ Sabhi password fields fill karein.",
+      "❌ Fill in all password fields.",
       "error"
     );
 
@@ -848,7 +1168,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "❌ New password kam se kam 6 characters ka hona chahiye.",
+      "❌ New password must be at least 6 characters long.",
       "error"
     );
 
@@ -864,7 +1184,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "❌ New Password aur Confirm Password match nahi kar rahe.",
+      "❌ New Password and Confirm Password do not match.",
       "error"
     );
 
@@ -880,7 +1200,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "❌ New password current password se alag hona chahiye.",
+      "❌ The new password must be different from the current password.",
       "error"
     );
 
@@ -900,7 +1220,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "Current password verify ho raha hai...",
+      "Current password verifying...",
       "info"
     );
 
@@ -924,7 +1244,7 @@ async function changePassword(){
     if(loginError){
 
       throw new Error(
-        "Current password galat hai."
+        "Current password is incorrect."
       );
 
     }
@@ -932,7 +1252,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "Password update ho raha hai...",
+      "Password updating...",
       "info"
     );
 
@@ -959,7 +1279,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "✅ Password successfully change ho gaya.",
+      "✅ Password successfully changed.",
       "success"
     );
 
@@ -999,7 +1319,7 @@ async function changePassword(){
 
     showStatus(
       "changeStatus",
-      "❌ Password change nahi hua: " +
+      "❌ Password change failed: " +
       error.message,
       "error"
     );
@@ -1029,19 +1349,19 @@ async function resetPassword(){
 
 
   const dob =
-    document
-      .getElementById(
-        "resetDob"
-      )
-      .value;
+    getDateFromDropdowns(
+      "resetDobDay",
+      "resetDobMonth",
+      "resetDobYear"
+    );
 
 
   const joiningDate =
-    document
-      .getElementById(
-        "resetJoiningDate"
-      )
-      .value;
+    getDateFromDropdowns(
+      "resetJoiningDay",
+      "resetJoiningMonth",
+      "resetJoiningYear"
+    );
 
 
   const newPassword =
@@ -1077,7 +1397,87 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "❌ Sabhi details fill karein.",
+      "❌ Fill in all required fields.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    DOB future check
+  */
+
+  const today =
+    new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  const dobDate =
+    new Date(
+      dob + "T00:00:00"
+    );
+
+
+  if(
+    dobDate > today
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ Date of Birth cannot be in the future.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Joining date future check
+  */
+
+  const joiningDateObject =
+    new Date(
+      joiningDate + "T00:00:00"
+    );
+
+
+  if(
+    joiningDateObject > today
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ Joining Date cannot be in the future.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Joining Date DOB se pehle nahi honi chahiye
+  */
+
+  if(
+    joiningDateObject < dobDate
+  ){
+
+    showStatus(
+      "resetStatus",
+      "❌ Joining Date cannot be before Date of Birth.",
       "error"
     );
 
@@ -1092,7 +1492,7 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "❌ Password kam se kam 6 characters ka hona chahiye.",
+      "❌ Password must be at least 6 characters long.",
       "error"
     );
 
@@ -1108,7 +1508,7 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "❌ New Password aur Confirm Password match nahi kar rahe.",
+      "❌ New Password and Confirm Password do not match.",
       "error"
     );
 
@@ -1128,7 +1528,7 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "Teacher details verify ho rahi hain...",
+      "Teacher details verifying...",
       "info"
     );
 
@@ -1168,7 +1568,7 @@ async function resetPassword(){
 
       showStatus(
         "resetStatus",
-        "❌ Email, DOB ya Joining Date match nahi hui.",
+        "❌ Email, DOB or Joining Date do not match.",
         "error"
       );
 
@@ -1179,7 +1579,7 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "Teacher verified. Password reset ho raha hai...",
+      "Teacher verified. Password reset is in progress...",
       "info"
     );
 
@@ -1220,7 +1620,7 @@ async function resetPassword(){
 
       throw new Error(
         data.error ||
-        "Password reset nahi hua."
+        "Password reset failed."
       );
 
     }
@@ -1228,14 +1628,28 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "✅ Password successfully reset ho gaya.",
+      "✅ Password successfully reset.",
       "success"
     );
 
 
     document
       .getElementById(
-        "resetDob"
+        "resetDobDay"
+      )
+      .value =
+      "";
+
+    document
+      .getElementById(
+        "resetDobMonth"
+      )
+      .value =
+      "";
+
+    document
+      .getElementById(
+        "resetDobYear"
       )
       .value =
       "";
@@ -1243,7 +1657,21 @@ async function resetPassword(){
 
     document
       .getElementById(
-        "resetJoiningDate"
+        "resetJoiningDay"
+      )
+      .value =
+      "";
+
+    document
+      .getElementById(
+        "resetJoiningMonth"
+      )
+      .value =
+      "";
+
+    document
+      .getElementById(
+        "resetJoiningYear"
       )
       .value =
       "";
@@ -1276,7 +1704,7 @@ async function resetPassword(){
 
     showStatus(
       "resetStatus",
-      "❌ Password reset nahi hua: " +
+      "❌ Password reset failed: " +
       error.message,
       "error"
     );
@@ -1358,6 +1786,8 @@ async function logout(){
 /* =========================================
    START
 ========================================= */
+
+initializeDateDropdowns();
 
 loadTeacherAccount();
 
