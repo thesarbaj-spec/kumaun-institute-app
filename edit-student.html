@@ -131,6 +131,16 @@ textarea:focus{
     border-color:#2563eb;
 }
 
+.date-selects{
+    display:grid;
+    grid-template-columns:1fr 1.5fr 1.2fr;
+    gap:8px;
+}
+
+.date-selects select{
+    width:100%;
+}
+
 .photo-area{
     display:flex;
     align-items:center;
@@ -250,6 +260,16 @@ textarea:focus{
 
     .photo-area{
         align-items:flex-start;
+    }
+
+    .date-selects{
+        grid-template-columns:1fr 1.5fr 1.2fr;
+        gap:6px;
+    }
+
+    .date-selects select{
+        padding:10px 7px;
+        font-size:13px;
     }
 
     .buttons{
@@ -431,9 +451,7 @@ textarea:focus{
         Batch Timing
     </label>
 
-    <select
-        id="batch_timing"
-    >
+    <select id="batch_timing">
 
         <option value="">
             Select Batch Timing
@@ -495,10 +513,21 @@ textarea:focus{
         Date of Birth
     </label>
 
-    <input
-        type="date"
-        id="dob"
-    >
+    <div class="date-selects">
+
+        <select id="dob_day">
+            <option value="">Day</option>
+        </select>
+
+        <select id="dob_month">
+            <option value="">Month</option>
+        </select>
+
+        <select id="dob_year">
+            <option value="">Year</option>
+        </select>
+
+    </div>
 
 </div>
 
@@ -510,10 +539,21 @@ textarea:focus{
         Admission Date
     </label>
 
-    <input
-        type="date"
-        id="admission_date"
-    >
+    <div class="date-selects">
+
+        <select id="admission_day">
+            <option value="">Day</option>
+        </select>
+
+        <select id="admission_month">
+            <option value="">Month</option>
+        </select>
+
+        <select id="admission_year">
+            <option value="">Year</option>
+        </select>
+
+    </div>
 
 </div>
 
@@ -674,8 +714,6 @@ function getStudentId(){
 
     }
 
-    /* OLD METHOD FALLBACK */
-
     const localId =
         localStorage.getItem(
             "editStudentId"
@@ -708,6 +746,326 @@ const studentId =
 
 let oldPhotoUrl =
     null;
+
+
+/* =========================================
+   DATE DATA
+========================================= */
+
+const months = [
+
+    {
+        value:"01",
+        name:"January"
+    },
+
+    {
+        value:"02",
+        name:"February"
+    },
+
+    {
+        value:"03",
+        name:"March"
+    },
+
+    {
+        value:"04",
+        name:"April"
+    },
+
+    {
+        value:"05",
+        name:"May"
+    },
+
+    {
+        value:"06",
+        name:"June"
+    },
+
+    {
+        value:"07",
+        name:"July"
+    },
+
+    {
+        value:"08",
+        name:"August"
+    },
+
+    {
+        value:"09",
+        name:"September"
+    },
+
+    {
+        value:"10",
+        name:"October"
+    },
+
+    {
+        value:"11",
+        name:"November"
+    },
+
+    {
+        value:"12",
+        name:"December"
+    }
+
+];
+
+
+/* =========================================
+   CREATE DATE SELECTS
+========================================= */
+
+function setupDateSelects(){
+
+    const dateSets = [
+
+        {
+            day:"dob_day",
+            month:"dob_month",
+            year:"dob_year"
+        },
+
+        {
+            day:"admission_day",
+            month:"admission_month",
+            year:"admission_year"
+        }
+
+    ];
+
+
+    dateSets.forEach(function(set){
+
+        const daySelect =
+            document.getElementById(
+                set.day
+            );
+
+        const monthSelect =
+            document.getElementById(
+                set.month
+            );
+
+        const yearSelect =
+            document.getElementById(
+                set.year
+            );
+
+
+        /* DAYS */
+
+        for(
+            let day = 1;
+            day <= 31;
+            day++
+        ){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                String(day).padStart(
+                    2,
+                    "0"
+                );
+
+            option.textContent =
+                day;
+
+            daySelect.appendChild(
+                option
+            );
+
+        }
+
+
+        /* MONTHS */
+
+        months.forEach(function(month){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                month.value;
+
+            option.textContent =
+                month.name;
+
+            monthSelect.appendChild(
+                option
+            );
+
+        });
+
+
+        /* YEARS */
+
+        const currentYear =
+            new Date().getFullYear();
+
+        for(
+            let year = currentYear;
+            year >= 1950;
+            year--
+        ){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                year;
+
+            option.textContent =
+                year;
+
+            yearSelect.appendChild(
+                option
+            );
+
+        }
+
+    });
+
+}
+
+
+setupDateSelects();
+
+
+/* =========================================
+   SET DATE INTO DROPDOWNS
+========================================= */
+
+function setDateSelects(
+    dateValue,
+    dayId,
+    monthId,
+    yearId
+){
+
+    if(!dateValue){
+
+        return;
+
+    }
+
+    const dateString =
+        String(dateValue).substring(
+            0,
+            10
+        );
+
+    const parts =
+        dateString.split("-");
+
+
+    if(parts.length !== 3){
+
+        return;
+
+    }
+
+
+    const year =
+        parts[0];
+
+    const month =
+        parts[1];
+
+    const day =
+        parts[2];
+
+
+    document.getElementById(
+        dayId
+    ).value =
+        day;
+
+    document.getElementById(
+        monthId
+    ).value =
+        month;
+
+    document.getElementById(
+        yearId
+    ).value =
+        year;
+
+}
+
+
+/* =========================================
+   GET DATE FROM DROPDOWNS
+========================================= */
+
+function getDateFromSelects(
+    dayId,
+    monthId,
+    yearId
+){
+
+    const day =
+        document.getElementById(
+            dayId
+        ).value;
+
+    const month =
+        document.getElementById(
+            monthId
+        ).value;
+
+    const year =
+        document.getElementById(
+            yearId
+        ).value;
+
+
+    if(
+        !day &&
+        !month &&
+        !year
+    ){
+
+        return null;
+
+    }
+
+
+    if(
+        !day ||
+        !month ||
+        !year
+    ){
+
+        throw new Error(
+            "Please select complete date: Day, Month and Year."
+        );
+
+    }
+
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+
+}
 
 
 /* =========================================
@@ -771,6 +1129,7 @@ async function loadStudent(){
             studentId
         );
 
+
         const {
             data,
             error
@@ -793,6 +1152,7 @@ async function loadStudent(){
             "Student data:",
             data
         );
+
 
         console.log(
             "Student error:",
@@ -891,22 +1251,22 @@ async function loadStudent(){
 
         /* DOB */
 
-        document.getElementById(
-            "dob"
-        ).value =
-            formatDateForInput(
-                data.dob
-            );
+        setDateSelects(
+            data.dob,
+            "dob_day",
+            "dob_month",
+            "dob_year"
+        );
 
 
-        /* ADMISSION */
+        /* ADMISSION DATE */
 
-        document.getElementById(
-            "admission_date"
-        ).value =
-            formatDateForInput(
-                data.admission_date
-            );
+        setDateSelects(
+            data.admission_date,
+            "admission_day",
+            "admission_month",
+            "admission_year"
+        );
 
 
         /* ADDRESS */
@@ -1082,6 +1442,30 @@ document
 
 
             /* =========================
+               DOB DATE
+            ========================= */
+
+            const dob =
+                getDateFromSelects(
+                    "dob_day",
+                    "dob_month",
+                    "dob_year"
+                );
+
+
+            /* =========================
+               ADMISSION DATE
+            ========================= */
+
+            const admissionDate =
+                getDateFromSelects(
+                    "admission_day",
+                    "admission_month",
+                    "admission_year"
+                );
+
+
+            /* =========================
                PHOTO
             ========================= */
 
@@ -1212,33 +1596,21 @@ document
                         "course"
                     ).value.trim() || null,
 
-                /* BATCH TIMING */
-
                 batch_timing:
                     document.getElementById(
                         "batch_timing"
                     ).value || null,
 
-                /* DOB */
-
                 dob:
-                    document.getElementById(
-                        "dob"
-                    ).value || null,
-
-                /* ADDRESS */
+                    dob,
 
                 address:
                     document.getElementById(
                         "address"
                     ).value.trim() || null,
 
-                /* ADMISSION DATE */
-
                 admission_date:
-                    document.getElementById(
-                        "admission_date"
-                    ).value || null,
+                    admissionDate,
 
                 total_fee:
                     totalFee,
@@ -1306,7 +1678,10 @@ document
             }
 
 
-            if(!data || data.length === 0){
+            if(
+                !data ||
+                data.length === 0
+            ){
 
                 throw new Error(
                     "Student not updated. Supabase RLS policy check karein."
@@ -1321,14 +1696,10 @@ document
             );
 
 
-            /* Remove old localStorage */
-
             localStorage.removeItem(
                 "editStudentId"
             );
 
-
-            /* Go back to profile */
 
             setTimeout(
                 function(){
@@ -1429,31 +1800,6 @@ function showMessage(
 
 
 /* =========================================
-   DATE FORMAT
-========================================= */
-
-function formatDateForInput(
-    value
-){
-
-    if(!value){
-
-        return "";
-
-    }
-
-
-    return String(
-        value
-    ).substring(
-        0,
-        10
-    );
-
-}
-
-
-/* =========================================
    ESCAPE HTML
 ========================================= */
 
@@ -1522,4 +1868,5 @@ function logout(){
 </script>
 
 </body>
+
 </html>
