@@ -1,1520 +1,1812 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Add Student | Kumaun Institute</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<title>Add Student | Kumaun Institute</title>
 
-    body {
-      background: #f4f6f9;
-      padding: 20px;
-    }
+<style>
 
-    .form-box {
-      max-width: 700px;
-      margin: 20px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.08);
-    }
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
 
-    .top-logo {
-      width: 80px;
-      height: 80px;
-      display: block;
-      margin: 0 auto 15px;
-      object-fit: contain;
-    }
+body{
+background:#f4f6f9;
+padding:20px;
+}
 
-    h1 {
-      text-align: center;
-      color: #172554;
-      margin-bottom: 8px;
-    }
+.form-box{
+max-width:700px;
+margin:20px auto;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
 
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-    }
+.top-logo{
+width:80px;
+height:80px;
+display:block;
+margin:0 auto 15px;
+object-fit:contain;
+}
 
-    .field {
-      margin-bottom: 18px;
-    }
+h1{
+text-align:center;
+color:#172554;
+margin-bottom:8px;
+}
 
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: bold;
-      color: #333;
-    }
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:25px;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d0d5dd;
-      border-radius: 8px;
-      font-size: 15px;
-      outline: none;
-      background: white;
-    }
+.field{
+margin-bottom:18px;
+}
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: #2563eb;
-    }
+label{
+display:block;
+margin-bottom:7px;
+font-weight:bold;
+color:#333;
+}
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+input,
+select,
+textarea{
+width:100%;
+padding:12px;
+border:1px solid #d0d5dd;
+border-radius:8px;
+font-size:15px;
+outline:none;
+background:white;
+}
 
-    .two {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
+input:focus,
+select:focus,
+textarea:focus{
+border-color:#2563eb;
+}
 
-    /* =========================
-       PHOTO AREA
-    ========================= */
+textarea{
+min-height:90px;
+resize:vertical;
+}
 
-    .photo-area {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+.two{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
 
-    .photo-preview {
-      width: 150px;
-      height: 180px;
-      border: 2px dashed #b8c0cc;
-      border-radius: 10px;
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #f8fafc;
-      color: #777;
-      font-size: 13px;
-      position: relative;
-    }
+/* DATE SYSTEM */
 
-    .photo-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-    }
+.date-selects{
+display:grid;
+grid-template-columns:1fr 1.5fr 1.3fr;
+gap:8px;
+}
 
-    /* =========================
-       PHOTO BUTTONS
-    ========================= */
+.date-selects select{
+cursor:pointer;
+}
 
-    .photo-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
+.date-preview{
+font-size:12px;
+color:#64748b;
+margin-top:6px;
+}
 
-    .photo-btn {
-      border: none;
-      padding: 11px 15px;
-      border-radius: 8px;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+/* PHOTO */
 
-    .upload-btn {
-      background: #2563eb;
-    }
+.photo-area{
+text-align:center;
+margin-bottom:25px;
+}
 
-    .camera-btn {
-      background: #16a34a;
-    }
+.photo-preview{
+width:150px;
+height:180px;
+border:2px dashed #b8c0cc;
+border-radius:10px;
+margin:0 auto 15px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+background:#f8fafc;
+color:#777;
+font-size:13px;
+position:relative;
+}
 
-    .capture-btn {
-      background: #dc2626;
-    }
+.photo-preview img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:none;
+}
 
-    .change-camera-btn {
-      background: #7c3aed;
-    }
+.photo-buttons{
+display:flex;
+justify-content:center;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:10px;
+}
 
-    .retake-btn {
-      background: #f59e0b;
-    }
+.photo-btn{
+border:none;
+padding:11px 15px;
+border-radius:8px;
+color:white;
+font-size:14px;
+font-weight:bold;
+cursor:pointer;
+}
 
-    .photo-buttons button:hover {
-      opacity: .9;
-    }
+.upload-btn{
+background:#2563eb;
+}
 
-    #studentPhoto {
-      display: none;
-    }
+.camera-btn{
+background:#16a34a;
+}
 
-    /* =========================
-       CAMERA
-    ========================= */
+.capture-btn{
+background:#dc2626;
+}
 
-    .camera-box {
-      display: none;
-      max-width: 400px;
-      margin: 15px auto;
-      padding: 12px;
-      background: #0f172a;
-      border-radius: 12px;
-    }
+.change-camera-btn{
+background:#7c3aed;
+}
 
-    .camera-box.show {
-      display: block;
-    }
+.retake-btn{
+background:#f59e0b;
+}
 
-    #cameraVideo {
-      width: 100%;
-      max-height: 350px;
-      display: block;
-      border-radius: 8px;
-      background: #000;
-      object-fit: cover;
-    }
+.photo-buttons button:hover{
+opacity:.9;
+}
 
-    .camera-controls {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
+#studentPhoto{
+display:none;
+}
 
-    .camera-controls button {
-      border: none;
-      padding: 10px 13px;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+/* CAMERA */
 
-    .camera-info {
-      color: white;
-      text-align: center;
-      font-size: 12px;
-      margin-top: 8px;
-    }
+.camera-box{
+display:none;
+max-width:400px;
+margin:15px auto;
+padding:12px;
+background:#0f172a;
+border-radius:12px;
+}
 
-    .save-btn {
-      width: 100%;
-      padding: 14px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 5px;
-    }
+.camera-box.show{
+display:block;
+}
 
-    .save-btn:hover {
-      background: #1d4ed8;
-    }
+#cameraVideo{
+width:100%;
+max-height:350px;
+display:block;
+border-radius:8px;
+background:#000;
+object-fit:cover;
+}
 
-    .back-btn {
-      width: 100%;
-      padding: 12px;
-      background: #eee;
-      border: none;
-      border-radius: 8px;
-      margin-top: 10px;
-      cursor: pointer;
-      font-size: 15px;
-    }
+.camera-controls{
+display:flex;
+gap:8px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:10px;
+}
 
-    .message {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-    }
+.camera-controls button{
+border:none;
+padding:10px 13px;
+border-radius:8px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
 
-    @media(max-width:600px) {
+.camera-info{
+color:white;
+text-align:center;
+font-size:12px;
+margin-top:8px;
+}
 
-      body {
-        padding: 10px;
-      }
+.save-btn{
+width:100%;
+padding:14px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:5px;
+}
 
-      .form-box {
-        padding: 20px 15px;
-      }
+.save-btn:hover{
+background:#1d4ed8;
+}
 
-      .two {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
+.back-btn{
+width:100%;
+padding:12px;
+background:#eee;
+border:none;
+border-radius:8px;
+margin-top:10px;
+cursor:pointer;
+font-size:15px;
+}
 
-      .photo-preview {
-        width: 140px;
-        height: 170px;
-      }
+.message{
+display:none;
+margin-top:15px;
+padding:12px;
+border-radius:8px;
+text-align:center;
+}
 
-      .photo-btn {
-        font-size: 13px;
-        padding: 10px 12px;
-      }
+/* MOBILE */
 
-    }
-  </style>
+@media(max-width:600px){
+
+body{
+padding:10px;
+}
+
+.form-box{
+padding:20px 15px;
+}
+
+.two{
+grid-template-columns:1fr;
+gap:0;
+}
+
+.photo-preview{
+width:140px;
+height:170px;
+}
+
+.photo-btn{
+font-size:13px;
+padding:10px 12px;
+}
+
+.date-selects{
+grid-template-columns:1fr 1.5fr 1.3fr;
+gap:6px;
+}
+
+.date-selects select{
+font-size:14px;
+padding:11px 6px;
+}
+
+}
+
+</style>
 
 </head>
 
 <body>
 
-  <div class="form-box">
+<div class="form-box">
 
 <img
-  src="kumaun institute logo.png"
-  alt="Kumaun Institute Logo"
-  class="top-logo"
+src="kumaun institute logo.png"
+alt="Kumaun Institute Logo"
+class="top-logo"
 >
 
 <h1>➕ Add New Student</h1>
 
 <p class="subtitle">
-  Kumaun Institute of Computer Education
+Kumaun Institute of Computer Education
 </p>
 
-<!-- =========================
-     STUDENT PHOTO
-========================= -->
+<!-- STUDENT PHOTO -->
 
 <div class="photo-area">
 
-  <div class="photo-preview" id="photoPreview">
+<div class="photo-preview" id="photoPreview">
 
-    <span id="photoText">
-      Passport Photo
-    </span>
+<span id="photoText">
+Passport Photo
+</span>
 
-    <img
-      id="previewImage"
-      alt="Student Photo"
-    >
-
-  </div>
-
-  <!-- HIDDEN FILE INPUT -->
-
-  <input
-    type="file"
-    id="studentPhoto"
-    accept="image/png,image/jpeg,image/jpg"
-  >
-
-  <!-- PHOTO BUTTONS -->
-
-  <div class="photo-buttons">
-
-    <button
-      type="button"
-      class="photo-btn upload-btn"
-      onclick="openFilePicker()"
-    >
-      📁 Upload File
-    </button>
-
-    <button
-      type="button"
-      class="photo-btn camera-btn"
-      onclick="openCamera()"
-    >
-      📷 Open Camera
-    </button>
-
-    <button
-      type="button"
-      class="photo-btn retake-btn"
-      id="retakeButton"
-      onclick="retakePhoto()"
-      style="display:none;"
-    >
-      🔁 Retake
-    </button>
-
-  </div>
-
-  <!-- CAMERA -->
-
-  <div
-    class="camera-box"
-    id="cameraBox"
-  >
-
-    <video
-      id="cameraVideo"
-      autoplay
-      playsinline
-    ></video>
-
-    <div class="camera-controls">
-
-      <button
-        type="button"
-        class="capture-btn"
-        onclick="capturePhoto()"
-      >
-        📸 Capture
-      </button>
-
-      <button
-        type="button"
-        class="change-camera-btn"
-        onclick="changeCamera()"
-      >
-        🔄 Change Camera
-      </button>
-
-      <button
-        type="button"
-        class="photo-btn"
-        style="background:#475569;"
-        onclick="closeCamera()"
-      >
-        ✕ Close
-      </button>
-
-    </div>
-
-    <div class="camera-info" id="cameraInfo">
-      Camera ready
-    </div>
-
-  </div>
-
-  <canvas
-    id="cameraCanvas"
-    style="display:none;"
-  ></canvas>
+<img
+id="previewImage"
+alt="Student Photo"
+>
 
 </div>
 
+<input
+type="file"
+id="studentPhoto"
+accept="image/png,image/jpeg,image/jpg"
+>
 
-<!-- =========================
-     FORM
-========================= -->
+<div class="photo-buttons">
+
+<button
+type="button"
+class="photo-btn upload-btn"
+onclick="openFilePicker()"
+>
+📁 Upload File
+</button>
+
+<button
+type="button"
+class="photo-btn camera-btn"
+onclick="openCamera()"
+>
+📷 Open Camera
+</button>
+
+<button
+type="button"
+class="photo-btn retake-btn"
+id="retakeButton"
+onclick="retakePhoto()"
+style="display:none;"
+>
+🔁 Retake
+</button>
+
+</div>
+
+<!-- CAMERA -->
+
+<div
+class="camera-box"
+id="cameraBox"
+>
+
+<video
+id="cameraVideo"
+autoplay
+playsinline
+></video>
+
+<div class="camera-controls">
+
+<button
+type="button"
+class="capture-btn"
+onclick="capturePhoto()"
+>
+📸 Capture
+</button>
+
+<button
+type="button"
+class="change-camera-btn"
+onclick="changeCamera()"
+>
+🔄 Change Camera
+</button>
+
+<button
+type="button"
+class="photo-btn"
+style="background:#475569;"
+onclick="closeCamera()"
+>
+✕ Close
+</button>
+
+</div>
+
+<div class="camera-info" id="cameraInfo">
+Camera ready
+</div>
+
+</div>
+
+<canvas
+id="cameraCanvas"
+style="display:none;"
+></canvas>
+
+</div>
+
+<!-- FORM -->
 
 <form id="studentForm">
 
-  <div class="field">
+<div class="field">
 
-    <label for="name">
-      Student Name *
-    </label>
+<label for="name">
+Student Name *
+</label>
 
-    <input
-      type="text"
-      id="name"
-      placeholder="Enter student name"
-      required
-    >
+<input
+type="text"
+id="name"
+placeholder="Enter student name"
+required
+>
 
-  </div>
+</div>
 
+<div class="two">
 
-  <div class="two">
+<div class="field">
 
-    <div class="field">
+<label for="email">
+Email
+</label>
 
-      <label for="email">
-        Email
-      </label>
+<input
+type="email"
+id="email"
+placeholder="Enter email"
+>
 
-      <input
-        type="email"
-        id="email"
-        placeholder="Enter email"
-      >
+</div>
 
-    </div>
+<div class="field">
 
+<label for="phone">
+Mobile Number *
+</label>
 
-    <div class="field">
+<input
+type="tel"
+id="phone"
+placeholder="Enter mobile number"
+required
+>
 
-      <label for="phone">
-        Mobile Number *
-      </label>
+</div>
 
-      <input
-        type="tel"
-        id="phone"
-        placeholder="Enter mobile number"
-        required
-      >
+</div>
 
-    </div>
+<div class="field">
 
-  </div>
+<label for="course">
+Course *
+</label>
 
+<input
+type="text"
+id="course"
+placeholder="Example: DCA, ADCA, Tally"
+required
+>
 
-  <div class="field">
+</div>
 
-    <label for="course">
-      Course *
-    </label>
+<div class="field">
 
-    <input
-      type="text"
-      id="course"
-      placeholder="Example: DCA, ADCA, Tally"
-      required
-    >
+<label for="batchTiming">
+Batch Timing *
+</label>
 
-  </div>
+<select
+id="batchTiming"
+required
+>
 
+<option value="">
+Select Batch Timing
+</option>
 
-  <div class="field">
+<option value="07:00 AM - 08:00 AM">
+07:00 AM - 08:00 AM
+</option>
 
-    <label for="batchTiming">
-      Batch Timing *
-    </label>
+<option value="08:00 AM - 09:00 AM">
+08:00 AM - 09:00 AM
+</option>
 
-    <select
-      id="batchTiming"
-      required
-    >
+<option value="09:00 AM - 10:00 AM">
+09:00 AM - 10:00 AM
+</option>
 
-      <option value="">
-        Select Batch Timing
-      </option>
+<option value="10:00 AM - 11:00 AM">
+10:00 AM - 11:00 AM
+</option>
 
-      <option value="07:00 AM - 08:00 AM">
-        07:00 AM - 08:00 AM
-      </option>
+<option value="11:00 AM - 12:00 PM">
+11:00 AM - 12:00 PM
+</option>
 
-      <option value="08:00 AM - 09:00 AM">
-        08:00 AM - 09:00 AM
-      </option>
+<option value="12:00 PM - 01:00 PM">
+12:00 PM - 01:00 PM
+</option>
 
-      <option value="09:00 AM - 10:00 AM">
-        09:00 AM - 10:00 AM
-      </option>
+<option value="01:00 PM - 02:00 PM">
+01:00 PM - 02:00 PM
+</option>
 
-      <option value="10:00 AM - 11:00 AM">
-        10:00 AM - 11:00 AM
-      </option>
+<option value="02:00 PM - 03:00 PM">
+02:00 PM - 03:00 PM
+</option>
 
-      <option value="11:00 AM - 12:00 PM">
-        11:00 AM - 12:00 PM
-      </option>
+<option value="03:00 PM - 04:00 PM">
+03:00 PM - 04:00 PM
+</option>
 
-      <option value="12:00 PM - 01:00 PM">
-        12:00 PM - 01:00 PM
-      </option>
+<option value="04:00 PM - 05:00 PM">
+04:00 PM - 05:00 PM
+</option>
 
-      <option value="01:00 PM - 02:00 PM">
-        01:00 PM - 02:00 PM
-      </option>
+<option value="05:00 PM - 06:00 PM">
+05:00 PM - 06:00 PM
+</option>
 
-      <option value="02:00 PM - 03:00 PM">
-        02:00 PM - 03:00 PM
-      </option>
+</select>
 
-      <option value="03:00 PM - 04:00 PM">
-        03:00 PM - 04:00 PM
-      </option>
+</div>
 
-      <option value="04:00 PM - 05:00 PM">
-        04:00 PM - 05:00 PM
-      </option>
+<!-- DATE OF BIRTH + ADMISSION DATE -->
 
-      <option value="05:00 PM - 06:00 PM">
-        05:00 PM - 06:00 PM
-      </option>
+<div class="two">
 
-    </select>
+<div class="field">
 
-  </div>
+<label>
+Date of Birth
+</label>
 
+<div class="date-selects">
 
-  <div class="two">
+<select id="dobDay">
+<option value="">Day</option>
+</select>
 
-    <div class="field">
+<select id="dobMonth">
+<option value="">Month</option>
+</select>
 
-      <label for="dob">
-        Date of Birth
-      </label>
+<select id="dobYear">
+<option value="">Year</option>
+</select>
 
-      <input
-        type="date"
-        id="dob"
-      >
+</div>
 
-    </div>
+<div class="date-preview" id="dobPreview">
+Date of Birth not selected
+</div>
 
+<!-- Hidden ISO date value -->
+<input
+type="hidden"
+id="dob"
+>
 
-    <div class="field">
+</div>
 
-      <label for="admissionDate">
-        Admission Date
-      </label>
+<div class="field">
 
-      <input
-        type="date"
-        id="admissionDate"
-      >
+<label>
+Admission Date
+</label>
 
-    </div>
+<div class="date-selects">
 
-  </div>
+<select id="admissionDay">
+<option value="">Day</option>
+</select>
 
+<select id="admissionMonth">
+<option value="">Month</option>
+</select>
 
-  <div class="field">
+<select id="admissionYear">
+<option value="">Year</option>
+</select>
 
-    <label for="address">
-      Address
-    </label>
+</div>
 
-    <textarea
-      id="address"
-      placeholder="Enter student address"
-    ></textarea>
+<div class="date-preview" id="admissionPreview">
+Admission Date not selected
+</div>
 
-  </div>
+<!-- Hidden ISO date value -->
+<input
+type="hidden"
+id="admissionDate"
+>
 
+</div>
 
-  <div class="two">
+</div>
 
-    <div class="field">
+<div class="field">
 
-      <label for="totalFee">
-        Total Fee
-      </label>
+<label for="address">
+Address
+</label>
 
-      <input
-        type="number"
-        id="totalFee"
-        placeholder="₹ Total fee"
-        min="0"
-      >
+<textarea
+id="address"
+placeholder="Enter student address"
+></textarea>
 
-    </div>
+</div>
 
+<div class="two">
 
-    <div class="field">
+<div class="field">
 
-      <label for="paidFee">
-        Paid Fee
-      </label>
+<label for="totalFee">
+Total Fee
+</label>
 
-      <input
-        type="number"
-        id="paidFee"
-        placeholder="₹ Paid fee"
-        min="0"
-      >
+<input
+type="number"
+id="totalFee"
+placeholder="₹ Total fee"
+min="0"
+>
 
-    </div>
+</div>
 
-  </div>
+<div class="field">
 
+<label for="paidFee">
+Paid Fee
+</label>
 
-  <div class="field">
+<input
+type="number"
+id="paidFee"
+placeholder="₹ Paid fee"
+min="0"
+>
 
-    <label for="status">
-      Student Status
-    </label>
+</div>
 
-    <select id="status">
+</div>
 
-      <option value="active">
-        Active
-      </option>
+<div class="field">
 
-      <option value="passout">
-        Pass Out
-      </option>
+<label for="status">
+Student Status
+</label>
 
-    </select>
+<select id="status">
 
-  </div>
+<option value="active">
+Active
+</option>
 
+<option value="passout">
+Pass Out
+</option>
 
-  <button
-    type="submit"
-    class="save-btn"
-    id="saveButton"
-  >
-    💾 Save Student
-  </button>
+</select>
 
+</div>
 
-  <button
-    type="button"
-    class="back-btn"
-    onclick="location.href='index.html'"
-  >
-    ← Back to Dashboard
-  </button>
+<button
+type="submit"
+class="save-btn"
+id="saveButton"
+>
+💾 Save Student
+</button>
 
+<button
+type="button"
+class="back-btn"
+onclick="location.href='index.html'"
+>
+← Back to Dashboard
+</button>
 
-  <div
-    class="message"
-    id="message"
-  ></div>
+<div
+class="message"
+id="message"
+></div>
 
 </form>
 
-  </div>
+</div>
 
-  <!-- SUPABASE -->
+<!-- SUPABASE -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
+<script>
 
-    const SUPABASE_URL =
-      "https://sfgnwdljakmtuyoxmltr.supabase.co";
+const SUPABASE_URL =
+"https://sfgnwdljakmtuyoxmltr.supabase.co";
 
-    const SUPABASE_KEY =
-      "sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
+const SUPABASE_KEY =
+"sb_publishable_wpPLMb__G9WtazYtQ8FiuA_F8CtBXTO";
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
 
-    /* =========================
-       CAMERA VARIABLES
-    ========================= */
+/* =========================================
+   DATE SYSTEM
+========================================= */
 
-    let cameraStream = null;
+const monthNames = [
+"January",
+"February",
+"March",
+"April",
+"May",
+"June",
+"July",
+"August",
+"September",
+"October",
+"November",
+"December"
+];
 
-    let currentFacingMode = "environment";
+function fillDateSelectors(
+dayId,
+monthId,
+yearId,
+previewId,
+hiddenId,
+startYear,
+endYear
+){
 
-    let capturedPhotoFile = null;
+const daySelect =
+document.getElementById(dayId);
 
+const monthSelect =
+document.getElementById(monthId);
 
-    /* =========================
-       ELEMENTS
-    ========================= */
+const yearSelect =
+document.getElementById(yearId);
 
-    const photoInput =
-      document.getElementById("studentPhoto");
+const preview =
+document.getElementById(previewId);
 
-    const previewImage =
-      document.getElementById("previewImage");
+const hidden =
+document.getElementById(hiddenId);
 
-    const photoText =
-      document.getElementById("photoText");
 
-    const cameraBox =
-      document.getElementById("cameraBox");
+/* DAYS */
 
-    const cameraVideo =
-      document.getElementById("cameraVideo");
+for(let day=1;day<=31;day++){
 
-    const cameraCanvas =
-      document.getElementById("cameraCanvas");
+const option =
+document.createElement("option");
 
-    const cameraInfo =
-      document.getElementById("cameraInfo");
+option.value =
+String(day).padStart(2,"0");
 
-    const retakeButton =
-      document.getElementById("retakeButton");
+option.textContent =
+day;
 
+daySelect.appendChild(option);
 
-    /* =========================
-       OPEN FILE PICKER
-    ========================= */
+}
 
-    function openFilePicker() {
 
-      photoInput.click();
+/* MONTHS */
 
-    }
+monthNames.forEach(
+function(month,index){
 
+const option =
+document.createElement("option");
 
-    /* =========================
-       FILE UPLOAD PREVIEW
-    ========================= */
+option.value =
+String(index+1).padStart(2,"0");
 
-    photoInput.addEventListener(
-      "change",
-      function() {
+option.textContent =
+month;
 
-        const file =
-          this.files[0];
+monthSelect.appendChild(option);
 
-        if (!file) {
-          return;
-        }
+}
+);
 
-        if (
-          !file.type.startsWith("image/")
-        ) {
 
-          alert(
-            "Sirf image file select karein."
-          );
+/* YEARS */
 
-          this.value = "";
+for(
+let year=endYear;
+year>=startYear;
+year--
+){
 
-          return;
-        }
+const option =
+document.createElement("option");
 
-        capturedPhotoFile = file;
+option.value =
+year;
 
-        const imageURL =
-          URL.createObjectURL(file);
+option.textContent =
+year;
 
-        previewImage.src =
-          imageURL;
+yearSelect.appendChild(option);
 
-        previewImage.style.display =
-          "block";
+}
 
-        photoText.style.display =
-          "none";
 
-        retakeButton.style.display =
-          "inline-block";
+/* UPDATE DATE */
 
-      }
-    );
+function updateDate(){
 
+const day =
+daySelect.value;
 
-    /* =========================
-       OPEN CAMERA
-    ========================= */
+const month =
+monthSelect.value;
 
-    async function openCamera() {
+const year =
+yearSelect.value;
 
-      if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-      ) {
+if(!day || !month || !year){
 
-        alert(
-          "Aapke browser me camera support nahi hai."
-        );
+hidden.value = "";
 
-        return;
-      }
+preview.textContent =
+"Date not selected";
 
+return;
 
-      try {
+}
 
-        await startCamera();
 
-        cameraBox.classList.add(
-          "show"
-        );
+/* VALIDATE REAL DATE */
 
-      }
-      catch(error) {
+const date =
+new Date(
+Number(year),
+Number(month)-1,
+Number(day)
+);
 
-        console.error(
-          "Camera error:",
-          error
-        );
+if(
+date.getFullYear() !== Number(year) ||
+date.getMonth() !== Number(month)-1 ||
+date.getDate() !== Number(day)
+){
 
-        alert(
-          "Camera open nahi ho paya. Browser me camera permission Allow karein."
-        );
+hidden.value = "";
 
-      }
+preview.textContent =
+"Please select a valid date";
 
-    }
+return;
 
+}
 
-    /* =========================
-       START CAMERA
-    ========================= */
 
-    async function startCamera() {
+/* SUPABASE FORMAT */
 
-      stopCamera();
+hidden.value =
+year +
+"-" +
+month +
+"-" +
+day;
 
 
-      const constraints = {
+/* DISPLAY */
 
-        video: {
+preview.textContent =
+day +
+" " +
+monthNames[Number(month)-1] +
+" " +
+year;
 
-          facingMode: {
-            ideal:
-              currentFacingMode
-          },
+}
 
-          width: {
-            ideal: 1280
-          },
 
-          height: {
-            ideal: 720
-          }
+daySelect.addEventListener(
+"change",
+updateDate
+);
 
-        },
+monthSelect.addEventListener(
+"change",
+updateDate
+);
 
-        audio: false
+yearSelect.addEventListener(
+"change",
+updateDate
+);
 
-      };
+}
 
 
-      cameraStream =
-        await navigator.mediaDevices.getUserMedia(
-          constraints
-        );
+/* CURRENT YEAR */
 
+const currentYear =
+new Date().getFullYear();
 
-      cameraVideo.srcObject =
-        cameraStream;
 
+/* DOB
+   1950 → current year + 10
+*/
 
-      cameraInfo.textContent =
-        currentFacingMode === "environment"
-          ? "📷 Back Camera"
-          : "🤳 Front Camera";
+fillDateSelectors(
+"dobDay",
+"dobMonth",
+"dobYear",
+"dobPreview",
+"dob",
+1950,
+currentYear + 10
+);
 
-    }
 
+/* ADMISSION DATE
+   2000 → current year + 10
+*/
 
-    /* =========================
-       CHANGE CAMERA
-    ========================= */
+fillDateSelectors(
+"admissionDay",
+"admissionMonth",
+"admissionYear",
+"admissionPreview",
+"admissionDate",
+2000,
+currentYear + 10
+);
 
-    async function changeCamera() {
 
-      if (!cameraStream) {
+/* =========================================
+   CAMERA VARIABLES
+========================================= */
 
-        alert(
-          "Pehle camera open karein."
-        );
+let cameraStream = null;
 
-        return;
-      }
+let currentFacingMode =
+"environment";
 
+let capturedPhotoFile = null;
 
-      currentFacingMode =
-        currentFacingMode === "environment"
-          ? "user"
-          : "environment";
 
+/* =========================================
+   ELEMENTS
+========================================= */
 
-      try {
+const photoInput =
+document.getElementById(
+"studentPhoto"
+);
 
-        await startCamera();
+const previewImage =
+document.getElementById(
+"previewImage"
+);
 
-      }
-      catch(error) {
+const photoText =
+document.getElementById(
+"photoText"
+);
 
-        console.error(
-          "Change camera error:",
-          error
-        );
+const cameraBox =
+document.getElementById(
+"cameraBox"
+);
 
-        /*
+const cameraVideo =
+document.getElementById(
+"cameraVideo"
+);
 
-          Kuch laptops/browsers me
-          front/back camera available
-          nahi hota.
+const cameraCanvas =
+document.getElementById(
+"cameraCanvas"
+);
 
-          Isliye purani camera setting
-          par wapas try kar rahe hain.
+const cameraInfo =
+document.getElementById(
+"cameraInfo"
+);
 
-        */
+const retakeButton =
+document.getElementById(
+"retakeButton"
+);
 
-        currentFacingMode =
-          currentFacingMode === "environment"
-            ? "user"
-            : "environment";
 
+/* =========================================
+   OPEN FILE PICKER
+========================================= */
 
-        try {
+function openFilePicker(){
 
-          await startCamera();
+photoInput.click();
 
-        }
-        catch(secondError) {
+}
 
-          console.error(
-            secondError
-          );
 
-          alert(
-            "Camera change nahi ho paya."
-          );
+/* =========================================
+   FILE UPLOAD PREVIEW
+========================================= */
 
-        }
+photoInput.addEventListener(
+"change",
+function(){
 
-      }
+const file =
+this.files[0];
 
-    }
+if(!file){
+return;
+}
 
+if(
+!file.type.startsWith("image/")
+){
 
-    /* =========================
-       CAPTURE PHOTO
-    ========================= */
+alert(
+"Sirf image file select karein."
+);
 
-    function capturePhoto() {
+this.value = "";
 
-      if (!cameraStream) {
+return;
 
-        alert(
-          "Camera open nahi hai."
-        );
+}
 
-        return;
-      }
+capturedPhotoFile =
+file;
 
+const imageURL =
+URL.createObjectURL(file);
 
-      const videoWidth =
-        cameraVideo.videoWidth;
+previewImage.src =
+imageURL;
 
-      const videoHeight =
-        cameraVideo.videoHeight;
+previewImage.style.display =
+"block";
 
+photoText.style.display =
+"none";
 
-      if (
-        !videoWidth ||
-        !videoHeight
-      ) {
+retakeButton.style.display =
+"inline-block";
 
-        alert(
-          "Camera ready hone ka wait karein."
-        );
+}
+);
 
-        return;
-      }
 
+/* =========================================
+   OPEN CAMERA
+========================================= */
 
-      cameraCanvas.width =
-        videoWidth;
+async function openCamera(){
 
-      cameraCanvas.height =
-        videoHeight;
+if(
+!navigator.mediaDevices ||
+!navigator.mediaDevices.getUserMedia
+){
 
+alert(
+"Aapke browser me camera support nahi hai."
+);
 
-      const context =
-        cameraCanvas.getContext(
-          "2d"
-        );
+return;
 
+}
 
-      context.drawImage(
-        cameraVideo,
-        0,
-        0,
-        videoWidth,
-        videoHeight
-      );
+try{
 
+await startCamera();
 
-      cameraCanvas.toBlob(
-        function(blob) {
+cameraBox.classList.add(
+"show"
+);
 
-          if (!blob) {
+}
+catch(error){
 
-            alert(
-              "Photo capture nahi hui."
-            );
+console.error(
+"Camera error:",
+error
+);
 
-            return;
-          }
+alert(
+"Camera open nahi ho paya. Browser me camera permission Allow karein."
+);
 
+}
 
-          capturedPhotoFile =
-            new File(
-              [
-                blob
-              ],
-              "student-camera-" +
-              Date.now() +
-              ".jpg",
-              {
-                type:
-                  "image/jpeg"
-              }
-            );
+}
 
 
-          const imageURL =
-            URL.createObjectURL(
-              blob
-            );
+/* =========================================
+   START CAMERA
+========================================= */
 
+async function startCamera(){
 
-          previewImage.src =
-            imageURL;
+stopCamera();
 
-          previewImage.style.display =
-            "block";
+const constraints = {
 
-          photoText.style.display =
-            "none";
+video:{
 
+facingMode:{
+ideal:
+currentFacingMode
+},
 
-          retakeButton.style.display =
-            "inline-block";
+width:{
+ideal:1280
+},
 
+height:{
+ideal:720
+}
 
-          closeCamera();
+},
 
+audio:false
 
-        },
-        "image/jpeg",
-        0.90
-      );
+};
 
-    }
+cameraStream =
+await navigator.mediaDevices.getUserMedia(
+constraints
+);
 
+cameraVideo.srcObject =
+cameraStream;
 
-    /* =========================
-       RETAKE PHOTO
-    ========================= */
+cameraInfo.textContent =
+currentFacingMode === "environment"
+? "📷 Back Camera"
+: "🤳 Front Camera";
 
-    async function retakePhoto() {
+}
 
-      capturedPhotoFile = null;
 
-      photoInput.value = "";
+/* =========================================
+   CHANGE CAMERA
+========================================= */
 
-      previewImage.src = "";
+async function changeCamera(){
 
-      previewImage.style.display =
-        "none";
+if(!cameraStream){
 
-      photoText.style.display =
-        "block";
+alert(
+"Pehle camera open karein."
+);
 
-      retakeButton.style.display =
-        "none";
+return;
 
+}
 
-      await openCamera();
+currentFacingMode =
+currentFacingMode === "environment"
+? "user"
+: "environment";
 
-    }
+try{
 
+await startCamera();
 
-    /* =========================
-       CLOSE CAMERA
-    ========================= */
+}
+catch(error){
 
-    function closeCamera() {
+console.error(
+"Change camera error:",
+error
+);
 
-      stopCamera();
+currentFacingMode =
+currentFacingMode === "environment"
+? "user"
+: "environment";
 
-      cameraBox.classList.remove(
-        "show"
-      );
+try{
 
-    }
+await startCamera();
 
+}
+catch(secondError){
 
-    /* =========================
-       STOP CAMERA
-    ========================= */
+console.error(
+secondError
+);
 
-    function stopCamera() {
+alert(
+"Camera change nahi ho paya."
+);
 
-      if (cameraStream) {
+}
 
-        cameraStream
-          .getTracks()
-          .forEach(
-            function(track) {
+}
 
-              track.stop();
+}
 
-            }
-          );
 
-        cameraStream = null;
+/* =========================================
+   CAPTURE PHOTO
+========================================= */
 
-      }
+function capturePhoto(){
 
-      cameraVideo.srcObject =
-        null;
+if(!cameraStream){
 
-    }
+alert(
+"Camera open nahi hai."
+);
 
+return;
 
-    /* =========================
-       SAVE STUDENT
-    ========================= */
+}
 
-    const studentForm =
-      document.getElementById(
-        "studentForm"
-      );
+const videoWidth =
+cameraVideo.videoWidth;
 
+const videoHeight =
+cameraVideo.videoHeight;
 
-    studentForm.addEventListener(
-      "submit",
-      async function(event) {
+if(
+!videoWidth ||
+!videoHeight
+){
 
-        event.preventDefault();
+alert(
+"Camera ready hone ka wait karein."
+);
 
+return;
 
-        const message =
-          document.getElementById(
-            "message"
-          );
+}
 
-        const saveButton =
-          document.getElementById(
-            "saveButton"
-          );
+cameraCanvas.width =
+videoWidth;
 
+cameraCanvas.height =
+videoHeight;
 
-        message.style.display =
-          "block";
+const context =
+cameraCanvas.getContext(
+"2d"
+);
 
-        message.style.background =
-          "#dbeafe";
+context.drawImage(
+cameraVideo,
+0,
+0,
+videoWidth,
+videoHeight
+);
 
-        message.style.color =
-          "#1e40af";
+cameraCanvas.toBlob(
+function(blob){
 
-        message.textContent =
-          "Student save ho raha hai...";
+if(!blob){
 
+alert(
+"Photo capture nahi hui."
+);
 
-        saveButton.disabled =
-          true;
+return;
 
-        saveButton.textContent =
-          "Saving...";
+}
 
+capturedPhotoFile =
+new File(
+[blob],
+"student-camera-" +
+Date.now() +
+".jpg",
+{
+type:"image/jpeg"
+}
+);
 
-        try {
+const imageURL =
+URL.createObjectURL(
+blob
+);
 
-          /* =========================
-             PHOTO
-          ========================= */
+previewImage.src =
+imageURL;
 
-          let photoUrl = null;
+previewImage.style.display =
+"block";
 
+photoText.style.display =
+"none";
 
-          const photoFile =
-            capturedPhotoFile ||
-            photoInput.files[0];
+retakeButton.style.display =
+"inline-block";
 
+closeCamera();
 
-          /* =========================
-             UPLOAD PHOTO
-          ========================= */
+},
+"image/jpeg",
+0.90
+);
 
-          if (photoFile) {
+}
 
-            const fileExt =
-              photoFile.name
-                .split(".")
-                .pop()
-                .toLowerCase();
 
+/* =========================================
+   RETAKE PHOTO
+========================================= */
 
-            const fileName =
-              Date.now() +
-              "-" +
-              Math.random()
-                .toString(36)
-                .substring(2) +
-              "." +
-              fileExt;
+async function retakePhoto(){
 
+capturedPhotoFile =
+null;
 
-            const filePath =
-              fileName;
+photoInput.value =
+"";
 
+previewImage.src =
+"";
 
-            const {
-              error: uploadError
-            } =
-              await supabaseClient
-                .storage
-                .from(
-                  "student-photos"
-                )
-                .upload(
-                  filePath,
-                  photoFile,
-                  {
-                    contentType:
-                      photoFile.type ||
-                      "image/jpeg",
+previewImage.style.display =
+"none";
 
-                    upsert:
-                      false
-                  }
-                );
+photoText.style.display =
+"block";
 
+retakeButton.style.display =
+"none";
 
-            if (uploadError) {
+await openCamera();
 
-              console.error(
-                uploadError
-              );
+}
 
-              throw new Error(
-                "Photo upload nahi hui: " +
-                uploadError.message
-              );
 
-            }
+/* =========================================
+   CLOSE CAMERA
+========================================= */
 
+function closeCamera(){
 
-            const {
-              data: publicData
-            } =
-              supabaseClient
-                .storage
-                .from(
-                  "student-photos"
-                )
-                .getPublicUrl(
-                  filePath
-                );
+stopCamera();
 
+cameraBox.classList.remove(
+"show"
+);
 
-            photoUrl =
-              publicData.publicUrl;
+}
 
-          }
 
+/* =========================================
+   STOP CAMERA
+========================================= */
 
-          /* =========================
-             STUDENT DATA
-          ========================= */
+function stopCamera(){
 
-          const student = {
+if(cameraStream){
 
-            name:
-              document
-                .getElementById("name")
-                .value
-                .trim(),
+cameraStream
+.getTracks()
+.forEach(
+function(track){
 
+track.stop();
 
-            email:
-              document
-                .getElementById("email")
-                .value
-                .trim() ||
-              null,
+}
+);
 
+cameraStream =
+null;
 
-            phone:
-              document
-                .getElementById("phone")
-                .value
-                .trim(),
+}
 
+cameraVideo.srcObject =
+null;
 
-            course:
-              document
-                .getElementById("course")
-                .value
-                .trim(),
+}
 
 
-            batch_timing:
-              document
-                .getElementById(
-                  "batchTiming"
-                )
-                .value,
+/* =========================================
+   SAVE STUDENT
+========================================= */
 
+const studentForm =
+document.getElementById(
+"studentForm"
+);
 
-            dob:
-              document
-                .getElementById("dob")
-                .value ||
-              null,
+studentForm.addEventListener(
+"submit",
+async function(event){
 
+event.preventDefault();
 
-            address:
-              document
-                .getElementById("address")
-                .value
-                .trim() ||
-              null,
+const message =
+document.getElementById(
+"message"
+);
 
+const saveButton =
+document.getElementById(
+"saveButton"
+);
 
-            admission_date:
-              document
-                .getElementById(
-                  "admissionDate"
-                )
-                .value ||
-              null,
 
+/* DATE VALIDATION */
 
-            total_fee:
-              Number(
-                document
-                  .getElementById(
-                    "totalFee"
-                  )
-                  .value
-              ) || 0,
+const dobValue =
+document.getElementById(
+"dob"
+).value;
 
+const admissionValue =
+document.getElementById(
+"admissionDate"
+).value;
 
-            paid_fee:
-              Number(
-                document
-                  .getElementById(
-                    "paidFee"
-                  )
-                  .value
-              ) || 0,
 
+/* PHOTO */
 
-            status:
-              document
-                .getElementById(
-                  "status"
-                )
-                .value,
+message.style.display =
+"block";
 
+message.style.background =
+"#dbeafe";
 
-            photo_url:
-              photoUrl
+message.style.color =
+"#1e40af";
 
-          };
+message.textContent =
+"Student save ho raha hai...";
 
+saveButton.disabled =
+true;
 
-          /* =========================
-             INSERT STUDENT
-          ========================= */
+saveButton.textContent =
+"Saving...";
 
-          const {
-            data,
-            error
-          } =
-            await supabaseClient
-              .from("Students")
-              .insert([
-                student
-              ])
-              .select();
 
+try{
 
-          if (error) {
+if(
+!dobValue
+){
 
-            console.error(
-              error
-            );
+throw new Error(
+"Date of Birth select karein."
+);
 
-            throw new Error(
-              "Student save nahi hua: " +
-              error.message
-            );
+}
 
-          }
+if(
+!admissionValue
+){
 
+throw new Error(
+"Admission Date select karein."
+);
 
-          /* =========================
-             SUCCESS
-          ========================= */
+}
 
-          message.style.background =
-            "#dcfce7";
 
-          message.style.color =
-            "#166534";
+/* =========================================
+   PHOTO
+========================================= */
 
-          message.textContent =
-            "✅ Student + Photo successfully saved!";
+let photoUrl =
+null;
 
+const photoFile =
+capturedPhotoFile ||
+photoInput.files[0];
 
-          studentForm.reset();
 
+/* =========================================
+   UPLOAD PHOTO
+========================================= */
 
-          capturedPhotoFile =
-            null;
+if(photoFile){
 
+const fileExt =
+photoFile.name
+.split(".")
+.pop()
+.toLowerCase();
 
-          previewImage.src =
-            "";
+const fileName =
+Date.now() +
+"-" +
+Math.random()
+.toString(36)
+.substring(2) +
+"." +
+fileExt;
 
-          previewImage.style.display =
-            "none";
+const filePath =
+fileName;
 
-          photoText.style.display =
-            "block";
+const {
+error:uploadError
+} =
+await supabaseClient
+.storage
+.from(
+"student-photos"
+)
+.upload(
+filePath,
+photoFile,
+{
+contentType:
+photoFile.type ||
+"image/jpeg",
 
-          retakeButton.style.display =
-            "none";
+upsert:false
+}
+);
 
+if(uploadError){
 
-        }
-        catch(error) {
+console.error(
+uploadError
+);
 
-          console.error(
-            error
-          );
+throw new Error(
+"Photo upload nahi hui: " +
+uploadError.message
+);
 
+}
 
-          message.style.background =
-            "#fee2e2";
+const {
+data:publicData
+} =
+supabaseClient
+.storage
+.from(
+"student-photos"
+)
+.getPublicUrl(
+filePath
+);
 
-          message.style.color =
-            "#991b1b";
+photoUrl =
+publicData.publicUrl;
 
-          message.textContent =
-            "❌ " +
-            error.message;
+}
 
-        }
-        finally {
 
-          saveButton.disabled =
-            false;
+/* =========================================
+   STUDENT DATA
+========================================= */
 
-          saveButton.textContent =
-            "💾 Save Student";
+const student = {
 
-        }
+name:
+document
+.getElementById("name")
+.value
+.trim(),
 
-      }
-    );
+email:
+document
+.getElementById("email")
+.value
+.trim() ||
+null,
 
+phone:
+document
+.getElementById("phone")
+.value
+.trim(),
 
-    /* =========================
-       PAGE CLOSE
-    ========================= */
+course:
+document
+.getElementById("course")
+.value
+.trim(),
 
-    window.addEventListener(
-      "beforeunload",
-      function() {
+batch_timing:
+document
+.getElementById(
+"batchTiming"
+)
+.value,
 
-        stopCamera();
+dob:
+dobValue,
 
-      }
-    );
+address:
+document
+.getElementById("address")
+.value
+.trim() ||
+null,
 
-  </script>
+admission_date:
+admissionValue,
+
+total_fee:
+Number(
+document
+.getElementById(
+"totalFee"
+)
+.value
+) || 0,
+
+paid_fee:
+Number(
+document
+.getElementById(
+"paidFee"
+)
+.value
+) || 0,
+
+status:
+document
+.getElementById(
+"status"
+)
+.value,
+
+photo_url:
+photoUrl
+
+};
+
+
+/* =========================================
+   INSERT STUDENT
+========================================= */
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("Students")
+.insert([
+student
+])
+.select();
+
+if(error){
+
+console.error(
+error
+);
+
+throw new Error(
+"Student save nahi hua: " +
+error.message
+);
+
+}
+
+
+/* =========================================
+   SUCCESS
+========================================= */
+
+message.style.background =
+"#dcfce7";
+
+message.style.color =
+"#166534";
+
+message.textContent =
+"✅ Student + Photo successfully saved!";
+
+studentForm.reset();
+
+capturedPhotoFile =
+null;
+
+previewImage.src =
+"";
+
+previewImage.style.display =
+"none";
+
+photoText.style.display =
+"block";
+
+retakeButton.style.display =
+"none";
+
+
+/* RESET DATE PREVIEWS */
+
+document.getElementById(
+"dob"
+).value = "";
+
+document.getElementById(
+"admissionDate"
+).value = "";
+
+document.getElementById(
+"dobPreview"
+).textContent =
+"Date of Birth not selected";
+
+document.getElementById(
+"admissionPreview"
+).textContent =
+"Admission Date not selected";
+
+}
+catch(error){
+
+console.error(
+error
+);
+
+message.style.background =
+"#fee2e2";
+
+message.style.color =
+"#991b1b";
+
+message.textContent =
+"❌ " +
+error.message;
+
+}
+finally{
+
+saveButton.disabled =
+false;
+
+saveButton.textContent =
+"💾 Save Student";
+
+}
+
+}
+);
+
+
+/* =========================================
+   PAGE CLOSE
+========================================= */
+
+window.addEventListener(
+"beforeunload",
+function(){
+
+stopCamera();
+
+}
+);
+
+</script>
 
 </body>
 </html>
