@@ -270,6 +270,109 @@ body{
   background:#15803d;
 }
 
+/* =========================================
+   CUSTOM LOGOUT CONFIRMATION
+========================================= */
+
+#customLogoutConfirm{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+  padding:20px;
+}
+
+.logout-confirm-box{
+  width:100%;
+  max-width:380px;
+  background:#ffffff;
+  border-radius:20px;
+  padding:28px 22px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  animation:logoutPopupIn .2s ease;
+}
+
+.logout-confirm-icon{
+  width:65px;
+  height:65px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  background:#fee2e2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+}
+
+.logout-confirm-box h3{
+  margin:0;
+  font-size:21px;
+  color:#111827;
+}
+
+.logout-confirm-box p{
+  margin:10px 0 22px;
+  color:#6b7280;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.logout-confirm-buttons{
+  display:flex;
+  gap:10px;
+}
+
+.logout-confirm-buttons button{
+  flex:1;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.logout-cancel-btn{
+  background:#f1f5f9;
+  color:#334155;
+}
+
+.logout-confirm-btn{
+  background:#dc2626;
+  color:#ffffff;
+}
+
+.logout-cancel-btn:hover{
+  background:#e2e8f0;
+}
+
+.logout-confirm-btn:hover{
+  background:#b91c1c;
+}
+
+.logout-confirm-buttons button:active{
+  transform:scale(.97);
+}
+
+@keyframes logoutPopupIn{
+  from{
+    opacity:0;
+    transform:scale(.94);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
 .container{
   display:flex;
   min-height:calc(100vh - 76px);
@@ -695,15 +798,15 @@ body{
 }
 
 @media(max-width:600px){
-   .header{
+  .header{
     padding:6px 9px;
     gap:6px;
   }
 
-    .brand{
+  .brand{
     gap:7px;
   }
-   
+
   .brand img{
     width:32px;
     height:32px;
@@ -714,7 +817,7 @@ body{
     line-height:1.15;
   }
 
-   .brand p{
+  .brand p{
     font-size:8px;
     margin-top:1px;
   }
@@ -733,7 +836,6 @@ body{
     padding:7px 9px;
     font-size:10px;
   }
-
 
   .notification-panel{
     top:60px;
@@ -754,7 +856,7 @@ body{
     overflow:hidden !important;
   }
 
-    .id-header{
+  .id-header{
     padding:1px 5px 5px !important;
   }
 
@@ -762,7 +864,6 @@ body{
     width:30px !important;
     height:30px !important;
   }
-
 
   .id-header-text{
     padding-right:30px !important;
@@ -812,13 +913,13 @@ body{
     width:75px !important;
   }
 
-    .signature-img{
+  .signature-img{
     width:48px !important;
     height:18px !important;
     margin:0 auto 1px !important;
   }
 
-   .signature-line{
+  .signature-line{
     padding-top:2px !important;
     font-size:6px !important;
   }
@@ -834,6 +935,11 @@ body{
 
   .quick-grid{
     grid-template-columns:1fr 1fr;
+  }
+
+  .logout-confirm-box{
+    max-width:340px;
+    padding:25px 18px;
   }
 }
 </style>
@@ -1203,7 +1309,7 @@ body{
         </h3>
 
         <p>
-         Check your salary or payment details.
+          Check your salary or payment details.
         </p>
 
       </div>
@@ -1237,8 +1343,6 @@ body{
 
       <div class="quick-grid">
 
-
-      
         <button
           class="quick-btn"
           onclick="go('teacher-notices.html')"
@@ -1250,7 +1354,7 @@ body{
           class="quick-btn"
           onclick="go('teacher-notice.html')"
         >
-           📋 Notice Box
+          📋 Notice Box
         </button>
 
         <button
@@ -1371,7 +1475,6 @@ function preventDashboardAfterLogout(){
 }
 
 
-/* Browser Back / Forward Cache */
 window.addEventListener(
   "pageshow",
   function(event){
@@ -1389,7 +1492,6 @@ window.addEventListener(
 );
 
 
-/* Browser Page Show */
 window.addEventListener(
   "popstate",
   function(){
@@ -2016,7 +2118,7 @@ async function loadTeacher(){
     true;
 
   setLoading(
-  "⏳ Teacher details loading..."
+    "⏳ Teacher details loading..."
   );
 
   hideError();
@@ -3157,18 +3259,6 @@ supabaseClient.auth.onAuthStateChange(
     }
 
 
-    /*
-      IMPORTANT:
-
-      SIGNED_OUT ke baad sirf
-      index.html par redirect hoga.
-
-      Agar browser back button se
-      dashboard restore hota hai,
-      pageshow/session check usko
-      turant index.html par bhej dega.
-    */
-
     if(
       event === "SIGNED_OUT"
     ){
@@ -3206,7 +3296,7 @@ supabaseClient.auth.onAuthStateChange(
 
 
 /* =========================================
-   LOGOUT
+   CUSTOM LOGOUT
 ========================================= */
 
 async function logout(){
@@ -3220,127 +3310,185 @@ async function logout(){
   }
 
 
-  const confirmLogout =
-    confirm(
-      "Are you sure you want to Logout?"
+  const oldBox =
+    document.getElementById(
+      "customLogoutConfirm"
     );
 
+  if(oldBox){
 
-  if(
-    !confirmLogout
-  ){
-
-    return;
+    oldBox.remove();
 
   }
 
 
-  isLoggingOut =
-    true;
+  const overlay =
+    document.createElement(
+      "div"
+    );
 
-  redirectingToLogin =
-    true;
+  overlay.id =
+    "customLogoutConfirm";
 
 
-  try{
+  overlay.innerHTML = `
 
-    /*
-      Realtime channel band
-    */
+    <div class="logout-confirm-box">
 
-    if(
-      realtimeChannel
-    ){
+      <div class="logout-confirm-icon">
+        🚪
+      </div>
+
+      <h3>
+        Are you sure Logout?
+      </h3>
+
+      <p>
+       Kumaun Institute of Computer Education.
+      </p>
+
+      <div class="logout-confirm-buttons">
+
+        <button
+          type="button"
+          class="logout-cancel-btn"
+          id="logoutCancelBtn"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="logout-confirm-btn"
+          id="logoutConfirmBtn"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  document
+    .getElementById(
+      "logoutCancelBtn"
+    )
+    .onclick =
+    function(){
+
+      overlay.remove();
+
+    };
+
+
+  document
+    .getElementById(
+      "logoutConfirmBtn"
+    )
+    .onclick =
+    async function(){
+
+      overlay.remove();
+
+      isLoggingOut =
+        true;
+
+      redirectingToLogin =
+        true;
+
 
       try{
 
-        await supabaseClient
-          .removeChannel(
-            realtimeChannel
+        if(
+          realtimeChannel
+        ){
+
+          try{
+
+            await supabaseClient
+              .removeChannel(
+                realtimeChannel
+              );
+
+          }catch(channelError){
+
+            console.warn(
+              "Realtime channel remove error:",
+              channelError
+            );
+
+          }
+
+          realtimeChannel =
+            null;
+
+        }
+
+
+        clearTeacherLoginState();
+
+        clearTeacherLocalData();
+
+
+        currentTeacher =
+          null;
+
+        currentTeacherId =
+          null;
+
+        currentTeacherEmail =
+          null;
+
+        allNotifications =
+          [];
+
+
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .signOut();
+
+
+        if(error){
+
+          console.error(
+            "Supabase logout error:",
+            error
           );
 
-      }catch(channelError){
+        }
 
-        console.warn(
-          "Realtime channel remove error:",
-          channelError
+
+      }catch(error){
+
+        console.error(
+          "Teacher logout error:",
+          error
+        );
+
+
+      }finally{
+
+        clearTeacherLoginState();
+
+        clearTeacherLocalData();
+
+        window.location.replace(
+          "index.html"
         );
 
       }
 
-      realtimeChannel =
-        null;
-
-    }
-
-
-    /*
-      Teacher local state clear
-    */
-
-    clearTeacherLoginState();
-
-    clearTeacherLocalData();
-
-
-    currentTeacher =
-      null;
-
-    currentTeacherId =
-      null;
-
-    currentTeacherEmail =
-      null;
-
-    allNotifications =
-      [];
-
-
-    /*
-      Supabase se actual logout
-    */
-
-    const{
-      error
-    } =
-      await supabaseClient.auth
-        .signOut();
-
-
-    if(error){
-
-      console.error(
-        "Supabase logout error:",
-        error
-      );
-
-    }
-
-
-  }catch(error){
-
-    console.error(
-      "Teacher logout error:",
-      error
-    );
-
-
-  }finally{
-
-    /*
-      FINAL redirect:
-      Student Login = index.html
-    */
-
-    clearTeacherLoginState();
-
-    clearTeacherLocalData();
-
-    window.location.replace(
-      "index.html"
-    );
-
-  }
+    };
 
 }
 
@@ -3511,11 +3659,6 @@ document.addEventListener(
     dashboardStarted =
       false;
 
-
-    /*
-      Browser cache/back se dashboard
-      open hone par pehle session check
-    */
 
     const user =
       await getLoggedInUser();
