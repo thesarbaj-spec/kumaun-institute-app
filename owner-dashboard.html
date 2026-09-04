@@ -391,15 +391,49 @@ body{
 
 .table-container{
   width:100%;
+  height:420px;
+  max-height:420px;
   overflow-x:auto;
-  overflow-y:hidden;
+  overflow-y:auto;
   -webkit-overflow-scrolling:touch;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  scrollbar-width:thin;
 }
 
+/* Recent Students table ko fixed box ke andar rakho */
 .table-container table{
   width:1750px;
   min-width:1750px;
   border-collapse:collapse;
+}
+
+/* Header scroll karte waqt upar visible rahe */
+.table-container thead th{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#fafafa;
+}
+
+/* Scrollbar */
+.table-container::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+
+.table-container::-webkit-scrollbar-track{
+  background:#f1f5f9;
+  border-radius:10px;
+}
+
+.table-container::-webkit-scrollbar-thumb{
+  background:#94a3b8;
+  border-radius:10px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover{
+  background:#64748b;
 }
 
 th,
