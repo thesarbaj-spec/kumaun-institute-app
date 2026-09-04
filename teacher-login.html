@@ -89,6 +89,31 @@ body{
     border-color:#2563eb;
 }
 
+/* DATE DROPDOWNS */
+
+.date-select-row{
+    display:grid;
+    grid-template-columns:1fr 1.5fr 1.2fr;
+    gap:8px;
+    width:100%;
+}
+
+.date-select-row select{
+    width:100%;
+    padding:12px 8px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+    color:#334155;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.date-select-row select:focus{
+    border-color:#2563eb;
+}
+
 .login-btn,
 .back-btn,
 .reset-btn{
@@ -210,18 +235,25 @@ button:disabled{
         padding:22px;
     }
 
+    .date-select-row{
+        grid-template-columns:1fr 1.35fr 1.15fr;
+        gap:6px;
+    }
+
+    .date-select-row select{
+        font-size:12px;
+        padding:12px 5px;
+    }
+
 }
 
 </style>
 
 </head>
 
-
 <body>
 
-
 <div class="login-box">
-
 
     <div class="logo-area">
 
@@ -247,7 +279,6 @@ button:disabled{
     >
 
         <form id="loginForm">
-
 
             <div class="form-group">
 
@@ -318,7 +349,6 @@ button:disabled{
                 class="status"
             ></div>
 
-
         </form>
 
     </div>
@@ -335,11 +365,6 @@ button:disabled{
             🔑 Forgot Password
         </h3>
 
-        <p class="small-text">
-            Teacher Email, DOB aur Joining Date verify karke naya password banayein.
-        </p>
-
-
         <div class="form-group">
 
             <label>
@@ -350,10 +375,13 @@ button:disabled{
                 type="email"
                 id="resetEmail"
                 placeholder="Enter teacher email"
+                autocomplete="email"
             >
 
         </div>
 
+
+        <!-- DATE OF BIRTH -->
 
         <div class="form-group">
 
@@ -361,13 +389,26 @@ button:disabled{
                 🎂 Date of Birth
             </label>
 
-            <input
-                type="date"
-                id="resetDob"
-            >
+            <div class="date-select-row">
+
+                <select id="resetDobDay">
+                    <option value="">Day</option>
+                </select>
+
+                <select id="resetDobMonth">
+                    <option value="">Month</option>
+                </select>
+
+                <select id="resetDobYear">
+                    <option value="">Year</option>
+                </select>
+
+            </div>
 
         </div>
 
+
+        <!-- JOINING DATE -->
 
         <div class="form-group">
 
@@ -375,10 +416,21 @@ button:disabled{
                 📅 Joining Date
             </label>
 
-            <input
-                type="date"
-                id="resetJoiningDate"
-            >
+            <div class="date-select-row">
+
+                <select id="resetJoiningDay">
+                    <option value="">Day</option>
+                </select>
+
+                <select id="resetJoiningMonth">
+                    <option value="">Month</option>
+                </select>
+
+                <select id="resetJoiningYear">
+                    <option value="">Year</option>
+                </select>
+
+            </div>
 
         </div>
 
@@ -439,12 +491,9 @@ button:disabled{
             class="status"
         ></div>
 
-
     </div>
 
-
 </div>
-
 
 
 <script>
@@ -526,7 +575,8 @@ function saveTeacherLogin(user){
             .toLowerCase()
         );
 
-    }catch(error){
+    }
+    catch(error){
 
         console.warn(
             "Teacher login storage error:",
@@ -562,7 +612,8 @@ function clearTeacherLogin(){
             TEACHER_EMAIL_KEY
         );
 
-    }catch(error){
+    }
+    catch(error){
 
         console.warn(
             "Teacher local clear error:",
@@ -586,9 +637,7 @@ async function checkExistingTeacherSession(){
             await supabaseClient.auth.getSession();
 
 
-        if(
-            result.error
-        ){
+        if(result.error){
 
             console.warn(
                 "Existing session error:",
@@ -622,12 +671,6 @@ async function checkExistingTeacherSession(){
                 );
 
 
-            /*
-              Agar Supabase session active hai
-              aur teacher portal saved hai,
-              to direct dashboard.
-            */
-
             if(
                 portal === "teacher" &&
                 loggedIn === "true"
@@ -647,16 +690,7 @@ async function checkExistingTeacherSession(){
             }
 
 
-            /*
-              Agar Supabase session active hai
-              lekin localStorage missing hai,
-              to bhi teacher session ko
-              continue karne dein.
-            */
-
-            if(
-                session.user.email
-            ){
+            if(session.user.email){
 
                 saveTeacherLogin(
                     session.user
@@ -813,6 +847,422 @@ function showLogin(){
 
 
 /* =========================================
+   DATE DROPDOWN DATA
+========================================= */
+
+const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+];
+
+
+/* =========================================
+   CREATE DAY OPTIONS
+========================================= */
+
+function populateDays(selectId){
+
+    const select =
+        document.getElementById(
+            selectId
+        );
+
+    if(!select){
+        return;
+    }
+
+    for(let day = 1; day <= 31; day++){
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            String(day).padStart(2,"0");
+
+        option.textContent =
+            String(day).padStart(2,"0");
+
+        select.appendChild(
+            option
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CREATE MONTH OPTIONS
+========================================= */
+
+function populateMonths(selectId){
+
+    const select =
+        document.getElementById(
+            selectId
+        );
+
+    if(!select){
+        return;
+    }
+
+    monthNames.forEach(
+        function(month,index){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                String(index + 1).padStart(2,"0");
+
+            option.textContent =
+                month;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CREATE YEAR OPTIONS
+========================================= */
+
+function populateYears(
+    selectId,
+    startYear,
+    endYear
+){
+
+    const select =
+        document.getElementById(
+            selectId
+        );
+
+    if(!select){
+        return;
+    }
+
+
+    for(
+        let year = endYear;
+        year >= startYear;
+        year--
+    ){
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            String(year);
+
+        option.textContent =
+            String(year);
+
+        select.appendChild(
+            option
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CHECK REAL DATE
+========================================= */
+
+function isValidDate(
+    year,
+    month,
+    day
+){
+
+    const date =
+        new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+        );
+
+
+    return(
+        date.getFullYear() === Number(year) &&
+        date.getMonth() === Number(month) - 1 &&
+        date.getDate() === Number(day)
+    );
+
+}
+
+
+/* =========================================
+   GET DATE FROM DROPDOWNS
+========================================= */
+
+function getDateFromDropdowns(
+    dayId,
+    monthId,
+    yearId
+){
+
+    const day =
+        document.getElementById(
+            dayId
+        ).value;
+
+    const month =
+        document.getElementById(
+            monthId
+        ).value;
+
+    const year =
+        document.getElementById(
+            yearId
+        ).value;
+
+
+    if(
+        !day ||
+        !month ||
+        !year
+    ){
+
+        return{
+            valid:false,
+            value:""
+        };
+
+    }
+
+
+    if(
+        !isValidDate(
+            year,
+            month,
+            day
+        )
+    ){
+
+        return{
+            valid:false,
+            value:""
+        };
+
+    }
+
+
+    const dateString =
+        year +
+        "-" +
+        month +
+        "-" +
+        day;
+
+
+    return{
+        valid:true,
+        value:dateString
+    };
+
+}
+
+
+/* =========================================
+   DATE DROPDOWN FUTURE DATE CONTROL
+========================================= */
+
+function setupDateValidation(){
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        23,
+        59,
+        59,
+        999
+    );
+
+
+    const datePairs = [
+
+        {
+            day:"resetDobDay",
+            month:"resetDobMonth",
+            year:"resetDobYear"
+        },
+
+        {
+            day:"resetJoiningDay",
+            month:"resetJoiningMonth",
+            year:"resetJoiningYear"
+        }
+
+    ];
+
+
+    datePairs.forEach(
+        function(pair){
+
+            const daySelect =
+                document.getElementById(
+                    pair.day
+                );
+
+            const monthSelect =
+                document.getElementById(
+                    pair.month
+                );
+
+            const yearSelect =
+                document.getElementById(
+                    pair.year
+                );
+
+
+            function validateDate(){
+
+                if(
+                    !daySelect.value ||
+                    !monthSelect.value ||
+                    !yearSelect.value
+                ){
+
+                    return;
+
+                }
+
+
+                const selected =
+                    new Date(
+                        Number(yearSelect.value),
+                        Number(monthSelect.value) - 1,
+                        Number(daySelect.value)
+                    );
+
+
+                if(
+                    selected > today ||
+                    !isValidDate(
+                        yearSelect.value,
+                        monthSelect.value,
+                        daySelect.value
+                    )
+                ){
+
+                    daySelect.value = "";
+                    monthSelect.value = "";
+                    yearSelect.value = "";
+
+                    showStatus(
+                        "resetStatus",
+                        "❌ Please select a valid date. Future dates are not allowed.",
+                        "error"
+                    );
+
+                }
+
+            }
+
+
+            daySelect.addEventListener(
+                "change",
+                validateDate
+            );
+
+            monthSelect.addEventListener(
+                "change",
+                validateDate
+            );
+
+            yearSelect.addEventListener(
+                "change",
+                validateDate
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   INITIALIZE DATE DROPDOWNS
+========================================= */
+
+function initializeDateDropdowns(){
+
+    const currentYear =
+        new Date().getFullYear();
+
+
+    /*
+      DOB:
+      1950 se current year tak.
+    */
+
+    populateDays(
+        "resetDobDay"
+    );
+
+    populateMonths(
+        "resetDobMonth"
+    );
+
+    populateYears(
+        "resetDobYear",
+        1950,
+        currentYear
+    );
+
+
+    /*
+      Joining Date:
+      2000 se current year tak.
+    */
+
+    populateDays(
+        "resetJoiningDay"
+    );
+
+    populateMonths(
+        "resetJoiningMonth"
+    );
+
+    populateYears(
+        "resetJoiningYear",
+        2000,
+        currentYear
+    );
+
+
+    setupDateValidation();
+
+}
+
+
+/* =========================================
    TEACHER LOGIN
 ========================================= */
 
@@ -942,12 +1392,6 @@ document
                 }
 
 
-                /*
-                  IMPORTANT:
-                  Login successful hone ke baad
-                  signOut NAHI karna hai.
-                */
-
                 saveTeacherLogin(
                     data.user
                 );
@@ -980,12 +1424,6 @@ document
                     error
                 );
 
-
-                /*
-                  Yahan signOut NAHI kar rahe.
-                  Sirf failed login par local
-                  teacher data clear karenge.
-                */
 
                 clearTeacherLogin();
 
@@ -1031,20 +1469,20 @@ async function resetTeacherPassword(){
             .toLowerCase();
 
 
-    const dob =
-        document
-            .getElementById(
-                "resetDob"
-            )
-            .value;
+    const dobResult =
+        getDateFromDropdowns(
+            "resetDobDay",
+            "resetDobMonth",
+            "resetDobYear"
+        );
 
 
-    const joiningDate =
-        document
-            .getElementById(
-                "resetJoiningDate"
-            )
-            .value;
+    const joiningResult =
+        getDateFromDropdowns(
+            "resetJoiningDay",
+            "resetJoiningMonth",
+            "resetJoiningYear"
+        );
 
 
     const newPassword =
@@ -1072,15 +1510,57 @@ async function resetTeacherPassword(){
 
     if(
         !email ||
-        !dob ||
-        !joiningDate ||
+        !dobResult.valid ||
+        !joiningResult.valid ||
         !newPassword ||
         !confirmNewPassword
     ){
 
         showStatus(
             "resetStatus",
-            "❌ Please fill in all details.",
+            "❌ Please fill in all details correctly.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        23,
+        59,
+        59,
+        999
+    );
+
+
+    const dobDate =
+        new Date(
+            dobResult.value +
+            "T00:00:00"
+        );
+
+
+    const joiningDateObj =
+        new Date(
+            joiningResult.value +
+            "T00:00:00"
+        );
+
+
+    if(
+        dobDate > today ||
+        joiningDateObj > today
+    ){
+
+        showStatus(
+            "resetStatus",
+            "❌ Future date is not allowed.",
             "error"
         );
 
@@ -1146,11 +1626,11 @@ async function resetTeacherPassword(){
                 )
                 .eq(
                     "dob",
-                    dob
+                    dobResult.value
                 )
                 .eq(
                     "joining_date",
-                    joiningDate
+                    joiningResult.value
                 )
                 .maybeSingle();
 
@@ -1250,7 +1730,21 @@ async function resetTeacherPassword(){
 
         document
             .getElementById(
-                "resetDob"
+                "resetDobDay"
+            )
+            .value =
+            "";
+
+        document
+            .getElementById(
+                "resetDobMonth"
+            )
+            .value =
+            "";
+
+        document
+            .getElementById(
+                "resetDobYear"
             )
             .value =
             "";
@@ -1258,7 +1752,21 @@ async function resetTeacherPassword(){
 
         document
             .getElementById(
-                "resetJoiningDate"
+                "resetJoiningDay"
+            )
+            .value =
+            "";
+
+        document
+            .getElementById(
+                "resetJoiningMonth"
+            )
+            .value =
+            "";
+
+        document
+            .getElementById(
+                "resetJoiningYear"
             )
             .value =
             "";
@@ -1332,11 +1840,6 @@ supabaseClient.auth.onAuthStateChange(
         );
 
 
-        /*
-          SIGNED_IN:
-          Login ko save rakho.
-        */
-
         if(
             event === "SIGNED_IN" &&
             session &&
@@ -1352,11 +1855,6 @@ supabaseClient.auth.onAuthStateChange(
         }
 
 
-        /*
-          TOKEN_REFRESHED:
-          Login ko active rakho.
-        */
-
         if(
             event === "TOKEN_REFRESHED" &&
             session &&
@@ -1371,12 +1869,6 @@ supabaseClient.auth.onAuthStateChange(
 
         }
 
-
-        /*
-          SIGNED_OUT:
-          Sirf actual logout par
-          local teacher login clear hoga.
-        */
 
         if(
             event === "SIGNED_OUT"
@@ -1398,9 +1890,7 @@ document.addEventListener(
     "DOMContentLoaded",
     function(){
 
-        /*
-          Existing Supabase session check.
-        */
+        initializeDateDropdowns();
 
         checkExistingTeacherSession();
 
