@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGC - Repayment Scheme</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f8fc;
+            color: #073f73;
+            min-height: 100vh;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app {
+            width: 100%;
+            min-height: 100vh;
+            background: #fff;
+        }
+
+        .header {
+            height: 82px;
+            width: 100%;
+            background: #fff;
+            border-bottom: 1px solid #e4edf5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            position: absolute;
+            left: 28px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 12px;
+            background: #eef7ff;
+            color: #075ca5;
+            font-size: 29px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background: #e0f1ff;
+        }
+
+        .egc-logo {
+            height: 60px;
+            width: auto;
+            max-width: 65%;
+            object-fit: contain;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 38px 35px 70px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .page-title h1 {
+            font-size: 34px;
+            font-weight: 800;
+            color: #06447c;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            font-size: 17px;
+            color: #72899e;
+            line-height: 1.5;
+        }
+
+        .steps {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 42px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .step-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .step-box:last-child {
+            flex: 0 0 auto;
+        }
+
+        .step {
+            min-width: 88px;
+            text-align: center;
+        }
+
+        .step-circle {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            font-size: 17px;
+            font-weight: 800;
+            background: #fff;
+            border: 3px solid #d0dfeb;
+            color: #8ba0b1;
+        }
+
+        .step.active .step-circle {
+            background: #0878d1;
+            border-color: #0878d1;
+            color: #fff;
+        }
+
+        .step.completed .step-circle {
+            background: #168c50;
+            border-color: #168c50;
+            color: #fff;
+        }
+
+        .step-name {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #8b9baa;
+            white-space: nowrap;
+        }
+
+        .step.active .step-name {
+            color: #0872c7;
+        }
+
+        .step.completed .step-name {
+            color: #168c50;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 3px;
+            background: #d6e2ec;
+            margin: 22px 8px 0;
+        }
+
+        .step-line.completed {
+            background: #168c50;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 24px;
+            background: #fff;
+            border: 1px solid #e0eaf2;
+            border-radius: 22px;
+            padding: 34px;
+            box-shadow: 0 10px 40px rgba(7, 65, 105, .08);
+        }
+
+        .card-title {
+            font-size: 27px;
+            font-weight: 800;
+            color: #06477f;
+            margin-bottom: 7px;
+        }
+
+        .card-subtitle {
+            font-size: 15px;
+            color: #71879a;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .amount-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .amount-box {
+            border: 1px solid #dceaf4;
+            background: #f8fcff;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 0;
+        }
+
+        .amount-label {
+            font-size: 12px;
+            color: #7890a3;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .amount-value {
+            font-size: 27px;
+            font-weight: 800;
+            color: #06477f;
+            overflow-wrap: anywhere;
+        }
+
+        .amount-box.advance {
+            background: #fffaf0;
+            border-color: #ffe0a0;
+        }
+
+        .amount-box.advance .amount-value {
+            color: #d18a00;
+        }
+
+        .amount-box.remaining {
+            background: #effaf4;
+            border-color: #c8ead7;
+        }
+
+        .amount-box.remaining .amount-value {
+            color: #16844c;
+        }
+
+        .calculation-box {
+            background: #f6fbff;
+            border: 1px solid #d8e9f5;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .calculation-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #075a96;
+            margin-bottom: 12px;
+        }
+
+        .calculation-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 9px 0;
+            border-bottom: 1px dashed #dbe8f0;
+            font-size: 14px;
+            color: #4c6b80;
+        }
+
+        .calculation-line:last-child {
+            border-bottom: 0;
+        }
+
+        .calculation-line strong {
+            color: #164c72;
+            text-align: right;
+        }
+
+        .calculation-total {
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 2px solid #d7e7f1;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 17px;
+            font-weight: 800;
+            color: #06477f;
+        }
+
+        .calculation-total strong {
+            text-align: right;
+        }
+
+        .scheme-heading {
+            margin-bottom: 16px;
+        }
+
+        .scheme-heading h3 {
+            font-size: 21px;
+            color: #06477f;
+            margin-bottom: 5px;
+        }
+
+        .scheme-heading p {
+            font-size: 14px;
+            color: #71879a;
+            line-height: 1.5;
+        }
+
+        .scheme-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .scheme-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 17px 18px;
+            border: 1px solid #dce8f0;
+            border-radius: 15px;
+            background: #fff;
+        }
+
+        .scheme-left {
+            min-width: 0;
+        }
+
+        .scheme-days {
+            font-size: 16px;
+            font-weight: 800;
+            color: #075a96;
+            margin-bottom: 6px;
+        }
+
+        .scheme-description {
+            font-size: 12px;
+            color: #7b91a2;
+            line-height: 1.5;
+        }
+
+        .scheme-charge {
+            min-width: 135px;
+            text-align: right;
+        }
+
+        .charge-label {
+            display: block;
+            font-size: 11px;
+            color: #8a9eac;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .charge-value {
+            font-size: 19px;
+            color: #c47b00;
+            font-weight: 800;
+        }
+
+        .fixed-rule {
+            margin-top: 20px;
+            padding: 15px 17px;
+            background: #eef8ff;
+            border: 1px solid #cde5f5;
+            border-radius: 13px;
+            color: #315f7d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .fixed-rule strong {
+            color: #075a96;
+        }
+
+        .rule-box {
+            margin-top: 25px;
+            padding: 19px;
+            border-radius: 15px;
+            background: #fff8ed;
+            border: 1px solid #f7d89e;
+        }
+
+        .rule-title {
+            color: #9b6500;
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .rule-text {
+            color: #745a28;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .agreement-box {
+            margin-top: 25px;
+            border: 1px solid #d9e7f1;
+            border-radius: 16px;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .agreement-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .agreement-row input {
+            width: 21px;
+            height: 21px;
+            margin-top: 1px;
+            cursor: pointer;
+            accent-color: #0878d1;
+            flex-shrink: 0;
+        }
+
+        .agreement-text {
+            font-size: 14px;
+            color: #315873;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .agreement-text strong {
+            color: #06477f;
+        }
+
+        .action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .back-step-btn {
+            min-width: 180px;
+            min-height: 58px;
+            border: 1px solid #d2e1ec;
+            border-radius: 14px;
+            background: #fff;
+            color: #15547d;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 12px 18px;
+        }
+
+        .back-step-btn:hover {
+            background: #f4f9fd;
+        }
+
+        .continue-btn {
+            min-width: 250px;
+            min-height: 58px;
+            border: 0;
+            border-radius: 14px;
+            background: #ffc21a;
+            color: #063d70;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 7px 18px rgba(255, 194, 26, .24);
+            padding: 12px 18px;
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            background: #ffca32;
+        }
+
+        .continue-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 14px 17px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .message.error,
+        .message.success,
+        .message.info {
+            display: block;
+        }
+
+        .message.error {
+            color: #bd2828;
+            background: #fff1f1;
+            border: 1px solid #ffc9c9;
+        }
+
+        .message.success {
+            color: #16833a;
+            background: #effcf3;
+            border: 1px solid #bde8c9;
+        }
+
+        .message.info {
+            color: #075a96;
+            background: #eef8ff;
+            border: 1px solid #cde5f5;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 15px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-box {
+            width: min(90%, 360px);
+            background: #fff;
+            border: 1px solid #dceaf4;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 15px 45px rgba(0, 50, 90, .14);
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #dcecf8;
+            border-top-color: #0878d1;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .loading-box strong {
+            display: block;
+            color: #06477f;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .loading-box span {
+            color: #71879a;
+            font-size: 13px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 800px) {
+            .header { height: 70px; }
+            .header-left { left: 14px; }
+            .back-btn { width: 38px; height: 38px; font-size: 26px; }
+            .egc-logo { height: 49px; }
+            .main { padding: 24px 12px 45px; }
+            .page-title { margin-bottom: 27px; }
+            .page-title h1 { font-size: 27px; }
+            .page-title p { font-size: 14px; }
+            .steps { margin-bottom: 25px; }
+            .step { min-width: 50px; }
+            .step-circle { width: 35px; height: 35px; font-size: 13px; }
+            .step-name { font-size: 9px; }
+            .step-line { margin: 17px 2px 0; }
+            .card { padding: 21px 14px; border-radius: 17px; }
+            .card-title { font-size: 22px; }
+            .card-subtitle { font-size: 13px; margin-bottom: 21px; }
+            .amount-summary { grid-template-columns: 1fr; gap: 10px; }
+            .amount-box { padding: 15px; }
+            .amount-value { font-size: 24px; }
+            .calculation-box { padding: 15px; }
+            .calculation-line { font-size: 13px; }
+            .calculation-total { font-size: 14px; line-height: 1.4; }
+            .scheme-heading h3 { font-size: 18px; }
+            .scheme-heading p { font-size: 12px; }
+            .scheme-row { padding: 14px; gap: 10px; }
+            .scheme-days { font-size: 14px; }
+            .scheme-description { font-size: 11px; }
+            .scheme-charge { min-width: 90px; }
+            .charge-label { font-size: 9px; }
+            .charge-value { font-size: 16px; }
+            .fixed-rule { font-size: 12px; padding: 13px; }
+            .rule-box { padding: 15px; }
+            .rule-title { font-size: 15px; }
+            .rule-text { font-size: 12px; }
+            .agreement-box { padding: 15px; }
+            .agreement-text { font-size: 12px; }
+            .action { flex-direction: column-reverse; align-items: stretch; }
+            .continue-btn, .back-step-btn {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .main { padding-left: 9px; padding-right: 9px; }
+            .card { padding: 18px 10px; }
+            .scheme-row { padding: 12px 10px; }
+            .scheme-days { font-size: 13px; }
+            .scheme-description { font-size: 10px; }
+            .scheme-charge { min-width: 78px; }
+            .charge-value { font-size: 14px; }
+            .step { min-width: 43px; }
+            .step-name { font-size: 8px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <header class="header">
+        <div class="header-left">
+            <button type="button" class="back-btn" id="backBtn" aria-label="Go back">‹</button>
+        </div>
+
+        <img
+            src="assets/EGC - Emergency Gas Cylinder logo.png"
+            class="egc-logo"
+            alt="EGC"
+            onerror="this.style.display='none';"
+        >
+    </header>
+
+    <main class="main">
+        <div class="page-title">
+            <h1>Repayment Scheme</h1>
+            <p>Review the repayment rules before submitting your cylinder request.</p>
+        </div>
+
+        <div class="steps">
+            <div class="step-box">
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-name">LPG Details</div>
+                </div>
+                <div class="step-line completed"></div>
+            </div>
+
+            <div class="step-box">
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-name">Verification</div>
+                </div>
+                <div class="step-line completed"></div>
+            </div>
+
+            <div class="step-box">
+                <div class="step active">
+                    <div class="step-circle">3</div>
+                    <div class="step-name">Scheme</div>
+                </div>
+                <div class="step-line"></div>
+            </div>
+
+            <div class="step-box">
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-name">Payment</div>
+                </div>
+                <div class="step-line"></div>
+            </div>
+
+            <div class="step-box">
+                <div class="step">
+                    <div class="step-circle">5</div>
+                    <div class="step-name">Complete</div>
+                </div>
+            </div>
+        </div>
+
+        <section class="card">
+            <h2 class="card-title">EGC Cylinder Finance Details</h2>
+
+            <p class="card-subtitle">
+                The repayment charges are fixed according to the number of days
+                taken to clear the remaining payment.
+            </p>
+
+            <div class="amount-summary">
+                <div class="amount-box">
+                    <div class="amount-label">Total Cylinder Amount</div>
+                    <div class="amount-value" id="cylinderAmount">₹890</div>
+                </div>
+
+                <div class="amount-box advance">
+                    <div class="amount-label">First Payment</div>
+                    <div class="amount-value" id="firstPayment">₹200</div>
+                </div>
+
+                <div class="amount-box remaining">
+                    <div class="amount-label">Remaining Payment</div>
+                    <div class="amount-value" id="remainingAmount">₹690</div>
+                </div>
+            </div>
+
+            <div class="calculation-box">
+                <div class="calculation-title">Payment Summary</div>
+
+                <div class="calculation-line">
+                    <span>Cylinder amount</span>
+                    <strong id="summaryCylinder">₹890</strong>
+                </div>
+
+                <div class="calculation-line">
+                    <span>Pay first</span>
+                    <strong id="summaryFirst">₹200</strong>
+                </div>
+
+                <div class="calculation-line">
+                    <span>Balance after first payment</span>
+                    <strong id="summaryRemaining">₹690</strong>
+                </div>
+
+                <div class="calculation-total">
+                    <span>Balance + applicable charge</span>
+                    <strong>According to payment date</strong>
+                </div>
+            </div>
+
+            <div class="scheme-heading">
+                <h3>Repayment Charges</h3>
+                <p>
+                    You do not need to choose a charge. The applicable charge
+                    will depend on when the remaining payment is fully cleared.
+                </p>
+            </div>
+
+            <div class="scheme-list">
+                <div class="scheme-row">
+                    <div class="scheme-left">
+                        <div class="scheme-days">1–10 Days</div>
+                        <div class="scheme-description">
+                            If the remaining payment is cleared within 1 to 10 days.
+                        </div>
+                    </div>
+                    <div class="scheme-charge">
+                        <span class="charge-label">Extra Charge</span>
+                        <span class="charge-value">₹35</span>
+                    </div>
+                </div>
+
+                <div class="scheme-row">
+                    <div class="scheme-left">
+                        <div class="scheme-days">11–15 Days</div>
+                        <div class="scheme-description">
+                            If the remaining payment is cleared within 11 to 15 days.
+                        </div>
+                    </div>
+                    <div class="scheme-charge">
+                        <span class="charge-label">Extra Charge</span>
+                        <span class="charge-value">₹40</span>
+                    </div>
+                </div>
+
+                <div class="scheme-row">
+                    <div class="scheme-left">
+                        <div class="scheme-days">16–30 Days</div>
+                        <div class="scheme-description">
+                            If the remaining payment is cleared within 16 to 30 days.
+                        </div>
+                    </div>
+                    <div class="scheme-charge">
+                        <span class="charge-label">Extra Charge</span>
+                        <span class="charge-value">₹50</span>
+                    </div>
+                </div>
+
+                <div class="scheme-row">
+                    <div class="scheme-left">
+                        <div class="scheme-days">31–45 Days</div>
+                        <div class="scheme-description">
+                            A further 15-day period is available after the first 30 days.
+                        </div>
+                    </div>
+                    <div class="scheme-charge">
+                        <span class="charge-label">Extra Charge</span>
+                        <span class="charge-value">₹50</span>
+                    </div>
+                </div>
+
+                <div class="scheme-row">
+                    <div class="scheme-left">
+                        <div class="scheme-days">46 Days or More</div>
+                        <div class="scheme-description">
+                            After 46 days, the applicable extra charge is ₹100.
+                        </div>
+                    </div>
+                    <div class="scheme-charge">
+                        <span class="charge-label">Extra Charge</span>
+                        <span class="charge-value">₹100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fixed-rule">
+                <strong>Important:</strong>
+                These charges are fixed. The applicable amount will be calculated
+                according to the actual date on which the remaining payment is completely cleared.
+            </div>
+
+            <div class="rule-box">
+                <div class="rule-title">Important Agency Rule</div>
+                <div class="rule-text">
+                    The previous cylinder payment must be completely cleared before
+                    another cylinder can be issued. Until the previous payment is
+                    fully cleared, the Request Cylinder option will remain disabled.
+                </div>
+            </div>
+
+            <div class="agreement-box">
+                <label class="agreement-row" for="agreeCheck">
+                    <input type="checkbox" id="agreeCheck">
+
+                    <span class="agreement-text">
+                        I have read and understood the repayment rules.
+                        I agree to pay <strong>₹200</strong> as the first payment
+                        and understand that the remaining <strong>₹690</strong>
+                        will have the applicable fixed extra charge according to
+                        the date of full payment. I also understand that another
+                        cylinder cannot be issued until the previous payment is
+                        completely cleared.
+                    </span>
+                </label>
+            </div>
+
+            <div id="message" class="message" role="status" aria-live="polite"></div>
+
+            <div class="action">
+                <button type="button" class="back-step-btn" id="backStepBtn">
+                    ⌂ HOME
+                </button>
+
+                <button type="button" class="continue-btn" id="continueBtn">
+                    REQUEST SUBMIT
+                </button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+    <div class="loading-box">
+        <div class="loader"></div>
+        <strong>Submitting your request...</strong>
+        <span>Please wait while we save your cylinder request.</span>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(() => {
+    "use strict";
+
+    // ==========================================
+    // SUPABASE CONFIGURATION
+    // ==========================================
+
+    const SUPABASE_URL = "https://szefvmvokkhvnzryodqu.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_S8aSsfmOKN6_7laRfgoMKA_Re2HzRS6";
+
+    const CYLINDER_AMOUNT = 890;
+    const FIRST_PAYMENT = 200;
+    const REMAINING_AMOUNT = CYLINDER_AMOUNT - FIRST_PAYMENT;
+
+    const $ = (id) => document.getElementById(id);
+
+    const continueBtn = $("continueBtn");
+    const backStepBtn = $("backStepBtn");
+    const backBtn = $("backBtn");
+    const agreeCheck = $("agreeCheck");
+    const message = $("message");
+    const loadingOverlay = $("loadingOverlay");
+
+    let supabaseClient = null;
+    let isSubmitting = false;
+
+    // ==========================================
+    // PAGE UTILITIES
+    // ==========================================
+
+    function showMessage(text, type = "error") {
+        message.className = "message " + type;
+        message.textContent = text;
+
+        message.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+    }
+
+    function clearMessage() {
+        message.className = "message";
+        message.textContent = "";
+    }
+
+    function setLoading(status) {
+        isSubmitting = status;
+
+        loadingOverlay.classList.toggle("show", status);
+        loadingOverlay.setAttribute("aria-hidden", String(!status));
+
+        continueBtn.disabled = status;
+        continueBtn.textContent = status
+            ? "SUBMITTING..."
+            : "REQUEST SUBMIT";
+    }
+
+    function readJSONFromStorage(storage, key) {
+        try {
+            const value = storage.getItem(key);
+            if (!value) return null;
+
+            const parsed = JSON.parse(value);
+
+            return parsed && typeof parsed === "object"
+                ? parsed
+                : null;
+        } catch (error) {
+            console.warn("Could not read storage key:", key, error);
+            return null;
+        }
+    }
+
+    function readJSON(key) {
+        return readJSONFromStorage(sessionStorage, key) ||
+               readJSONFromStorage(localStorage, key);
+    }
+
+    function saveJSON(key, value) {
+        const serialized = JSON.stringify(value);
+
+        try {
+            sessionStorage.setItem(key, serialized);
+        } catch (error) {
+            console.warn("Session storage save failed:", error);
+        }
+
+        try {
+            localStorage.setItem(key, serialized);
+        } catch (error) {
+            console.warn("Local storage save failed:", error);
+        }
+    }
+
+    function readStoredValue(key) {
+        try {
+            const sessionValue = sessionStorage.getItem(key);
+
+            if (sessionValue && sessionValue.trim()) {
+                return sessionValue;
+            }
+
+            const localValue = localStorage.getItem(key);
+
+            if (localValue && localValue.trim()) {
+                return localValue;
+            }
+        } catch (error) {
+            console.warn("Unable to read stored value:", key, error);
+        }
+
+        return null;
+    }
+
+    // ==========================================
+    // LPG DETAILS
+    // ==========================================
+
+    function getLpgDetails() {
+        const keys = [
+            "egc_lpg_details",
+            "egcLpgDetails",
+            "lpgDetails",
+            "lpg_details",
+            "egc_lpg_data",
+            "egc_lpg_form_data"
+        ];
+
+        for (const key of keys) {
+            const data = readJSON(key);
+
+            if (data && typeof data === "object" && !Array.isArray(data)) {
+                return data;
+            }
+        }
+
+        const state = readStoredValue("egc_lpg_state");
+        const district = readStoredValue("egc_lpg_district");
+        const city = readStoredValue("egc_lpg_city");
+        const company = readStoredValue("egc_lpg_company");
+        const agencyId = readStoredValue("egc_lpg_agency_id");
+
+        if (state || district || city || company || agencyId) {
+            return {
+                state: state || "",
+                district: district || "",
+                city: city || "",
+                lpg_company: company || "",
+                agency_id: agencyId || ""
+            };
+        }
+
+        throw new Error(
+            "Saved LPG Details were not found. Please return to LPG Details and complete the form first."
+        );
+    }
+
+    // ==========================================
+    // VERIFICATION DATA
+    // ==========================================
+
+    function getVerificationData() {
+        const keys = [
+            "egc_lpg_verification",
+            "egc_verification_data",
+            "egc_verification_personal",
+            "egc_verification_details",
+            "egc_verification",
+            "verificationData"
+        ];
+
+        for (const key of keys) {
+            const data = readJSON(key);
+
+            if (data && typeof data === "object" && !Array.isArray(data)) {
+                return data;
+            }
+        }
+
+        throw new Error(
+            "Verification information was not found. Please complete Verification first."
+        );
+    }
+
+    // ==========================================
+    // AGENCY ID
+    // ==========================================
+
+    function findAgencyId(obj) {
+        if (!obj || typeof obj !== "object") return null;
+
+        const keys = [
+            "agency_id",
+            "agencyId",
+            "selected_agency_id",
+            "selectedAgencyId",
+            "lpg_agency_id",
+            "lpgAgencyId"
+        ];
+
+        for (const key of keys) {
+            const value = obj[key];
+
+            if (value !== undefined && value !== null &&
+                String(value).trim() !== "") {
+                return String(value).trim();
+            }
+        }
+
+        const nestedKeys = [
+            "agency",
+            "selected_agency",
+            "selectedAgency",
+            "agency_data",
+            "agencyData"
+        ];
+
+        for (const key of nestedKeys) {
+            if (obj[key] && typeof obj[key] === "object") {
+                const nestedId = findAgencyId(obj[key]);
+                if (nestedId) return nestedId;
+            }
+        }
+
+        return null;
+    }
+
+    function getSelectedAgency(lpgDetails) {
+        const directId = findAgencyId(lpgDetails);
+
+        if (directId) {
+            return {
+                id: directId,
+                agency_name:
+                    lpgDetails.agency_name ||
+                    lpgDetails.agencyName ||
+                    "",
+                agency_code:
+                    lpgDetails.agency_code ||
+                    lpgDetails.agencyCode ||
+                    "",
+                lpg_company:
+                    lpgDetails.lpg_company ||
+                    lpgDetails.lpgCompany ||
+                    lpgDetails.company ||
+                    "",
+                state: lpgDetails.state || "",
+                district: lpgDetails.district || "",
+                city: lpgDetails.city || ""
+            };
+        }
+
+        for (const key of [
+            "egc_selected_agency",
+            "selectedAgency",
+            "selected_agency"
+        ]) {
+            const savedAgency = readJSON(key);
+            if (!savedAgency) continue;
+
+            const agencyId = findAgencyId(savedAgency);
+
+            if (agencyId) {
+                return {
+                    id: agencyId,
+                    agency_name:
+                        savedAgency.agency_name ||
+                        savedAgency.name ||
+                        "",
+                    agency_code:
+                        savedAgency.agency_code ||
+                        savedAgency.code ||
+                        "",
+                    lpg_company:
+                        savedAgency.lpg_company ||
+                        savedAgency.company ||
+                        "",
+                    state: savedAgency.state || "",
+                    district: savedAgency.district || "",
+                    city: savedAgency.city || ""
+                };
+            }
+        }
+
+        return null;
+    }
+
+    // ==========================================
+    // ADDRESS
+    // ==========================================
+
+    function getAddress(verificationData, lpgDetails) {
+        const candidates = [
+            verificationData.personal_details,
+            verificationData.personalDetails,
+            verificationData.personal,
+            verificationData,
+            readJSON("egc_verification_personal"),
+            lpgDetails
+        ];
+
+        for (const obj of candidates) {
+            if (!obj || typeof obj !== "object") continue;
+
+            const address =
+                obj.address ||
+                obj.full_address ||
+                obj.fullAddress ||
+                obj.delivery_address ||
+                obj.deliveryAddress;
+
+            if (address && String(address).trim()) {
+                return String(address).trim();
+            }
+        }
+
+        return null;
+    }
+
+    // ==========================================
+    // STATUS HELPERS
+    // ==========================================
+
+    function normalStatus(value) {
+        return String(value || "")
+            .trim()
+            .toLowerCase()
+            .replace(/[\s-]+/g, "_");
+    }
+
+    function isRejectedOrCancelled(request) {
+        const status = normalStatus(request.status);
+        const approval = normalStatus(request.owner_approval);
+
+        return ["cancelled", "canceled", "rejected"].includes(status) ||
+               ["rejected", "cancelled", "canceled"].includes(approval);
+    }
+
+   function isFullyCleared(request, verifiedPaidAmount = null) {
+if (!request) return false;
+
+const remaining = Number(request.remaining_amount);
+const repaymentStatus = normalStatus(request.repayment_status);
+
+const completedStatuses = [
+    "completed",
+    "complete",
+    "paid",
+    "cleared",
+    "fully_paid",
+    "fully_cleared",
+    "paid_in_full",
+    "settled",
+    "clear"
+];
+
+// When verified payment records are available, use their calculated balance.
+if (
+    verifiedPaidAmount !== null &&
+    Number.isFinite(Number(verifiedPaidAmount))
+) {
+    const totalPaid = Number(verifiedPaidAmount);
+    const totalDue = Number(request.cylinder_amount || CYLINDER_AMOUNT);
+
+    return totalDue > 0 && totalPaid >= totalDue;
+}
+
+return (
+    Number.isFinite(remaining) &&
+    remaining <= 0 &&
+    completedStatuses.includes(repaymentStatus)
+);
+
+}
+
+function isActiveRequest(request) {
+if (!request || isRejectedOrCancelled(request)) {
+return false;
+}
+
+// A fully repaid old request must not block a new request.
+if (isFullyCleared(request)) {
+    return false;
+}
+
+// Every other non-rejected request remains active.
+return true;
+
+}
+
+    // ==========================================
+    // AUTHENTICATED USER AND PROFILE
+    // ==========================================
+
+    async function getCurrentUser() {
+        const { data, error } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            throw new Error("Login verification failed: " + error.message);
+        }
+
+        if (!data || !data.user) {
+            throw new Error("Your login session was not found. Please login again.");
+        }
+
+        return data.user;
+    }
+
+    async function getProfile(userId) {
+        const { data, error } = await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .maybeSingle();
+
+        if (error) {
+            throw new Error("Unable to load your profile: " + error.message);
+        }
+
+        if (!data) {
+            throw new Error("Your EGC profile could not be found. Please complete your profile first.");
+        }
+
+        return data;
+    }
+
+    // ==========================================
+    // REQUEST ID HELPERS
+    // ==========================================
+
+    function readStoredRequestId() {
+        for (const key of [
+            "egc_current_request_id",
+            "egc_last_request_id"
+        ]) {
+            const value = readStoredValue(key);
+
+            if (value && String(value).trim()) {
+                return String(value).trim();
+            }
+        }
+
+        for (const key of [
+            "egc_current_request",
+            "egc_request_data",
+            "egc_cylinder_request"
+        ]) {
+            const obj = readJSON(key);
+            if (!obj) continue;
+
+            const id =
+                obj.request_id ||
+                obj.requestId ||
+                obj.cylinder_request_id ||
+                obj.cylinderRequestId;
+
+            if (id !== undefined && id !== null && String(id).trim()) {
+                return String(id).trim();
+            }
+        }
+
+        return null;
+    }
+
+    async function getRequestById(requestId, userId) {
+        if (!requestId) return null;
+
+        const { data, error } = await supabaseClient
+            .from("cylinder_requests")
+            .select("*")
+            .eq("id", requestId)
+            .eq("user_id", userId)
+            .maybeSingle();
+
+        if (error) {
+            throw new Error("Unable to check the saved request: " + error.message);
+        }
+
+        return data || null;
+    }
+
+    async function getVerifiedPaymentsForRequest(request) {
+const { data, error } = await supabaseClient
+.from("payments")
+.select("*")
+.eq("request_id", request.id);
+
+if (error) {
+    throw new Error(
+        "Unable to verify your previous payments: " + error.message
+    );
+}
+
+const approvedPayments = (data || []).filter(payment => {
+    const verificationStatus = normalStatus(
+        payment.verification_status
+    );
+
+    const paymentStatus = normalStatus(payment.payment_status);
+
+    return (
+        ["approved", "verified"].includes(verificationStatus) &&
+        ["paid", "approved", "verified", "completed"].includes(paymentStatus)
+    );
+});
+
+const totalPaid = approvedPayments.reduce((sum, payment) => {
+    return sum + Math.max(
+        0,
+        Number(payment.payment_amount || payment.amount || 0)
+    );
+}, 0);
+
+const cylinderAmount = Number(
+    request.cylinder_amount || request.total_amount || CYLINDER_AMOUNT
+);
+
+// Repayment notes may contain the approved extra charge.
+let extraCharge = Number(request.extra_charge || 0);
+
+for (const payment of approvedPayments) {
+    let notes = payment.notes;
+
+    if (typeof notes === "string") {
+        try {
+            notes = JSON.parse(notes);
+        } catch {
+            notes = null;
+        }
+    }
+
+    if (notes && typeof notes === "object") {
+        const paymentType = normalStatus(
+            notes.payment_type || notes.type
+        );
+
+        if (paymentType === "repayment") {
+            extraCharge = Math.max(
+                extraCharge,
+                Number(notes.extra_charge || 0)
+            );
+        }
+    }
+}
+
+const totalDue = cylinderAmount + extraCharge;
+const remaining = Math.max(0, totalDue - totalPaid);
+
+return {
+    approvedPayments,
+    totalPaid,
+    totalDue,
+    remaining,
+    fullyPaid: totalDue > 0 && remaining <= 0
+};
+
+}
+
+ async function getExistingActiveRequest(userId) {
+const { data, error } = await supabaseClient
+.from("cylinder_requests")
+.select("*")
+.eq("user_id", userId)
+.order("created_at", { ascending: false })
+.limit(100);
+
+if (error) {
+    throw new Error(
+        "Unable to check your existing request: " + error.message
+    );
+}
+
+const requests = data || [];
+
+for (const request of requests) {
+    if (isRejectedOrCancelled(request)) {
+        continue;
+    }
+
+    const balance = await getVerifiedPaymentsForRequest(request);
+
+    // A fully repaid request must not block a new request.
+    if (balance.fullyPaid) {
+        continue;
+    }
+
+    // Any request with an outstanding balance blocks a new request.
+    if (balance.remaining > 0) {
+        return {
+            ...request,
+            calculated_remaining_amount: balance.remaining,
+            calculated_total_paid: balance.totalPaid,
+            calculated_total_due: balance.totalDue
+        };
+    }
+
+    // Do not silently ignore an unresolved active request.
+    if (!isFullyCleared(request)) {
+        return request;
+    }
+}
+
+return null;
+
+}
+
+    // ==========================================
+    // VERIFY SELECTED AGENCY
+    // ==========================================
+
+    async function getVerifiedAgency(lpgDetails) {
+        const detectedAgency = getSelectedAgency(lpgDetails);
+
+        if (!detectedAgency || !detectedAgency.id) {
+            throw new Error(
+                "Saved agency information was not found. Please return to LPG Details and select your agency again."
+            );
+        }
+
+        const { data, error } = await supabaseClient
+            .from("agencies")
+            .select("*")
+            .eq("id", detectedAgency.id)
+            .maybeSingle();
+
+        if (error) {
+            throw new Error("Agency verification failed: " + error.message);
+        }
+
+        if (!data) {
+            throw new Error(
+                "The selected agency was not found in the database. Please select it again."
+            );
+        }
+
+        if (data.is_active === false) {
+            throw new Error("The selected agency is currently inactive.");
+        }
+
+        if (data.status && normalStatus(data.status) !== "active") {
+            throw new Error("The selected agency is currently inactive.");
+        }
+
+        return {
+            ...data,
+            agency_name:
+                data.agency_name ||
+                data.name ||
+                detectedAgency.agency_name ||
+                "",
+            agency_code:
+                data.agency_code ||
+                data.code ||
+                detectedAgency.agency_code ||
+                "",
+            lpg_company:
+                data.lpg_company ||
+                detectedAgency.lpg_company ||
+                ""
+        };
+    }
+
+    // ==========================================
+    // REQUEST NUMBER
+    // ==========================================
+
+    function generateRequestNumber() {
+        const datePart = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "");
+
+        const randomPart = Math.floor(100000 + Math.random() * 900000);
+
+        return "EGC-" + datePart + "-" + randomPart;
+    }
+
+    // ==========================================
+    // CREATE REQUEST
+    // ==========================================
+
+    async function createRequest(user, profile, agency, lpgDetails, verificationData) {
+    if (!user || !user.id) {
+        throw new Error("User login is required to create a cylinder request.");
+    }
+
+    if (!agency || !agency.id) {
+        throw new Error("Please select a valid LPG agency.");
+    }
+
+    const company =
+        lpgDetails.lpg_company ||
+        lpgDetails.lpgCompany ||
+        lpgDetails.company ||
+        profile.lpg_company ||
+        agency.lpg_company ||
+        null;
+
+    const address = getAddress(verificationData, lpgDetails);
+
+    // Generate a unique request number for every new request.
+    const requestNumber = generateRequestNumber();
+
+    // Every new request starts with fresh approval and payment statuses.
+    // Never copy approval or payment status from an older request.
+    const insertData = {
+        user_id: user.id,
+        request_number: requestNumber,
+
+        quantity: 1,
+        total_amount: CYLINDER_AMOUNT,
+
+        status: "Pending",
+        notes: "Cylinder request submitted after repayment scheme agreement.",
+
+        agency_id: agency.id,
+        lpg_company: company,
+
+        // Owner must approve every new request separately.
+        owner_approval: "pending",
+        approved_by: null,
+        approved_at: null,
+        rejection_reason: null,
+        owner_note: null,
+        owner_rejected_at: null,
+
+        // Initial payment must be submitted and verified separately.
+        payment_status: "pending",
+        payment_verification_status: "pending",
+        payment_pending_clear: "pending",
+
+        payment_reference: null,
+        payment_transaction_id: null,
+        payment_method: null,
+        payment_submitted_at: null,
+        payment_verified_at: null,
+        payment_paid_at: null,
+
+        payment_screenshot_1: null,
+        payment_screenshot_2: null,
+        payment_screenshot_3: null,
+        payment_note: null,
+
+        // Agency cannot process the request before Owner approval
+        // and initial payment verification.
+        agency_status: "waiting",
+        agency_note: null,
+        agency_updated_at: null,
+
+        delivery_status: "pending",
+        delivery_note: null,
+        delivery_date: null,
+        delivered_at: null,
+
+        // Cylinder financial details.
+        cylinder_amount: CYLINDER_AMOUNT,
+        advance_amount: FIRST_PAYMENT,
+        remaining_amount: REMAINING_AMOUNT,
+        extra_charge: 0,
+        charge_amount: 0,
+
+        // This field represents the initial payment due in this workflow.
+        total_payable: FIRST_PAYMENT,
+
+        // Repayment remains separate from the initial payment.
+        repayment_days: null,
+        repayment_due_date: null,
+        repayment_status: "pending",
+
+        // Eligibility must not be granted automatically.
+        cylinder_hold_eligible: "hold",
+
+        user_status: "pending",
+        request_date: new Date().toISOString()
+    };
+
+    if (address) {
+        insertData.address = address;
+    }
+
+    if (lpgDetails.city || profile.city) {
+        insertData.city = lpgDetails.city || profile.city;
+    }
+
+    if (lpgDetails.state || profile.state) {
+        insertData.state = lpgDetails.state || profile.state;
+    }
+
+    if (lpgDetails.district || profile.district) {
+        insertData.district = lpgDetails.district || profile.district;
+    }
+
+    if (profile.full_name || profile.name) {
+        insertData.customer_name =
+            profile.full_name || profile.name;
+    }
+
+    if (profile.phone || profile.mobile || profile.mobile_number) {
+        insertData.customer_mobile =
+            profile.phone || profile.mobile || profile.mobile_number;
+    }
+
+    if (user.email || profile.email) {
+        insertData.customer_email = user.email || profile.email;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("cylinder_requests")
+        .insert(insertData)
+        .select("*")
+        .single();
+
+    if (error) {
+        console.error("Request insert error:", error);
+
+        throw new Error(
+            "Request could not be saved. Database message: " +
+            error.message
+        );
+    }
+
+    if (!data || !data.id) {
+        throw new Error(
+            "The request was submitted, but its saved record could not be confirmed. Please check your request history before trying again."
+        );
+    }
+
+    // Verify the new record's Owner approval was not automatically approved.
+    if (
+        String(data.owner_approval || "").trim().toLowerCase() !== "pending"
+    ) {
+        console.error(
+            "Unexpected Owner approval status on new request:",
+            data
+        );
+
+        throw new Error(
+            "The request was saved, but its Owner approval status is unexpected. Please contact support before submitting another request."
+        );
+    }
+
+    return data;
+}
+    // ==========================================
+    // SAVE REQUEST REFERENCE LOCALLY
+    // Database remains the source of truth.
+    // ==========================================
+
+    function saveCurrentRequest(request, user, agency) {
+        const requestData = {
+            request_id: request.id,
+            request_number: request.request_number || "",
+            user_id: user.id,
+            agency_id: request.agency_id || agency.id,
+            agency_name: agency.agency_name || "",
+            agency_code: agency.agency_code || "",
+            lpg_company: request.lpg_company || agency.lpg_company || "",
+            cylinder_amount: Number(request.cylinder_amount || CYLINDER_AMOUNT),
+            first_payment: Number(request.advance_amount || FIRST_PAYMENT),
+            remaining_amount: Number(request.remaining_amount ?? REMAINING_AMOUNT),
+            extra_charge: Number(request.extra_charge || 0),
+            total_payable: Number(request.total_payable || FIRST_PAYMENT),
+            status: request.status || "Pending",
+            payment_status: request.payment_status || "pending",
+            owner_approval: request.owner_approval || "pending",
+            user_status: request.user_status || "pending",
+            repayment_status: request.repayment_status || "pending",
+            submitted_at: request.created_at || new Date().toISOString()
+        };
+
+        saveJSON("egc_current_request", requestData);
+        saveJSON("egc_request_data", requestData);
+
+        for (const key of [
+            "egc_current_request_id",
+            "egc_last_request_id"
+        ]) {
+            try {
+                sessionStorage.setItem(key, String(request.id));
+                localStorage.setItem(key, String(request.id));
+            } catch (error) {
+                console.warn("Unable to save request ID:", error);
+            }
+        }
+
+        if (request.request_number) {
+            try {
+                localStorage.setItem(
+                    "egc_last_request_number",
+                    String(request.request_number)
+                );
+            } catch (error) {
+                console.warn("Unable to save request number:", error);
+            }
+        }
+
+        return requestData;
+    }
+
+    // ==========================================
+    // MAIN REQUEST SUBMISSION
+    // ==========================================
+
+    async function submitRequest() {
+const user = await getCurrentUser();
+
+const lpgDetails = getLpgDetails();
+const verificationData = getVerificationData();
+const profile = await getProfile(user.id);
+const agency = await getVerifiedAgency(lpgDetails);
+
+// Check the latest database records before creating a request.
+const existingRequest = await getExistingActiveRequest(user.id);
+
+if (existingRequest) {
+   if (existingRequest) {
+const remaining = Number(
+existingRequest.calculated_remaining_amount ??
+existingRequest.remaining_amount
+);
+
+if (Number.isFinite(remaining) && remaining > 0) {
+    throw new Error(
+        "Aapki purani cylinder request ki ₹" +
+        remaining +
+        " repayment abhi baaki hai. Repayment poori hone ke baad hi nayi request kar sakte hain."
+    );
+}
+
+if (!isFullyCleared(existingRequest)) {
+    throw new Error(
+        "Aapki purani cylinder request abhi active hai. Owner se repayment aur request status verify karwayein."
+    );
+}
+
+}
+    const repaymentStatus = normalStatus(
+        existingRequest.repayment_status || ""
+    );
+
+    if (
+        Number.isFinite(remaining) &&
+        remaining > 0
+    ) {
+        throw new Error(
+            "Aapki purani cylinder request ki ₹" +
+            remaining +
+            " repayment abhi baaki hai. Repayment poori hone ke baad hi nayi request kar sakte hain."
+        );
+    }
+
+    if (!isFullyCleared(existingRequest)) {
+        throw new Error(
+            "Aapki purani cylinder request abhi active hai. Owner se repayment aur request status verify karwayein."
+        );
+    }
+}
+
+// Create a fresh database row with a new Request Number.
+// Never reuse an old request ID or Request Number.
+const request = await createRequest(
+    user,
+    profile,
+    agency,
+    lpgDetails,
+    verificationData
+);
+
+saveCurrentRequest(request, user, agency);
+
+return {
+    request,
+    reused: false
+};
+
+}
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+
+    function goToStatusPage() {
+        window.location.href = "request-status.html";
+    }
+
+    backBtn.addEventListener("click", () => {
+        window.location.href = "verification.html";
+    });
+
+    backStepBtn.addEventListener("click", () => {
+        window.location.href = "dashboard.html";
+    });
+
+    // ==========================================
+    // DISPLAY PAYMENT AMOUNTS
+    // ==========================================
+
+    [
+        ["cylinderAmount", CYLINDER_AMOUNT],
+        ["firstPayment", FIRST_PAYMENT],
+        ["remainingAmount", REMAINING_AMOUNT],
+        ["summaryCylinder", CYLINDER_AMOUNT],
+        ["summaryFirst", FIRST_PAYMENT],
+        ["summaryRemaining", REMAINING_AMOUNT]
+    ].forEach(([id, amount]) => {
+        const element = $(id);
+
+        if (element) {
+            element.textContent = "₹" + amount;
+        }
+    });
+
+    // ==========================================
+    // INITIALIZE SUPABASE
+    // ==========================================
+
+    if (
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+    ) {
+        showMessage(
+            "The Supabase library did not load. Check your internet connection and refresh this page.",
+            "error"
+        );
+
+        continueBtn.disabled = true;
+        return;
+    }
+
+    try {
+        supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+    } catch (error) {
+        console.error("Supabase initialization failed:", error);
+
+        showMessage(
+            "Unable to initialize the database connection. Please refresh the page.",
+            "error"
+        );
+
+        continueBtn.disabled = true;
+        return;
+    }
+
+    // ==========================================
+    // SUBMIT BUTTON
+    // ==========================================
+
+    continueBtn.addEventListener("click", async () => {
+        if (isSubmitting) return;
+
+        clearMessage();
+
+        if (!agreeCheck.checked) {
+            showMessage(
+                "Please tick the agreement checkbox before submitting your request.",
+                "error"
+            );
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const result = await submitRequest();
+            const request = result.request;
+
+            console.log(
+                result.reused
+                    ? "Existing active EGC request found:"
+                    : "New EGC request saved:",
+                request
+            );
+
+            // Do not navigate until the database operation succeeds.
+            setLoading(false);
+
+            continueBtn.disabled = true;
+            continueBtn.textContent = "REQUEST SAVED";
+
+            showMessage(
+                result.reused
+                    ? "You already have an active request. Opening its status page."
+                    : "Your cylinder request has been saved successfully. Opening request status.",
+                "success"
+            );
+
+            setTimeout(goToStatusPage, 1000);
+
+        } catch (error) {
+            console.error("EGC scheme submission error:", error);
+
+            setLoading(false);
+
+            showMessage(
+                error && error.message
+                    ? error.message
+                    : "Unable to save your request. Please try again.",
+                "error"
+            );
+        }
+    });
+
+    console.log("EGC Scheme page initialized.");
+})();
+</script>
+
+</body>
+</html>

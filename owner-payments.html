@@ -1,0 +1,2759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGC - Owner Payments</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%}
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:#073f73;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 8% 8%,rgba(255,190,190,.34),transparent 30%),
+        radial-gradient(circle at 92% 12%,rgba(180,220,255,.38),transparent 30%),
+        radial-gradient(circle at 50% 100%,rgba(220,235,255,.34),transparent 38%),
+        #fff;
+}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+
+.header{
+    height:78px;background:rgba(255,255,255,.95);
+    border-bottom:1px solid #dfe8ef;display:flex;
+    align-items:center;justify-content:space-between;
+    padding:0 28px;position:sticky;top:0;z-index:100;
+    backdrop-filter:blur(12px)
+}
+.header-left{display:flex;align-items:center;gap:15px}
+.menu-btn{
+    width:42px;height:42px;border:0;border-radius:12px;
+    background:#eef7ff;color:#075ca5;font-size:22px;
+    display:none;align-items:center;justify-content:center
+}
+.logo{height:57px;width:auto;object-fit:contain}
+.owner-title{font-size:20px;font-weight:800;color:#06477f}
+.owner-subtitle{font-size:12px;color:#8094a6;margin-top:3px}
+.header-right{display:flex;align-items:center;gap:12px}
+
+.notification-wrap{position:relative}
+.notification-btn{
+    width:42px;height:42px;border:1px solid #dce8f1;
+    border-radius:12px;background:#f7fbff;color:#075ca5;
+    font-size:20px;display:flex;align-items:center;
+    justify-content:center;position:relative;text-decoration:none
+}
+.notification-count{
+    position:absolute;top:-4px;right:-4px;min-width:18px;
+    height:18px;padding:0 5px;border-radius:20px;
+    background:#e53935;color:#fff;font-size:9px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid #fff
+}
+.notification-panel{
+    display:none;position:absolute;top:52px;right:0;width:330px;
+    background:#fff;border:1px solid #dce6ef;border-radius:16px;
+    box-shadow:0 18px 55px rgba(20,60,90,.18);overflow:hidden;z-index:500
+}
+.notification-panel:target{display:block}
+.notification-head{
+    padding:15px 17px;border-bottom:1px solid #edf2f6;
+    display:flex;justify-content:space-between;align-items:center
+}
+.notification-head strong{color:#06477f;font-size:14px}
+.notification-head span{font-size:10px;color:#0871c3;font-weight:700}
+.notification-empty{padding:28px 17px;text-align:center;color:#8b9ba8;font-size:11px}
+
+.owner-badge{
+    display:flex;align-items:center;gap:9px;background:#eef8ff;
+    padding:9px 14px;border-radius:12px;color:#075ca5;
+    font-size:14px;font-weight:700
+}
+.owner-dot{width:9px;height:9px;background:#20a45a;border-radius:50%}
+
+.layout{display:flex;min-height:calc(100vh - 78px)}
+.sidebar{
+    width:245px;
+    background:linear-gradient(180deg,rgba(255,245,245,.98),rgba(242,248,255,.98) 52%,rgba(255,255,255,.98));
+    border-right:1px solid #e1e9f0;padding:25px 15px;flex-shrink:0;
+    box-shadow:5px 0 25px rgba(60,90,120,.05);
+    display:flex;flex-direction:column;overflow-y:auto
+}
+.sidebar-title{
+    color:#7990a4;font-size:13px;font-weight:800;
+    padding:0 13px 12px;text-transform:uppercase;letter-spacing:.5px
+}
+.nav-btn{
+    width:100%;min-height:43px;border:0;background:transparent;
+    color:#496a82;padding:11px 14px;border-radius:11px;
+    margin-bottom:5px;text-align:left;font-size:14px;font-weight:700;
+    transition:.2s;flex-shrink:0;text-decoration:none;display:block
+}
+.nav-btn:hover{background:#e5f2fc;color:#075ca5}
+.nav-btn.active{
+    background:linear-gradient(135deg,#eaf6ff,#fff0f0);
+    color:#075ca5;box-shadow:0 4px 12px rgba(60,120,170,.08)
+}
+.nav-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:25px;margin-right:2px;font-size:17px
+}
+.sidebar-bottom{margin-top:auto;padding-top:12px;border-top:1px solid #e6edf2}
+.sidebar-logout{color:#c72e2e;background:rgba(255,241,241,.7)}
+.sidebar-logout:hover{background:#ffe3e3;color:#b92727}
+
+.main{flex:1;padding:30px;min-width:0}
+.welcome{margin-bottom:22px}
+.welcome h1{font-size:28px;color:#06477f;font-weight:800;margin-bottom:6px}
+.welcome p{color:#7890a3;font-size:14px}
+
+.stats{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:16px;margin-bottom:22px
+}
+.stat-card{
+    background:rgba(255,255,255,.95);border:1px solid #dce6ef;
+    border-radius:17px;padding:18px;box-shadow:0 8px 28px rgba(50,80,110,.07)
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stat-name{color:#8093a4;font-size:11px;font-weight:800;text-transform:uppercase}
+.stat-number{color:#06477f;font-size:27px;font-weight:800;margin-top:8px;overflow-wrap:anywhere}
+.stat-icon{
+    width:43px;height:43px;flex-shrink:0;border-radius:12px;
+    background:linear-gradient(135deg,#eef8ff,#fff1f1);
+    display:flex;align-items:center;justify-content:center;font-size:21px
+}
+
+.type-summary{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;margin-bottom:22px
+}
+.type-card{background:#fff;border:1px solid #dce6ef;border-radius:14px;padding:15px}
+.type-card strong{display:block;font-size:12px;color:#71889a;text-transform:uppercase}
+.type-card span{display:block;margin-top:7px;font-size:23px;font-weight:800;color:#06477f}
+.type-card small{display:block;color:#8799a9;margin-top:4px;font-size:11px}
+
+.panel{
+    background:rgba(255,255,255,.95);border:1px solid #dce6ef;
+    border-radius:18px;box-shadow:0 8px 28px rgba(50,80,110,.07);overflow:hidden
+}
+.panel-header{
+    padding:20px;border-bottom:1px solid #edf2f6;
+    display:flex;align-items:center;justify-content:space-between;gap:15px
+}
+.panel-title{font-size:18px;font-weight:800;color:#06477f}
+.panel-subtitle{font-size:12px;color:#8799a9;margin-top:4px;line-height:1.5}
+
+.search-box{
+    padding:18px 20px;border-bottom:1px solid #edf2f6;
+    display:grid;grid-template-columns:minmax(180px,1fr) repeat(3,minmax(140px,180px));gap:10px
+}
+.search-input,.status-filter{
+    height:44px;width:100%;min-width:0;border:1px solid #dce6ef;
+    border-radius:11px;padding:0 12px;outline:none;color:#31566f;background:#fbfdff
+}
+.search-input:focus,.status-filter:focus{
+    border-color:#8fc3ea;box-shadow:0 0 0 3px rgba(65,150,215,.08)
+}
+.filter-label{
+    display:block;font-size:10px;font-weight:800;color:#8093a4;
+    margin:0 0 5px 2px;text-transform:uppercase
+}
+.filter-group{min-width:0}
+.search-group{min-width:0;display:flex;align-items:end}
+
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:2100px}
+th{
+    background:#f7fafc;color:#71889a;font-size:10px;text-transform:uppercase;
+    padding:13px 12px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:2
+}
+td{
+    padding:12px;border-top:1px solid #edf2f6;color:#35566f;
+    font-size:12px;vertical-align:middle;white-space:nowrap
+}
+.payment-id{
+    font-weight:800;color:#0871c3;max-width:150px;overflow:hidden;text-overflow:ellipsis
+}
+.request-number{font-weight:800;color:#315671}
+.user-box{display:flex;align-items:center;gap:9px;min-width:200px}
+.user-photo,.user-photo-fallback{
+    width:42px;height:42px;border-radius:50%;border:2px solid #e1edf5;
+    background:#eef7ff;flex-shrink:0
+}
+.user-photo{object-fit:cover}
+.user-photo-fallback{display:flex;align-items:center;justify-content:center;font-size:18px}
+.user-name{font-weight:800;color:#315671}
+.user-email{font-size:10px;color:#91a0ac;margin-top:3px}
+.user-id{
+    max-width:170px;overflow:hidden;text-overflow:ellipsis;
+    color:#607b8f;font-family:monospace;font-size:11px
+}
+.money{font-weight:800;color:#315671}
+.total-money{font-weight:900;color:#0871c3}
+
+.badge{
+    display:inline-flex;align-items:center;justify-content:center;min-width:82px;
+    padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800;text-transform:capitalize
+}
+.badge-green{background:#eaf9ef;color:#18803d}
+.badge-yellow{background:#fff7df;color:#a36b00}
+.badge-blue{background:#edf6ff;color:#086db7}
+.badge-red{background:#fff0f0;color:#c72e2e}
+.badge-gray{background:#f0f3f5;color:#617687}
+.type-initial{background:#fff7df;color:#9a6800}
+.type-partial{background:#edf6ff;color:#086db7}
+.type-full{background:#eaf9ef;color:#18803d}
+
+.action-wrap{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.action-btn{border:0;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800}
+.details-btn{background:#edf7ff;color:#0871c3}
+.delete-btn{background:#fff0f0;color:#c72e2e}
+
+.status-display{min-width:105px}
+.status-display .badge{min-width:95px}
+.payment-clear-action{
+    background:#eaf9ef;color:#18803d;
+    border:1px solid #c7ebd2
+}
+.payment-pending-action{
+    background:#fff7df;color:#a36b00;
+    border:1px solid #f0dfa6
+}
+.action-btn:hover{filter:brightness(.97)}
+.action-btn:disabled{cursor:wait}
+
+.empty,.loading{text-align:center;padding:40px 20px;color:#91a1af;font-size:13px}
+.payment-pending-row{background:#fffdf7}
+.history-row td{background:#f8fbfe;white-space:normal}
+.history-panel{padding:12px 10px 16px}
+.history-title{font-size:13px;font-weight:800;color:#06477f;margin-bottom:10px}
+.history-table{
+    width:100%;min-width:950px;border:1px solid #e1eaf2;
+    border-radius:10px;overflow:hidden
+}
+.history-table th{position:static;background:#edf6ff}
+.history-table td{background:#fff}
+.history-empty{padding:18px;color:#71889a;font-size:12px}
+.history-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.count-pill{
+    display:inline-flex;align-items:center;justify-content:center;border-radius:18px;
+    background:#eef7ff;color:#075ca5;font-weight:800;font-size:11px;padding:5px 9px
+}
+.muted{color:#8799a9}
+
+.toast{
+    position:fixed;right:20px;bottom:20px;z-index:99999;min-width:290px;max-width:390px;
+    background:#fff;border:1px solid #dce6ef;border-radius:14px;
+    box-shadow:0 15px 45px rgba(20,60,90,.18);padding:15px;display:none
+}
+.toast.show{display:block}
+.toast-title{color:#06477f;font-size:13px;font-weight:800}
+.toast-text{color:#7890a3;font-size:11px;margin-top:4px;line-height:1.5}
+
+.modal,.logout-modal{
+    display:none;position:fixed;inset:0;background:rgba(5,35,58,.45);
+    z-index:9999;align-items:center;justify-content:center;padding:20px
+}
+.modal.show,.modal:target,.logout-modal.show,.logout-modal:target{display:flex}
+.modal-card,.logout-card{
+    width:100%;max-width:400px;background:#fff;border-radius:20px;
+    padding:24px;box-shadow:0 25px 80px rgba(0,0,0,.25);text-align:center
+}
+.modal-title,.logout-title{font-size:19px;color:#06477f;font-weight:800;margin-bottom:6px}
+.delete-icon,.logout-icon{
+    width:55px;height:55px;border-radius:50%;background:#fff1f1;
+    margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:25px
+}
+.delete-text,.logout-text{color:#8194a5;font-size:12px;line-height:1.6}
+.modal-actions,.logout-actions{display:flex;justify-content:center;gap:8px;margin-top:18px}
+.modal-btn,.logout-action{
+    height:42px;border:0;border-radius:10px;padding:0 20px;font-weight:800;
+    text-decoration:none;display:flex;align-items:center;justify-content:center
+}
+.cancel-btn,.logout-cancel{background:#eef4f8;color:#527087}
+.delete-confirm,.logout-confirm{background:#d93636;color:#fff}
+.logout-action{flex:1;font-size:12px}
+.overlay{display:none}
+
+@media(max-width:1300px){.search-box{grid-template-columns:1fr 1fr}}
+@media(max-width:1100px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){
+    .owner-subtitle{display:none}
+    .owner-title{font-size:18px}
+    .main{padding:25px}
+}
+@media(max-width:760px){
+    .header{height:70px;padding:0 14px}
+    .menu-btn{display:flex}
+    .logo{height:48px}
+    .owner-title,.owner-subtitle,.owner-badge{display:none}
+    .notification-btn{width:40px;height:40px}
+    .notification-panel{position:fixed;top:78px;right:12px;left:12px;width:auto;max-width:none}
+    .layout{display:block}
+    .sidebar{
+        position:fixed;top:70px;left:-260px;width:245px;height:calc(100vh - 70px);
+        z-index:200;transition:.25s;overflow-y:auto
+    }
+    .sidebar.open{left:0}
+    .overlay.show{display:block;position:fixed;inset:70px 0 0;background:rgba(0,0,0,.25);z-index:150}
+    .main{padding:20px 14px 40px}
+    .welcome h1{font-size:23px}
+    .welcome p{font-size:12px}
+    .stats{grid-template-columns:1fr 1fr;gap:10px}
+    .stat-card{padding:14px}
+    .stat-number{font-size:22px}
+    .stat-icon{width:36px;height:36px;font-size:17px}
+    .type-summary{gap:8px}
+    .type-card{padding:12px}
+    .type-card span{font-size:19px}
+    .search-box{grid-template-columns:1fr}
+    .panel-header{padding:16px}
+    .panel-title{font-size:16px}
+    .toast{left:14px;right:14px;bottom:14px;min-width:0}
+    .modal,.logout-modal{padding:12px}
+    .modal-card,.logout-card{padding:18px;border-radius:17px}
+    .modal-actions,.logout-actions{flex-direction:column}
+    .modal-btn,.logout-action{width:100%}
+    .table-wrap{border-top:1px solid #edf2f6}
+}
+@media(max-width:520px){
+    .header{padding:0 10px}
+    .header-left{gap:10px}
+    .menu-btn{width:40px;height:40px}
+    .logo{height:44px}
+    .notification-panel{top:76px}
+    .type-summary{grid-template-columns:1fr}
+    .type-card{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .type-card span{margin:0}
+}
+@media(max-width:420px){
+    .stat-card{padding:12px 10px}
+    .stat-name{font-size:9px}
+    .stat-number{font-size:19px}
+    .stat-icon{width:32px;height:32px;font-size:15px}
+    .welcome h1{font-size:21px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-left">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+        <img src="assets/EGC - Emergency Gas Cylinder logo.png" class="logo" alt="EGC" onerror="this.style.display='none'">
+        <div>
+            <div class="owner-title">Owner Dashboard</div>
+            <div class="owner-subtitle">Emergency Gas Cylinder Management</div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="notification-wrap">
+            <a href="#ownerNotifications" class="notification-btn" aria-label="Notifications">
+                🔔 <span class="notification-count" id="notificationCount">0</span>
+            </a>
+            <div class="notification-panel" id="ownerNotifications">
+                <div class="notification-head"><strong>Notifications</strong><span>View All</span></div>
+                <div class="notification-empty" id="notificationEmpty">No new notifications</div>
+            </div>
+        </div>
+        <div class="owner-badge"><span class="owner-dot"></span>Owner</div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-title">Management</div>
+        <button class="nav-btn" data-page="dashboard" type="button"><span class="nav-icon">▦</span>Dashboard</button>
+        <button class="nav-btn" data-page="users" type="button"><span class="nav-icon">👥</span>Users</button>
+        <button class="nav-btn" data-page="agencies" type="button"><span class="nav-icon">🏪</span>LPG Agencies</button>
+        <button class="nav-btn" data-page="companies" type="button"><span class="nav-icon">🏢</span>LPG Companies</button>
+        <button class="nav-btn" data-page="pending-approvals" type="button"><span class="nav-icon">⏳</span>Pending Approvals</button>
+        <button class="nav-btn" data-page="requests" type="button"><span class="nav-icon">🛢</span>Cylinder Requests</button>
+        <button class="nav-btn active" data-page="payments" type="button"><span class="nav-icon">₹</span>Payments</button>
+        <button class="nav-btn" data-page="reports" type="button"><span class="nav-icon">▤</span>Reports</button>
+
+        <div class="sidebar-title" style="margin-top:25px">Owner Pages</div>
+        <button class="nav-btn" data-page="request-details" type="button"><span class="nav-icon">📄</span>Request Details</button>
+        <button class="nav-btn" data-page="payment-details" type="button"><span class="nav-icon">💳</span>Payment Details</button>
+        <button class="nav-btn" data-page="agency-details" type="button"><span class="nav-icon">🏪</span>Agency Details</button>
+        <button class="nav-btn" data-page="deliveries" type="button"><span class="nav-icon">🚚</span>Deliveries</button>
+        <button class="nav-btn" data-page="repayments" type="button"><span class="nav-icon">💰</span>Repayments</button>
+        <button class="nav-btn" data-page="notifications" type="button"><span class="nav-icon">🔔</span>Notifications</button>
+        <button class="nav-btn" data-page="slips" type="button"><span class="nav-icon">🧾</span>Slips</button>
+        <button class="nav-btn" data-page="profile" type="button"><span class="nav-icon">👤</span>Profile</button>
+
+        <div class="sidebar-title" style="margin-top:25px">System</div>
+        <button class="nav-btn" data-page="settings" type="button"><span class="nav-icon">⚙</span>Settings</button>
+
+        <div class="sidebar-bottom">
+            <a href="#logoutConfirmation" class="nav-btn sidebar-logout" id="logoutOpen"><span class="nav-icon">🚪</span>Logout</a>
+        </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main">
+        <div class="welcome">
+            <h1>Payments</h1>
+            <p>Manage payments, verification status and cylinder eligibility.</p>
+        </div>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div><div class="stat-name">Total Payment Records</div><div class="stat-number" id="totalPayments">0</div></div>
+                    <div class="stat-icon">💳</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div><div class="stat-name">Paid Records</div><div class="stat-number" id="paidPayments">0</div></div>
+                    <div class="stat-icon">✅</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div><div class="stat-name">Pending Records</div><div class="stat-number" id="pendingPayments">0</div></div>
+                    <div class="stat-icon">⏳</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div><div class="stat-name">Recorded Payment Amount</div><div class="stat-number" id="totalAmount">₹0.00</div></div>
+                    <div class="stat-icon">💰</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="type-summary">
+            <div class="type-card">
+                <div><strong>Initial Payments</strong><small>First advance payment records</small></div>
+                <span id="initialCount">0</span>
+            </div>
+            <div class="type-card">
+                <div><strong>Partial Payments</strong><small>Payments before full settlement</small></div>
+                <span id="partialCount">0</span>
+            </div>
+            <div class="type-card">
+                <div><strong>Full Payments</strong><small>Records completing the request amount</small></div>
+                <span id="fullCount">0</span>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">Payments by User</div>
+                    <div class="panel-subtitle">One row per user and request. Open Details to see individual payment records.</div>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <div class="search-group">
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔎 Search user, request, mobile, agency, payment ID...">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="typeFilter">Payment Type</label>
+                    <select id="typeFilter" class="status-filter">
+                        <option value="">All Payment Types</option>
+                        <option value="initial">Initial Payments</option>
+                        <option value="partial">Partial Payments</option>
+                        <option value="full">Full Payments</option>
+                        <option value="unclassified">Unclassified</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="statusFilter">Payment Status</label>
+                    <select id="statusFilter" class="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="failed">Failed</option>
+                        <option value="refunded">Refunded</option>
+                        <option value="approved">Owner Approved</option>
+                        <option value="rejected">Owner Rejected</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="verificationFilter">Verification</label>
+                    <select id="verificationFilter" class="status-filter">
+                        <option value="">All Verification</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="not recorded">Not Recorded</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>EGC User ID</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Request Number</th>
+                            <th>Agency</th>
+                            <th>LPG Company</th>
+                            <th>Quantity</th>
+                            <th>Payment Records</th>
+                            <th>Paid Records</th>
+                            <th>Pending Records</th>
+                            <th>Total Paid</th>
+                            <th>Advance Amount</th>
+                            <th>Extra Charge</th>
+                            <th>Request Total</th>
+                            <th>Remaining</th>
+                            <th>Overall Status</th>
+                            <th>Latest Payment</th>
+                            <th>Verification</th>
+                            <th>Payment Pending / Clear</th>
+                            <th>Cylinder Hold / Eligible</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody">
+                        <tr><td colspan="22" class="loading">Loading payments...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div class="modal-card">
+        <div class="delete-icon">🗑️</div>
+        <div class="modal-title" id="deleteTitle">Delete Payment?</div>
+        <div class="delete-text" id="deleteText">Kya aap is payment record ko permanently delete karna chahte hain? Ye action undo nahi kiya ja sakta.</div>
+        <div class="modal-actions">
+            <button type="button" class="modal-btn cancel-btn" id="deleteCancel">Cancel</button>
+            <button type="button" class="modal-btn delete-confirm" id="deleteConfirm">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div class="logout-modal" id="logoutConfirmation" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+    <div class="logout-card">
+        <div class="logout-icon">🚪</div>
+        <div class="logout-title" id="logoutTitle">Logout?</div>
+        <div class="logout-text">Kya aap Owner Panel se logout karna chahte hain?</div>
+        <div class="logout-actions">
+            <button type="button" class="logout-action logout-cancel" id="logoutCancel">Cancel</button>
+            <button type="button" class="logout-action logout-confirm" id="logoutConfirm">Logout</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="toast-title" id="toastTitle">Notification</div>
+    <div class="toast-text" id="toastText"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+"use strict";
+
+/* =====================================================
+   EGC OWNER PAYMENTS — CONFIG
+===================================================== */
+
+const SUPABASE_URL = "https://szefvmvokkhvnzryodqu.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_S8aSsfmOKN6_7laRfgoMKA_Re2HzRS6";
+const OWNER_STORAGE_KEY = "egc-owner-auth";
+
+if (!window.supabase) {
+    alert("Supabase library load nahi hui. Internet connection check karein.");
+    throw new Error("Supabase JS library not loaded.");
+}
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true,
+            storageKey: OWNER_STORAGE_KEY
+        },
+        realtime: {
+            params: {
+                eventsPerSecond: 10
+            }
+        }
+    }
+);
+
+/* =====================================================
+   DOM ELEMENTS
+===================================================== */
+
+const $ = id => document.getElementById(id);
+
+const totalPaymentsEl = $("totalPayments");
+const paidPaymentsEl = $("paidPayments");
+const pendingPaymentsEl = $("pendingPayments");
+const totalAmountEl = $("totalAmount");
+
+const initialCountEl = $("initialCount");
+const partialCountEl = $("partialCount");
+const fullCountEl = $("fullCount");
+
+const paymentTableBody = $("paymentTableBody");
+
+const searchInput = $("searchInput");
+const typeFilter = $("typeFilter");
+const statusFilter = $("statusFilter");
+const verificationFilter = $("verificationFilter");
+
+const deleteModal = $("deleteModal");
+const deleteCancel = $("deleteCancel");
+const deleteConfirm = $("deleteConfirm");
+const deleteText = $("deleteText");
+
+const logoutModal = $("logoutConfirmation");
+const logoutOpen = $("logoutOpen");
+const logoutCancel = $("logoutCancel");
+const logoutConfirm = $("logoutConfirm");
+
+const toast = $("toast");
+const toastTitle = $("toastTitle");
+const toastText = $("toastText");
+
+const menuBtn = $("menuBtn");
+const sidebar = $("sidebar");
+const overlay = $("overlay");
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let payments = [];
+let userGroups = [];
+
+let selectedDeleteId = null;
+let realtimeChannel = null;
+
+let isLoading = false;
+let reloadRequested = false;
+let isDeleting = false;
+let isLoggingOut = false;
+let isInitializing = false;
+
+let toastTimer = null;
+
+const busyStatusUpdates = new Set();
+
+let activeStatusGroupKey = null;
+let isSavingPopupStatus = false;
+
+/* =====================================================
+   OWNER ROUTES
+===================================================== */
+
+const OWNER_PAGE_ROUTES = {
+    dashboard: "owner-dashboard.html",
+    users: "owner-users.html",
+    agencies: "owner-agencies.html",
+    companies: "owner-companies.html",
+    "pending-approvals": "owner-pending.html",
+    requests: "owner-requests.html",
+    payments: "owner-payments.html",
+    reports: "owner-reports.html",
+    "request-details": "owner-request-details.html",
+    "payment-details": "owner-payment-details.html",
+    "agency-details": "owner-agency-details.html",
+    deliveries: "owner-deliveries.html",
+    repayments: "owner-repayments.html",
+    notifications: "owner-notifications.html",
+    slips: "owner-slips.html",
+    profile: "owner-profile.html",
+    settings: "owner-settings.html"
+};
+
+function closeSidebar() {
+    sidebar?.classList.remove("open");
+    overlay?.classList.remove("show");
+}
+
+function openPage(page) {
+    const destination = OWNER_PAGE_ROUTES[page];
+
+    if (!destination) return;
+
+    if (
+        location.pathname.split("/").pop().toLowerCase() ===
+        destination.toLowerCase()
+    ) {
+        closeSidebar();
+        return;
+    }
+
+    closeSidebar();
+
+    location.assign(
+        new URL(destination, location.href).href
+    );
+}
+
+document.addEventListener("click", event => {
+    const element = event.target.closest("[data-page]");
+
+    if (!element) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    openPage(element.dataset.page);
+});
+
+menuBtn?.addEventListener("click", () => {
+    const isOpen = sidebar.classList.toggle("open");
+
+    overlay?.classList.toggle("show", isOpen);
+});
+
+overlay?.addEventListener("click", closeSidebar);
+
+/* =====================================================
+   COMMON HELPERS
+===================================================== */
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function moneyNumber(value) {
+    const number = Number(value);
+
+    return Number.isFinite(number) ? number : 0;
+}
+
+function formatMoney(value) {
+    return "₹" + moneyNumber(value).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function formatDate(value) {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+function getTime(value) {
+    const number = new Date(value || 0).getTime();
+
+    return Number.isFinite(number) ? number : 0;
+}
+
+function normalise(value) {
+    return String(value ?? "").trim().toLowerCase();
+}
+
+/* =====================================================
+   PAYMENT STATUS HELPERS
+===================================================== */
+
+function getStatus(payment) {
+    return normalise(payment.payment_status || "pending");
+}
+
+function getVerification(payment) {
+    const value = normalise(
+        payment.verification_status ||
+        payment.request?.payment_verification_status
+    );
+
+    if (value) return value;
+
+    return getStatus(payment) === "paid"
+        ? "not recorded"
+        : "pending";
+}
+
+function isFailedOrRefunded(payment) {
+    return (
+        ["failed", "refunded"].includes(getStatus(payment)) ||
+        getVerification(payment) === "rejected"
+    );
+}
+
+function isPaid(payment) {
+    return (
+        getStatus(payment) === "paid" &&
+        !isFailedOrRefunded(payment)
+    );
+}
+
+function isPending(payment) {
+    return (
+        !isFailedOrRefunded(payment) &&
+        getStatus(payment) === "pending" &&
+        getVerification(payment) !== "approved"
+    );
+}
+
+function badgeClass(value) {
+    const status = normalise(value);
+
+    if (
+        [
+            "paid",
+            "approved",
+            "completed",
+            "delivered",
+            "clear",
+            "eligible"
+        ].includes(status)
+    ) {
+        return "badge-green";
+    }
+
+    if (
+        ["pending", "waiting", "hold"].includes(status)
+    ) {
+        return "badge-yellow";
+    }
+
+    if (status === "processing") {
+        return "badge-blue";
+    }
+
+    if (
+        [
+            "failed",
+            "refunded",
+            "rejected",
+            "cancelled",
+            "declined"
+        ].includes(status)
+    ) {
+        return "badge-red";
+    }
+
+    return "badge-gray";
+}
+
+function badgeHtml(value) {
+    const text = value || "Not Set";
+
+    return `
+        <span class="badge ${badgeClass(text)}">
+            ${escapeHtml(text)}
+        </span>
+    `;
+}
+
+function paymentTypeLabel(type) {
+    return ({
+        initial: "Initial",
+        partial: "Partial",
+        full: "Full",
+        unclassified: "Unclassified"
+    })[type] || "Unclassified";
+}
+
+function typeBadge(type) {
+    const classes = {
+        initial: "type-initial",
+        partial: "type-partial",
+        full: "type-full",
+        unclassified: "badge-gray"
+    };
+
+    return `
+        <span class="badge ${classes[type] || "badge-gray"}">
+            ${escapeHtml(paymentTypeLabel(type))}
+        </span>
+    `;
+}
+
+/* =====================================================
+   FETCH RELATED DATA
+===================================================== */
+
+async function fetchByIds(table, ids) {
+    if (!ids.length) return [];
+
+    const { data, error } = await supabaseClient
+        .from(table)
+        .select("*")
+        .in("id", ids);
+
+    if (error) {
+        console.warn(
+            table + " loading error:",
+            error.message
+        );
+
+        throw error;
+    }
+
+    return data || [];
+}
+
+async function attachRelatedData() {
+    if (!payments.length) return;
+
+    const userIds = [
+        ...new Set(
+            payments.map(payment => payment.user_id).filter(Boolean)
+        )
+    ];
+
+    const requestIds = [
+        ...new Set(
+            payments.map(payment => payment.request_id).filter(Boolean)
+        )
+    ];
+
+    const [profiles, requests] = await Promise.all([
+        fetchByIds("profiles", userIds),
+        fetchByIds("cylinder_requests", requestIds)
+    ]);
+
+    const agencyIds = [
+        ...new Set(
+            requests.map(request => request.agency_id).filter(Boolean)
+        )
+    ];
+
+    const agencies = await fetchByIds("agencies", agencyIds);
+
+    const profileMap = new Map(
+        profiles.map(profile => [profile.id, profile])
+    );
+
+    const requestMap = new Map(
+        requests.map(request => [request.id, request])
+    );
+
+    const agencyMap = new Map(
+        agencies.map(agency => [agency.id, agency])
+    );
+
+    payments = payments.map(payment => {
+        const profile = profileMap.get(payment.user_id) || {};
+        const request = requestMap.get(payment.request_id) || {};
+        const agency = agencyMap.get(request.agency_id) || {};
+
+        return {
+            ...payment,
+            profile,
+            request,
+            agency
+        };
+    });
+}
+
+/* =====================================================
+   LOAD PAYMENTS
+===================================================== */
+
+async function loadPayments() {
+    if (isLoading) {
+        reloadRequested = true;
+        return;
+    }
+
+    isLoading = true;
+
+    if (!payments.length && paymentTableBody) {
+        paymentTableBody.innerHTML = `
+            <tr>
+                <td colspan="22" class="loading">
+                    Loading payments...
+                </td>
+            </tr>
+        `;
+    }
+
+    try {
+        do {
+            reloadRequested = false;
+
+            const { data, error } = await supabaseClient
+                .from("payments")
+                .select("*")
+                .order("created_at", {
+                    ascending: true
+                });
+
+            if (error) throw error;
+
+            payments = data || [];
+
+            await attachRelatedData();
+
+            classifyPayments();
+            buildUserGroups();
+            updateCounters();
+            renderPayments();
+
+        } while (reloadRequested);
+
+    } catch (error) {
+        console.error("Payments loading error:", error);
+
+        paymentTableBody.innerHTML = `
+            <tr>
+                <td colspan="22" class="empty">
+                    Unable to load payments.<br>
+                    ${escapeHtml(error.message || "Unknown error")}
+                </td>
+            </tr>
+        `;
+
+        showToast(
+            "Payments Load Failed",
+            error.message || "Unable to load payments."
+        );
+
+    } finally {
+        isLoading = false;
+    }
+}
+
+/* =====================================================
+   FIELD HELPERS
+===================================================== */
+
+function userName(payment) {
+    return (
+        payment.profile?.full_name ||
+        payment.profile?.username ||
+        payment.request?.customer_name ||
+        "User"
+    );
+}
+
+function userMobile(payment) {
+    return (
+        payment.profile?.mobile ||
+        payment.request?.customer_mobile ||
+        "—"
+    );
+}
+
+function userEmail(payment) {
+    return (
+        payment.profile?.email ||
+        payment.profile?.auth_email ||
+        payment.request?.customer_email ||
+        "—"
+    );
+}
+
+function userPhoto(payment) {
+    return (
+        payment.profile?.profile_photo ||
+        payment.request?.profile_photo ||
+        ""
+    );
+}
+
+function userCode(payment) {
+    return (
+        payment.request?.egc_user_code ||
+        payment.profile?.egc_user_code ||
+        payment.profile?.username ||
+        "—"
+    );
+}
+
+function agencyName(payment) {
+    const agency = payment.agency || {};
+
+    return (
+        agency.agency_name ||
+        agency.name ||
+        agency.full_name ||
+        "—"
+    );
+}
+
+function companyName(payment) {
+    return (
+        payment.request?.lpg_company ||
+        payment.agency?.lpg_company ||
+        "—"
+    );
+}
+
+function requestNumber(payment) {
+    return (
+        payment.request?.request_number ||
+        payment.request_id ||
+        "—"
+    );
+}
+
+function requestTotal(payment) {
+    const request = payment.request || {};
+
+    return moneyNumber(
+        request.total_payable ?? request.total_amount
+    );
+}
+
+function advanceAmount(payment) {
+    return moneyNumber(payment.request?.advance_amount);
+}
+
+function extraCharge(payment) {
+    return moneyNumber(
+        payment.request?.extra_charge ??
+        payment.request?.charge_amount
+    );
+}
+
+function quantity(payment) {
+    return payment.request?.quantity ?? "—";
+}
+
+function paymentAmount(payment) {
+    return moneyNumber(
+        payment.payment_amount ??
+        payment.amount ??
+        payment.submitted_amount
+    );
+}
+
+function paymentDate(payment) {
+    return (
+        payment.payment_date ||
+        payment.created_at ||
+        payment.updated_at
+    );
+}
+
+function getPaymentKey(payment) {
+    return payment.request_id ||
+        payment.request?.id ||
+        "no-request";
+}
+
+function getRequestId(group) {
+    return (
+        group.first?.request?.id ||
+        group.first?.request_id ||
+        ""
+    );
+}
+
+/* =====================================================
+   NEW SUPABASE STATUS COLUMNS
+===================================================== */
+
+/*
+Required cylinder_requests columns:
+
+payment_pending_clear:
+    pending / clear
+
+cylinder_hold_eligible:
+    hold / eligible
+
+Important:
+payment_status is the actual payment-record status.
+Do not overwrite it with "clear" or "pending" from this popup.
+*/
+
+function getPaymentClearStatus(group) {
+    return normalise(
+        group.first?.request?.payment_pending_clear || "pending"
+    ) === "clear"
+        ? "clear"
+        : "pending";
+}
+
+function getCylinderEligibility(group) {
+    return normalise(
+        group.first?.request?.cylinder_hold_eligible || "hold"
+    ) === "eligible"
+        ? "eligible"
+        : "hold";
+}
+
+/* =====================================================
+   CLASSIFY CHRONOLOGICAL PAYMENT RECORDS
+===================================================== */
+
+function classifyPayments() {
+    const byRequest = new Map();
+
+    payments.forEach(payment => {
+        payment.paymentType = "unclassified";
+        payment.paidBefore = 0;
+        payment.paidAfter = 0;
+        payment.remainingAfter = requestTotal(payment);
+
+        const key = getPaymentKey(payment);
+
+        if (!byRequest.has(key)) {
+            byRequest.set(key, []);
+        }
+
+        byRequest.get(key).push(payment);
+    });
+
+    for (const list of byRequest.values()) {
+        list.sort(
+            (a, b) =>
+                getTime(paymentDate(a)) -
+                getTime(paymentDate(b))
+        );
+
+        const first = list[0];
+        const total = requestTotal(first);
+        const advance = advanceAmount(first);
+
+        let cumulative = 0;
+        let firstPaidSeen = false;
+
+        for (const payment of list) {
+            const amount = paymentAmount(payment);
+
+            payment.paidBefore = cumulative;
+
+            if (isPaid(payment)) {
+                const next = cumulative + amount;
+
+                payment.paidAfter = next;
+                payment.remainingAfter = Math.max(
+                    0,
+                    total - next
+                );
+
+                if (
+                    !firstPaidSeen &&
+                    advance > 0 &&
+                    Math.abs(amount - advance) < 0.01
+                ) {
+                    payment.paymentType = "initial";
+
+                } else if (total > 0 && next >= total) {
+                    payment.paymentType = "full";
+
+                } else if (total > 0) {
+                    payment.paymentType = "partial";
+                }
+
+                firstPaidSeen = true;
+                cumulative = next;
+
+            } else {
+                payment.paidAfter = cumulative;
+
+                payment.remainingAfter = Math.max(
+                    0,
+                    total - cumulative
+                );
+            }
+        }
+    }
+}
+
+/* =====================================================
+   GROUP BY USER + REQUEST
+===================================================== */
+
+function buildUserGroups() {
+    const map = new Map();
+
+    for (const payment of payments) {
+        const userKey =
+            payment.user_id ||
+            payment.request?.user_id ||
+            "unknown-user";
+
+        const requestKey =
+            payment.request_id ||
+            payment.request?.id ||
+            "no-request";
+
+        const key = userKey + "::" + requestKey;
+
+        if (!map.has(key)) {
+            map.set(key, {
+                key,
+                userId: userKey,
+                requestId: requestKey,
+                records: [],
+                first: payment
+            });
+        }
+
+        map.get(key).records.push(payment);
+    }
+
+    userGroups = [...map.values()];
+
+    userGroups.forEach(group => {
+        group.records.sort(
+            (a, b) =>
+                getTime(paymentDate(a)) -
+                getTime(paymentDate(b))
+        );
+
+        group.first = group.records[0];
+
+        group.paidRecords = group.records.filter(isPaid);
+        group.pendingRecords = group.records.filter(isPending);
+
+        group.totalAmount = group.records.reduce(
+            (sum, payment) =>
+                sum + paymentAmount(payment),
+            0
+        );
+
+        group.paidAmount = group.paidRecords.reduce(
+            (sum, payment) =>
+                sum + paymentAmount(payment),
+            0
+        );
+
+        group.recordCount = group.records.length;
+        group.paidCount = group.paidRecords.length;
+        group.pendingCount = group.pendingRecords.length;
+
+        const request = group.first.request || {};
+
+        group.requestTotal = moneyNumber(
+            request.total_payable ?? request.total_amount
+        );
+
+        group.remaining = Math.max(
+            0,
+            group.requestTotal - group.paidAmount
+        );
+
+        group.advance = advanceAmount(group.first);
+        group.extra = extraCharge(group.first);
+
+        group.latest =
+            group.records[group.records.length - 1];
+
+        group.types = new Set(
+            group.records.map(payment => payment.paymentType)
+        );
+
+        group.verifications = new Set(
+            group.records.map(getVerification)
+        );
+
+        group.statuses = new Set(
+            group.records.map(getStatus)
+        );
+
+        if (
+            group.records.some(
+                payment =>
+                    getVerification(payment) === "rejected" ||
+                    getStatus(payment) === "failed"
+            )
+        ) {
+            group.overallStatus = "Rejected";
+
+        } else if (group.pendingCount > 0) {
+            group.overallStatus = "Pending";
+
+        } else if (
+            group.paidCount === group.recordCount
+        ) {
+            group.overallStatus = "Paid";
+
+        } else {
+            group.overallStatus = "Mixed";
+        }
+
+        group.overallVerification =
+            group.records.some(
+                payment => getVerification(payment) === "rejected"
+            )
+                ? "rejected"
+
+                : group.records.some(
+                    payment => getVerification(payment) === "pending"
+                )
+                    ? "pending"
+
+                    : group.records.every(
+                        payment => getVerification(payment) === "approved"
+                    )
+                        ? "approved"
+                        : "not recorded";
+    });
+}
+
+/* =====================================================
+   COUNTERS
+===================================================== */
+
+function updateCounters() {
+    totalPaymentsEl.textContent = String(payments.length);
+
+    paidPaymentsEl.textContent = String(
+        payments.filter(isPaid).length
+    );
+
+    pendingPaymentsEl.textContent = String(
+        payments.filter(isPending).length
+    );
+
+    totalAmountEl.textContent = formatMoney(
+        payments.reduce(
+            (sum, payment) =>
+                sum + paymentAmount(payment),
+            0
+        )
+    );
+
+    initialCountEl.textContent = String(
+        payments.filter(
+            payment => payment.paymentType === "initial"
+        ).length
+    );
+
+    partialCountEl.textContent = String(
+        payments.filter(
+            payment => payment.paymentType === "partial"
+        ).length
+    );
+
+    fullCountEl.textContent = String(
+        payments.filter(
+            payment => payment.paymentType === "full"
+        ).length
+    );
+}
+
+/* =====================================================
+   SEARCH + FILTERS
+===================================================== */
+
+function groupSearchText(group) {
+    return [
+        group.userId,
+        requestNumber(group.first),
+        userName(group.first),
+        userMobile(group.first),
+        userEmail(group.first),
+        userCode(group.first),
+        agencyName(group.first),
+        companyName(group.first),
+        group.overallStatus,
+        group.first.request?.payment_pending_clear,
+        group.first.request?.cylinder_hold_eligible,
+
+        ...group.records.map(payment => [
+            payment.id,
+            payment.transaction_id,
+            payment.payment_reference,
+            payment.payment_method,
+            payment.payment_status,
+            payment.verification_status,
+            payment.payment_amount,
+            payment.notes,
+            payment.payment_note,
+            payment.transaction_reference,
+            paymentTypeLabel(payment.paymentType)
+        ].join(" "))
+    ].join(" ").toLowerCase();
+}
+
+function groupMatches(group) {
+    const search = searchInput.value.trim().toLowerCase();
+    const type = typeFilter.value;
+    const status = statusFilter.value;
+    const verification = verificationFilter.value;
+
+    if (
+        search &&
+        !groupSearchText(group).includes(search)
+    ) {
+        return false;
+    }
+
+    if (
+        type &&
+        !group.records.some(
+            payment => payment.paymentType === type
+        )
+    ) {
+        return false;
+    }
+
+    if (status) {
+        const matches = group.records.some(payment => {
+            const paymentStatus = getStatus(payment);
+            const verificationStatus = getVerification(payment);
+
+            if (status === "approved") {
+                return (
+                    verificationStatus === "approved" ||
+                    paymentStatus === "paid"
+                );
+            }
+
+            if (status === "rejected") {
+                return (
+                    verificationStatus === "rejected" ||
+                    paymentStatus === "failed"
+                );
+            }
+
+            if (status === "pending") {
+                return isPending(payment);
+            }
+
+            return paymentStatus === status;
+        });
+
+        if (!matches) return false;
+    }
+
+    if (
+        verification &&
+        !group.records.some(
+            payment =>
+                getVerification(payment) === verification
+        )
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
+/* =====================================================
+   PAYMENT HISTORY
+===================================================== */
+
+function renderHistory(group) {
+    const rows = group.records.map(payment => {
+        const amount = paymentAmount(payment);
+
+        const transaction =
+            payment.transaction_id ||
+            payment.payment_reference ||
+            payment.transaction_reference ||
+            payment.reference_number ||
+            "—";
+
+        const method =
+            payment.payment_method ||
+            payment.method ||
+            "—";
+
+        const note =
+            payment.payment_note ||
+            payment.user_note ||
+            payment.notes ||
+            "—";
+
+        const displayNote = typeof note === "object"
+            ? JSON.stringify(note)
+            : note;
+
+        return `
+            <tr>
+                <td>
+                    <div class="payment-id"
+                         title="${escapeHtml(payment.id)}">
+                        ${escapeHtml(payment.id)}
+                    </div>
+                </td>
+
+                <td>${typeBadge(payment.paymentType)}</td>
+
+                <td class="money">${formatMoney(amount)}</td>
+
+                <td>${escapeHtml(transaction)}</td>
+
+                <td>${escapeHtml(method)}</td>
+
+                <td>${formatDate(paymentDate(payment))}</td>
+
+                <td>${badgeHtml(getStatus(payment))}</td>
+
+                <td>${badgeHtml(getVerification(payment))}</td>
+
+                <td>${escapeHtml(displayNote)}</td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="action-btn delete-btn"
+                        data-delete-id="${escapeHtml(payment.id)}">
+                        🗑 Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+
+    return `
+        <div class="history-panel">
+
+            <div class="history-title">
+                Payment History —
+                ${escapeHtml(userName(group.first))}
+                · ${group.recordCount} record(s)
+            </div>
+
+            <div class="history-tools">
+                <span class="count-pill">
+                    Total recorded: ${formatMoney(group.totalAmount)}
+                </span>
+
+                <span class="count-pill">
+                    Paid: ${formatMoney(group.paidAmount)}
+                </span>
+
+                <span class="count-pill">
+                    Remaining: ${formatMoney(group.remaining)}
+                </span>
+            </div>
+
+            <div class="table-wrap">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Transaction ID</th>
+                            <th>Method</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Verification</th>
+                            <th>Note</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${rows || `
+                            <tr>
+                                <td colspan="10" class="history-empty">
+                                    No payment history.
+                                </td>
+                            </tr>
+                        `}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    `;
+}
+
+/* =====================================================
+   PAYMENT CLEAR + CYLINDER ELIGIBILITY COLUMNS
+===================================================== */
+
+function renderPaymentClearStatus(group) {
+    const status = getPaymentClearStatus(group);
+
+    return `
+        <div class="status-display">
+            ${badgeHtml(
+                status === "clear" ? "Clear" : "Pending"
+            )}
+        </div>
+    `;
+}
+
+function renderCylinderEligibilityStatus(group) {
+    const status = getCylinderEligibility(group);
+
+    return `
+        <div class="status-display">
+            ${badgeHtml(
+                status === "eligible" ? "Eligible" : "Hold"
+            )}
+        </div>
+    `;
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+function renderStatusAction(group) {
+const requestId = getRequestId(group);
+const payment = group.latest || group.first;
+const paymentId = payment?.id || "";
+
+const historyId = "history-" +
+    String(group.key).replace(/[^a-zA-Z0-9_-]/g, "");
+
+const status = getPaymentClearStatus(group);
+
+const viewUrl = new URL(
+    OWNER_PAGE_ROUTES["payment-details"],
+    window.location.href
+);
+
+if (paymentId) {
+    viewUrl.searchParams.set("payment_id", paymentId);
+}
+
+if (requestId) {
+    viewUrl.searchParams.set("request_id", requestId);
+}
+
+return `
+    <div class="action-wrap">
+
+        <button
+            type="button"
+            class="action-btn view-btn"
+            data-view-payment="${escapeHtml(viewUrl.href)}">
+            👁 View
+        </button>
+
+        <button
+            type="button"
+            class="action-btn details-btn"
+            data-toggle-history="${escapeHtml(historyId)}"
+            aria-expanded="false">
+            📋 Details
+        </button>
+
+        <button
+            type="button"
+            class="action-btn payment-clear-action"
+            data-open-status-popup="${escapeHtml(group.key)}"
+            ${!requestId ? "disabled" : ""}>
+            ${status === "clear" ? "✓ Clear" : "✓ Mark Clear"}
+        </button>
+
+    </div>
+`;
+
+}
+
+/* =====================================================
+   MAIN PAYMENT TABLE
+===================================================== */
+
+function renderPayments() {
+    if (!paymentTableBody) return;
+
+    const filtered = userGroups.filter(groupMatches);
+
+    if (!filtered.length) {
+        paymentTableBody.innerHTML = `
+            <tr>
+                <td colspan="22" class="empty">
+                    No payments found for the selected filters.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    paymentTableBody.innerHTML = filtered.map(group => {
+        const payment = group.first;
+
+        const name = userName(payment);
+        const email = userEmail(payment);
+        const photo = userPhoto(payment);
+
+        const photoHtml = photo
+            ? `
+                <img
+                    src="${escapeHtml(photo)}"
+                    class="user-photo"
+                    alt="User photo"
+                    loading="lazy"
+                    onerror="this.outerHTML='&lt;div class=&quot;user-photo-fallback&quot;&gt;👤&lt;/div&gt;'">
+            `
+            : `
+                <div class="user-photo-fallback">👤</div>
+            `;
+
+        const requestStatus = group.overallStatus.toLowerCase();
+
+        const historyId = "history-" +
+            String(group.key).replace(/[^a-zA-Z0-9_-]/g, "");
+
+        return `
+            <tr class="user-row"
+                data-group-row="${escapeHtml(group.key)}">
+
+                <td>
+                    <div class="user-box">
+                        ${photoHtml}
+
+                        <div>
+                            <div class="user-name">
+                                ${escapeHtml(name)}
+                            </div>
+
+                            <div class="user-email">
+                                ${escapeHtml(email)}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="user-id">
+                        ${escapeHtml(userCode(payment))}
+                    </div>
+                </td>
+
+                <td>${escapeHtml(userMobile(payment))}</td>
+
+                <td>${escapeHtml(email)}</td>
+
+                <td>
+                    <div class="request-number">
+                        ${escapeHtml(requestNumber(payment))}
+                    </div>
+                </td>
+
+                <td>${escapeHtml(agencyName(payment))}</td>
+
+                <td>${escapeHtml(companyName(payment))}</td>
+
+                <td>${escapeHtml(quantity(payment))}</td>
+
+                <td>
+                    <span class="count-pill">${group.recordCount}</span>
+                </td>
+
+                <td>
+                    <span class="count-pill">${group.paidCount}</span>
+                </td>
+
+                <td>
+                    <span class="count-pill">${group.pendingCount}</span>
+                </td>
+
+                <td class="total-money">
+                    ${formatMoney(group.paidAmount)}
+                </td>
+
+                <td class="money">
+                    ${formatMoney(group.advance)}
+                </td>
+
+                <td class="money">
+                    ${formatMoney(group.extra)}
+                </td>
+
+                <td class="total-money">
+                    ${formatMoney(group.requestTotal)}
+                </td>
+
+                <td class="money">
+                    ${formatMoney(group.remaining)}
+                </td>
+
+                <td>${badgeHtml(requestStatus)}</td>
+
+                <td>${formatDate(paymentDate(group.latest))}</td>
+
+                <td>${badgeHtml(group.overallVerification)}</td>
+
+                <td>${renderPaymentClearStatus(group)}</td>
+
+                <td>${renderCylinderEligibilityStatus(group)}</td>
+
+                <td>${renderStatusAction(group)}</td>
+
+            </tr>
+
+            <tr class="history-row"
+                id="${escapeHtml(historyId)}"
+                hidden>
+
+                <td colspan="22">
+                    ${renderHistory(group)}
+                </td>
+
+            </tr>
+        `;
+    }).join("");
+}
+
+/* =====================================================
+   STATUS POPUP CSS + HTML
+===================================================== */
+
+function createStatusPopup() {
+    if ($("paymentStatusPopup")) return;
+
+    const style = document.createElement("style");
+
+    style.id = "paymentStatusPopupStyles";
+
+    style.textContent = `
+        .status-popup-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(5, 24, 45, .65);
+            backdrop-filter: blur(5px);
+        }
+
+        .status-popup-overlay.show {
+            display: flex;
+        }
+
+        .status-popup-box {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            padding: 28px 22px;
+            border-radius: 20px;
+            background: #fff;
+            color: #17324d;
+            text-align: center;
+            box-shadow: 0 20px 65px rgba(0,0,0,.22);
+        }
+
+        .status-popup-close {
+            position: absolute;
+            top: 9px;
+            right: 12px;
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 50%;
+            background: #f0f4f8;
+            color: #334155;
+            font-size: 27px;
+            cursor: pointer;
+        }
+
+        .status-popup-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .status-popup-box h2 {
+            margin: 0 25px 10px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .status-popup-description {
+            margin: 0 0 17px;
+            color: #64748b;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .status-current-info {
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            background: #f1f6fb;
+            color: #334155;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .status-popup-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .status-option-btn {
+            min-height: 48px;
+            border: 0;
+            border-radius: 11px;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .status-option-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .status-option-clear {
+            color: #fff;
+            background: #138a52;
+        }
+
+        .status-option-pending {
+            color: #704900;
+            background: #fff0c2;
+        }
+
+        .status-popup-message {
+            min-height: 20px;
+            margin: 14px 0 0;
+            font-size: 13px;
+            color: #64748b;
+            overflow-wrap: anywhere;
+        }
+
+        .status-popup-message.error {
+            color: #c62828;
+        }
+
+        @media(max-width:380px) {
+            .status-popup-box {
+                padding: 25px 15px;
+            }
+
+            .status-popup-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
+
+    const modal = document.createElement("div");
+
+    modal.id = "paymentStatusPopup";
+    modal.className = "status-popup-overlay";
+
+    modal.innerHTML = `
+        <div
+            class="status-popup-box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="statusPopupTitle">
+
+            <button
+                type="button"
+                class="status-popup-close"
+                id="statusPopupClose"
+                aria-label="Close popup">
+                &times;
+            </button>
+
+            <div class="status-popup-icon">💳</div>
+
+            <h2 id="statusPopupTitle">
+                Update Payment Status
+            </h2>
+
+            <p class="status-popup-description">
+                Payment status select karein.
+                Cylinder status bhi automatically update hoga.
+            </p>
+
+            <div
+                class="status-current-info"
+                id="statusCurrentInfo">
+                Current status: Pending · Cylinder: Hold
+            </div>
+
+            <div class="status-popup-buttons">
+
+                <button
+                    type="button"
+                    id="statusPopupClear"
+                    class="status-option-btn status-option-clear">
+                    ✓ Clear
+                </button>
+
+                <button
+                    type="button"
+                    id="statusPopupPending"
+                    class="status-option-btn status-option-pending">
+                    ⏳ Pending
+                </button>
+
+            </div>
+
+            <p
+                id="statusPopupMessage"
+                class="status-popup-message"
+                aria-live="polite">
+            </p>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    $("statusPopupClose").addEventListener(
+        "click",
+        closeStatusPopup
+    );
+
+    modal.addEventListener("click", event => {
+        if (event.target === modal) {
+            closeStatusPopup();
+        }
+    });
+
+    $("statusPopupClear").addEventListener(
+        "click",
+        () => savePopupStatus("clear")
+    );
+
+    $("statusPopupPending").addEventListener(
+        "click",
+        () => savePopupStatus("pending")
+    );
+}
+
+/* =====================================================
+   OPEN / CLOSE POPUP
+===================================================== */
+
+function openStatusPopup(groupKey) {
+    const group = userGroups.find(
+        item => item.key === groupKey
+    );
+
+    if (!group) {
+        showToast(
+            "Update Failed",
+            "Payment group nahi mila."
+        );
+
+        return;
+    }
+
+    if (!getRequestId(group)) {
+        showToast(
+            "Update Failed",
+            "Is payment ke saath cylinder request linked nahi hai."
+        );
+
+        return;
+    }
+
+    createStatusPopup();
+
+    activeStatusGroupKey = groupKey;
+
+    const paymentStatus = getPaymentClearStatus(group);
+    const cylinderStatus = getCylinderEligibility(group);
+
+    $("statusCurrentInfo").textContent =
+        "Current status: " +
+        (paymentStatus === "clear" ? "Clear" : "Pending") +
+        " · Cylinder: " +
+        (cylinderStatus === "eligible" ? "Eligible" : "Hold");
+
+    $("statusPopupMessage").textContent = "";
+    $("statusPopupMessage").classList.remove("error");
+
+    $("paymentStatusPopup").classList.add("show");
+
+    $("statusPopupClear").focus();
+}
+
+function closeStatusPopup() {
+    if (isSavingPopupStatus) return;
+
+    $("paymentStatusPopup")?.classList.remove("show");
+
+    activeStatusGroupKey = null;
+}
+
+/* =====================================================
+   SAVE CLEAR / PENDING + CYLINDER STATUS
+===================================================== */
+
+async function savePopupStatus(nextState) {
+if (isSavingPopupStatus || !activeStatusGroupKey) {
+return;
+}
+
+if (!["clear", "pending"].includes(nextState)) {
+    showToast("Update Failed", "Invalid status.");
+    return;
+}
+
+const group = userGroups.find(
+    item => item.key === activeStatusGroupKey
+);
+
+if (!group) {
+    showToast("Update Failed", "Payment group nahi mila.");
+    return;
+}
+
+const requestId = getRequestId(group);
+
+if (!requestId) {
+    showToast(
+        "Update Failed",
+        "Cylinder request ID nahi mila."
+    );
+    return;
+}
+
+const busyKey = String(requestId) + ":payment-cylinder";
+
+if (busyStatusUpdates.has(busyKey)) return;
+
+const clearButton = $("statusPopupClear");
+const pendingButton = $("statusPopupPending");
+const message = $("statusPopupMessage");
+
+isSavingPopupStatus = true;
+busyStatusUpdates.add(busyKey);
+
+clearButton.disabled = true;
+pendingButton.disabled = true;
+
+message.classList.remove("error");
+message.textContent = "Saving status...";
+
+try {
+    const nextPaymentStatus =
+        nextState === "clear" ? "paid" : "pending";
+
+    const updateObject = nextState === "clear"
+? {
+payment_pending_clear: "clear",
+cylinder_hold_eligible: "eligible",
+repayment_status: "clear",
+payment_status: "paid"
+}
+: {
+payment_pending_clear: "pending",
+cylinder_hold_eligible: "hold",
+repayment_status: "pending",
+payment_status: "pending"
+};
+    /*
+     * STEP 1:
+     * Update cylinder request statuses.
+     */
+    const { data: requestData, error: requestError } =
+        await supabaseClient
+            .from("cylinder_requests")
+            .update(updateObject)
+            .eq("id", requestId)
+            .select(`
+                id,
+                payment_pending_clear,
+                cylinder_hold_eligible,
+                repayment_status
+            `);
+
+    if (requestError) throw requestError;
+
+    if (!requestData || requestData.length === 0) {
+        throw new Error(
+            "Cylinder request update nahi hua. RLS policy aur Owner permissions check karein."
+        );
+    }
+
+    /*
+     * STEP 2:
+     * Update payment_status for payment records
+     * belonging to this request.
+     */
+    const { data: paymentData, error: paymentError } =
+        await supabaseClient
+            .from("payments")
+            .update({
+                payment_status: nextPaymentStatus
+            })
+            .eq("request_id", requestId)
+            .select("id, payment_status");
+
+    if (paymentError) {
+        throw new Error(
+            "Cylinder status update ho gaya, lekin payment_status update nahi hua: " +
+            paymentError.message
+        );
+    }
+
+    if (!paymentData || paymentData.length === 0) {
+        throw new Error(
+            "Cylinder status update ho gaya, lekin linked payment records update nahi hue. Payments table ki RLS policy check karein."
+        );
+    }
+
+    /*
+     * STEP 3:
+     * Reload authoritative data from Supabase.
+     */
+    $("paymentStatusPopup").classList.remove("show");
+    activeStatusGroupKey = null;
+
+    await loadPayments();
+
+    showToast(
+        "Status Updated",
+        nextState === "clear"
+            ? "Payment Clear aur payment_status = paid save ho gaya. Cylinder Eligible hai."
+            : "Payment Pending aur payment_status = pending save ho gaya. Cylinder Hold hai."
+    );
+
+} catch (error) {
+    console.error(
+        "Payment/cylinder status update error:",
+        error
+    );
+
+    message.textContent =
+        error.message ||
+        "Status save nahi hua. Database permissions check karein.";
+
+    message.classList.add("error");
+
+    showToast(
+        "Update Failed",
+        error.message || "Status save nahi hua."
+    );
+
+    /*
+     * Reload database state because one update might
+     * have succeeded before another update failed.
+     */
+    try {
+        await loadPayments();
+    } catch (reloadError) {
+        console.error("Payment reload error:", reloadError);
+    }
+
+} finally {
+    isSavingPopupStatus = false;
+    busyStatusUpdates.delete(busyKey);
+
+    clearButton.disabled = false;
+    pendingButton.disabled = false;
+}
+
+}
+
+/* =====================================================
+   TABLE CLICK HANDLER
+===================================================== */
+
+paymentTableBody.addEventListener("click", async event => {
+    const viewButton = event.target.closest("[data-view-payment]"); if (viewButton) { event.preventDefault(); const viewUrl = viewButton.dataset.viewPayment; if (viewUrl) { window.location.href = viewUrl; } return; }
+    const statusButton = event.target.closest(
+        "[data-open-status-popup]"
+    );
+
+    const historyButton = event.target.closest(
+        "[data-toggle-history]"
+    );
+
+    const deleteButton = event.target.closest(
+        "[data-delete-id]"
+    );
+
+    if (statusButton) {
+        event.preventDefault();
+
+        openStatusPopup(
+            statusButton.dataset.openStatusPopup
+        );
+
+        return;
+    }
+
+    if (historyButton) {
+        event.preventDefault();
+
+        const row = $(historyButton.dataset.toggleHistory);
+
+        if (row) {
+            const opening = row.hidden;
+
+            row.hidden = !opening;
+
+            historyButton.setAttribute(
+                "aria-expanded",
+                String(opening)
+            );
+
+            historyButton.textContent = opening
+                ? "✖ Hide Details"
+                : "👁 Details";
+        }
+
+        return;
+    }
+
+    if (deleteButton) {
+        event.preventDefault();
+
+        openDeleteModal(deleteButton.dataset.deleteId);
+    }
+});
+
+/* =====================================================
+   SEARCH / FILTER EVENT LISTENERS
+===================================================== */
+
+searchInput.addEventListener("input", renderPayments);
+typeFilter.addEventListener("change", renderPayments);
+statusFilter.addEventListener("change", renderPayments);
+verificationFilter.addEventListener("change", renderPayments);
+
+/* =====================================================
+   DELETE PAYMENT RECORD
+===================================================== */
+
+function openDeleteModal(id) {
+    if (!id || isDeleting) return;
+
+    selectedDeleteId = id;
+
+    const selectedPayment = payments.find(
+        payment => String(payment.id) === String(id)
+    );
+
+    deleteText.textContent = selectedPayment
+        ? `Payment ${id} (${formatMoney(paymentAmount(selectedPayment))}) permanently delete hoga. Sirf ye payment record delete hoga.`
+        : "Kya aap is payment record ko permanently delete karna chahte hain?";
+
+    deleteModal.classList.add("show");
+}
+
+function closeDeleteModal() {
+    if (isDeleting) return;
+
+    deleteModal.classList.remove("show");
+    selectedDeleteId = null;
+}
+
+deleteCancel.addEventListener("click", closeDeleteModal);
+
+deleteModal.addEventListener("click", event => {
+    if (event.target === deleteModal) {
+        closeDeleteModal();
+    }
+});
+
+deleteConfirm.addEventListener("click", async () => {
+    if (!selectedDeleteId || isDeleting) return;
+
+    const id = selectedDeleteId;
+
+    isDeleting = true;
+
+    deleteConfirm.disabled = true;
+    deleteCancel.disabled = true;
+    deleteConfirm.textContent = "Deleting...";
+
+    try {
+        const { data, error } = await supabaseClient
+            .from("payments")
+            .delete()
+            .eq("id", id)
+            .select("id");
+
+        if (error) throw error;
+
+        if (!data || !data.length) {
+            throw new Error(
+                "Payment delete nahi hua. Owner permissions aur RLS policy check karein."
+            );
+        }
+
+        deleteModal.classList.remove("show");
+        selectedDeleteId = null;
+
+        showToast(
+            "Payment Deleted",
+            "Selected payment record delete ho gaya."
+        );
+
+        await loadPayments();
+
+    } catch (error) {
+        console.error("Delete payment error:", error);
+
+        showToast(
+            "Delete Failed",
+            error.message || "Unable to delete payment."
+        );
+
+    } finally {
+        isDeleting = false;
+
+        deleteConfirm.disabled = false;
+        deleteCancel.disabled = false;
+        deleteConfirm.textContent = "Delete";
+    }
+});
+
+/* =====================================================
+   TOAST NOTIFICATIONS
+===================================================== */
+
+function showToast(title, message) {
+    if (!toast || !toastTitle || !toastText) {
+        console.log(title, message);
+        return;
+    }
+
+    toastTitle.textContent = title || "Notification";
+    toastText.textContent = message || "";
+
+    toast.classList.add("show");
+
+    if (toastTimer) {
+        clearTimeout(toastTimer);
+    }
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+        toastTimer = null;
+    }, 4500);
+}
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logoutOpen.addEventListener("click", event => {
+    event.preventDefault();
+
+    logoutModal.classList.add("show");
+
+    history.replaceState(
+        null,
+        "",
+        location.pathname + location.search
+    );
+});
+
+function closeLogoutModal() {
+    if (!isLoggingOut) {
+        logoutModal.classList.remove("show");
+    }
+}
+
+logoutCancel.addEventListener("click", closeLogoutModal);
+
+logoutModal.addEventListener("click", event => {
+    if (event.target === logoutModal) {
+        closeLogoutModal();
+    }
+});
+
+logoutConfirm.addEventListener("click", async () => {
+    if (isLoggingOut) return;
+
+    isLoggingOut = true;
+
+    logoutConfirm.disabled = true;
+    logoutCancel.disabled = true;
+    logoutConfirm.textContent = "Logging out...";
+
+    try {
+        if (realtimeChannel) {
+            await supabaseClient.removeChannel(realtimeChannel);
+            realtimeChannel = null;
+        }
+
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) throw error;
+
+        location.replace("owner-login.html");
+
+    } catch (error) {
+        console.error("Logout error:", error);
+
+        showToast(
+            "Logout Failed",
+            error.message || "Please try again."
+        );
+
+        isLoggingOut = false;
+
+        logoutConfirm.disabled = false;
+        logoutCancel.disabled = false;
+        logoutConfirm.textContent = "Logout";
+    }
+});
+
+/* =====================================================
+   KEYBOARD SHORTCUTS
+===================================================== */
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeStatusPopup();
+        closeDeleteModal();
+        closeLogoutModal();
+        closeSidebar();
+    }
+});
+
+/* =====================================================
+   REALTIME SUBSCRIPTIONS
+===================================================== */
+
+function startRealtime() {
+    if (realtimeChannel) return;
+
+    realtimeChannel = supabaseClient
+        .channel("owner-payments-realtime")
+
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "payments"
+            },
+            async payload => {
+                console.log("Payment changed:", payload);
+
+                if (payload.eventType === "INSERT") {
+                    showToast(
+                        "New Payment",
+                        "A new payment record has been submitted."
+                    );
+                }
+
+                await loadPayments();
+            }
+        )
+
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "cylinder_requests"
+            },
+            async payload => {
+                console.log(
+                    "Cylinder request changed:",
+                    payload
+                );
+
+                await loadPayments();
+            }
+        )
+
+        .subscribe(status => {
+            console.log("EGC Payment Realtime:", status);
+        });
+}
+
+/* =====================================================
+   AUTH + INITIALIZATION
+===================================================== */
+
+async function initPayments() {
+    if (isInitializing) return;
+
+    isInitializing = true;
+
+    try {
+        const { data, error } =
+            await supabaseClient.auth.getSession();
+
+        if (error) throw error;
+
+        if (!data?.session?.user) {
+            location.replace("owner-login.html");
+            return;
+        }
+
+        createStatusPopup();
+
+        await loadPayments();
+
+        startRealtime();
+
+        console.log(
+            "EGC Owner Payments initialized.",
+            data.session.user.id
+        );
+
+    } catch (error) {
+        console.error(
+            "Owner Payments initialization error:",
+            error
+        );
+
+        paymentTableBody.innerHTML = `
+            <tr>
+                <td colspan="22" class="empty">
+                    Unable to initialize Payments page.<br>
+                    ${escapeHtml(error.message || "Unknown error")}
+                </td>
+            </tr>
+        `;
+
+        showToast(
+            "Initialization Failed",
+            error.message || "Unable to initialize Payments."
+        );
+
+    } finally {
+        isInitializing = false;
+    }
+}
+
+/* =====================================================
+   CLEANUP
+===================================================== */
+
+window.addEventListener("pagehide", () => {
+    if (realtimeChannel) {
+        const channel = realtimeChannel;
+
+        realtimeChannel = null;
+
+        supabaseClient.removeChannel(channel);
+    }
+});
+
+/* =====================================================
+   START
+===================================================== */
+
+initPayments();
+
+</script>
+
+</body>
+</html>
